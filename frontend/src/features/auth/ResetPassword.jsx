@@ -74,7 +74,7 @@ function ResetPassword() {
     const resetPassword = async () => {
         try {
             const response = await axios.post(
-                `${USER_BASE_PATH}${RESET_PASSWORD}${QUESTION}${USER_ID}${formData.userId}${AND}${OTP}${formData.otp}${AND}"newPasswor${NEW_PASSWORD}="${formData.newPassword}`
+                `${USER_BASE_PATH}${RESET_PASSWORD}${QUESTION}${USER_ID}${formData.userId}${AND}${OTP}${formData.otp}${AND}newPassword=${formData.newPassword}`
             );
 
             if (response.data.success) {

@@ -4,6 +4,7 @@ import org.example.learningprojectserver.dto.exam.ExamAttemptView;
 import org.example.learningprojectserver.dto.exam.ExamQuestionInput;
 import org.example.learningprojectserver.dto.exam.ExamResultView;
 import org.example.learningprojectserver.entities.ExamAttemptEntity;
+import org.example.learningprojectserver.entities.StudentAccommodationEntity;
 import org.example.learningprojectserver.entities.TeacherTestEntity;
 import org.example.learningprojectserver.entities.TestQuestionEntity;
 import org.example.learningprojectserver.enums.ExamAttemptStatus;
@@ -39,6 +40,9 @@ class ExamAttemptServiceTest {
     @Mock ExamIntegrityEventRepository examIntegrityEventRepository;
     @Mock StudentRepository studentRepository;
     @Mock CacheManager cacheManager;
+    @Mock ExamFeedbackService examFeedbackService;
+    @Mock EngagementEvents engagementEvents;
+    @Mock StudentAccommodationRepository studentAccommodationRepository;
 
     private ExamAttemptService service;
     private TeacherTestEntity test;
@@ -48,7 +52,8 @@ class ExamAttemptServiceTest {
         ExamQuestionCodec codec = new ExamQuestionCodec();
         service = new ExamAttemptService(teacherTestRepository, teacherTestResultRepository, examAttemptRepository,
                 examAttemptAnswerRepository, examIntegrityEventRepository, studentRepository, codec,
-                new ExamGrader(), cacheManager);
+                new ExamGrader(), cacheManager, examFeedbackService, engagementEvents,
+                studentAccommodationRepository);
 
         test = new TeacherTestEntity();
         test.setId(5L);
@@ -99,6 +104,20 @@ class ExamAttemptServiceTest {
         assertEquals(1, view.getQuestions().size());
         assertEquals("NUMERIC", view.getQuestions().get(0).getKind());
         assertNull(view.getQuestions().get(0).getOptions());
+    }
+
+    @Test
+    void extraTimeAccommodationExtendsTheServerDeadline() {
+        test.setStartTime(LocalDateTime.now().minusMinutes(5).format(ExamAttemptService.START_FORMAT));
+        StudentAccommodationEntity accommodation = new StudentAccommodationEntity("s1");
+        accommodation.setExtraTimePercent(50);
+        when(studentAccommodationRepository.findByStudentUserId("s1")).thenReturn(Optional.of(accommodation));
+
+        BasicResponse<ExamAttemptView> response = service.startAttempt("s1", 5L);
+
+        assertTrue(response.isSuccess());
+        // 30 minutes + 50% = 45 minutes from the scheduled start, 5 of which have passed.
+        assertTrue(response.getData().getRemainingSeconds() > 38 * 60 && response.getData().getRemainingSeconds() <= 40 * 60);
     }
 
     @Test

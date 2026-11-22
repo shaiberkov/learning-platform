@@ -55,6 +55,7 @@ public class ExamAttemptService {
     private final CacheManager cacheManager;
     private final ExamFeedbackService examFeedbackService;
     private final EngagementEvents engagementEvents;
+    private final StudentAccommodationRepository studentAccommodationRepository;
 
     private static final Logger log = LoggerFactory.getLogger(ExamAttemptService.class);
 
@@ -100,7 +101,7 @@ public class ExamAttemptService {
         if (now.isBefore(start)) {
             return new BasicResponse<>(false, "הזמן טרם הגיע להתחלת המבחן");
         }
-        LocalDateTime deadline = start.plusMinutes(test.getTimeLimitMinutes());
+        LocalDateTime deadline = start.plusMinutes(timeLimitWithAccommodation(test.getTimeLimitMinutes(), userId));
 
         attempt = new ExamAttemptEntity();
         attempt.setTest(test);
@@ -119,6 +120,14 @@ public class ExamAttemptService {
         attempt.setDeadline(deadline);
         examAttemptRepository.save(attempt);
         return ok(buildView(attempt, now), "המבחן התחיל בהצלחה");
+    }
+
+    /** The exam's time limit plus the student's extra-time accommodation (percent, rounded up), as the exam screen shows it. */
+    private int timeLimitWithAccommodation(int minutes, String userId) {
+        int percent = studentAccommodationRepository.findByStudentUserId(userId)
+                .map(StudentAccommodationEntity::getExtraTimePercent)
+                .orElse(0);
+        return percent <= 0 ? minutes : minutes + (int) Math.ceil(minutes * percent / 100.0);
     }
 
     /** Autosave. Returns the seconds left by the server's clock. */

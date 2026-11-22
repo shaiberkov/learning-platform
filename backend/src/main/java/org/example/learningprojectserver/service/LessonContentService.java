@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 public class LessonContentService {
 
     private static final Pattern YOUTUBE = Pattern.compile(
-            "^(?:https?://)?(?:www\\.|m\\.)?(?:youtube\\.com/(?:watch\\?(?:.*&)?v=|embed/|shorts/)|youtu\\.be/)([A-Za-z0-9_-]{11}).*$");
+            "^(?:https?://)?(?:www\\.|m\\.)?(?:youtube(?:-nocookie)?\\.com/(?:watch\\?(?:.*&)?v=|embed/|shorts/)|youtu\\.be/)([A-Za-z0-9_-]{11}).*$");
     private static final Pattern VIMEO = Pattern.compile(
             "^(?:https?://)?(?:www\\.|player\\.)?vimeo\\.com/(?:video/)?(\\d+).*$");
 

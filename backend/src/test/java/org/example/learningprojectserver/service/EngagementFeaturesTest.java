@@ -72,8 +72,12 @@ class EngagementFeaturesTest {
                 LessonContentService.toEmbedUrl("https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=10"));
         assertEquals("https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ",
                 LessonContentService.toEmbedUrl("https://youtu.be/dQw4w9WgXcQ"));
+        assertEquals("https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ",
+                LessonContentService.toEmbedUrl("https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ"));
         assertEquals("https://player.vimeo.com/video/123456",
                 LessonContentService.toEmbedUrl("https://vimeo.com/123456"));
+        assertEquals("https://player.vimeo.com/video/123456",
+                LessonContentService.toEmbedUrl("https://player.vimeo.com/video/123456"));
         assertEquals("", LessonContentService.toEmbedUrl("  "));
         assertNull(LessonContentService.toEmbedUrl("https://evil.example.com/video"));
         assertNull(LessonContentService.toEmbedUrl("javascript:alert(1)"));

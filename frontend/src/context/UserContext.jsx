@@ -71,7 +71,9 @@ export const UserProvider = ({ children }) => {
                         userId:response.data.userId,
                         role:response.data.role,
                         username:response.data.username,
-                        schoolCode:response.data.schoolCode
+                        schoolCode:response.data.schoolCode,
+                        impersonatorId:response.data.impersonatorId,
+                        impersonatorUsername:response.data.impersonatorUsername
                     });
                     // userIdRef.current = newUserId;
                     console.log(`✅ טוקן תקף - userId: ${response.data.userId}, role: ${response.data.role}, username: ${response.data.username},schoolCode:${response.data.schoolCode}`);

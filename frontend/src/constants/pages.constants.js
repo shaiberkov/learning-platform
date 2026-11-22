@@ -118,6 +118,25 @@ export const PagesConstants = {
         GET_UPCOMING_EVENTS: '/get-upcoming-events',
     },
 
+    AuditLog: {
+        AUDIT_LOG_BASE_PATH: `${API_BASE_URL}${BASE_API}/audit-log`,
+        LIST_AUDIT_LOG: '/list',
+        AUDIT_ACTIONS: '/actions',
+    },
+
+    Impersonation: {
+        IMPERSONATION_BASE_PATH: `${API_BASE_URL}${BASE_API}/impersonation`,
+        START_IMPERSONATION: '/start',
+        STOP_IMPERSONATION: '/stop',
+    },
+
+    // Served under SystemAdmin.SYSTEM_ADMIN_BASE_PATH.
+    AdminTools: {
+        SYSTEM_HEALTH: '/health',
+        FEATURE_FLAGS: '/feature-flags',
+        SET_FEATURE_FLAG: '/feature-flags/set',
+    },
+
     User: {
         USER_BASE_PATH: `${API_BASE_URL}${BASE_API}/user`,
         ADD_USER: '/add-user',
@@ -257,6 +276,27 @@ export const {
     UPCOMING_EVENTS_BASE_PATH,
     GET_UPCOMING_EVENTS,
 } = PagesConstants.UpcomingEvents;
+
+/* AuditLog */
+export const {
+    AUDIT_LOG_BASE_PATH,
+    LIST_AUDIT_LOG,
+    AUDIT_ACTIONS,
+} = PagesConstants.AuditLog;
+
+/* Impersonation */
+export const {
+    IMPERSONATION_BASE_PATH,
+    START_IMPERSONATION,
+    STOP_IMPERSONATION,
+} = PagesConstants.Impersonation;
+
+/* AdminTools (under SYSTEM_ADMIN_BASE_PATH) */
+export const {
+    SYSTEM_HEALTH,
+    FEATURE_FLAGS,
+    SET_FEATURE_FLAG,
+} = PagesConstants.AdminTools;
 
 export const {
     USER_BASE_PATH,

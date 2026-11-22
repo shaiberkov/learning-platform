@@ -40,6 +40,17 @@ import PrivacyPolicy from "../pages/footer/PrivacyPolicy.jsx";
 import Faq from "../pages/footer/Faq.jsx";
 import About from "../pages/footer/About.jsx";
 import Footer from "../components/Footer.jsx";
+import AccommodationsSync from "../components/AccommodationsSync.jsx";
+import Achievements from "../pages/student/Achievements.jsx";
+import StudyPlan from "../pages/student/StudyPlan.jsx";
+import Lessons from "../pages/student/Lessons.jsx";
+import LessonView from "../pages/student/LessonView.jsx";
+import Homework from "../pages/student/Homework.jsx";
+import AccessibilitySettings from "../pages/student/AccessibilitySettings.jsx";
+import LessonAuthoring from "../pages/teacher/LessonAuthoring.jsx";
+import HomeworkBoard from "../pages/teacher/HomeworkBoard.jsx";
+import StudentAccommodations from "../pages/teacher/StudentAccommodations.jsx";
+import ClassChallenges from "../pages/teacher/ClassChallenges.jsx";
 export default function AppRoutes() {
 
     const {user}=useContext(UserContext)
@@ -51,6 +62,7 @@ export default function AppRoutes() {
 
 
                 <SideBar />
+                <AccommodationsSync />
 
 
             <main className="flex-1 px-4 sm:px-6 lg:px-10 pt-28 sm:pt-32">
@@ -96,6 +108,10 @@ export default function AppRoutes() {
                             <Route path="/teacher-dashboard" element={<TeacherDashboard />} />
                             <Route path="/teacher-weekly-schedule" element={<TeacherWeeklySchedule />} />
                             <Route path="/test-configurator" element={<TestConfigurator type="teacher" />} />
+                            <Route path="/lesson-authoring" element={<LessonAuthoring />} />
+                            <Route path="/homework-board" element={<HomeworkBoard />} />
+                            <Route path="/class-challenges" element={<ClassChallenges />} />
+                            <Route path="/student-accommodations" element={<StudentAccommodations />} />
                         </>
                     )}
 
@@ -109,6 +125,12 @@ export default function AppRoutes() {
                             <Route path="/exercises/:subjectName/:topicName/:exerciseName" element={<QuestionPractice />} />
                             <Route path="/test/:selectedSubject/:selectedTopic/:selectedDifficulty/:selectedQuestionCount/:selectedTimeMinutes" element={<TestSession type="practiceTest" />} />
                             <Route path="/test/:TeacherTestId/:timeLimitMinutes" element={<TestSession type="teacherTest" />} />
+                            <Route path="/lessons" element={<Lessons />} />
+                            <Route path="/lessons/:lessonId" element={<LessonView />} />
+                            <Route path="/homework" element={<Homework />} />
+                            <Route path="/study-plan" element={<StudyPlan />} />
+                            <Route path="/achievements" element={<Achievements />} />
+                            <Route path="/accessibility" element={<AccessibilitySettings />} />
                         </>
                     )}
                     {user?.role === 'STUDENT'&&!user?.schoolCode && (

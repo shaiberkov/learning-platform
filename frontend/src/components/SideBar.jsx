@@ -108,6 +108,10 @@ function SideBar() {
                 { to: "teacher-dashboard", label: "מסך בית" },
                 { to: "teacher-weekly-schedule", label: "מערכת שעות" },
                 { to: "test-configurator", label: "יצירת מבחן לתלמידים" },
+                { to: "lesson-authoring", label: "כתיבת שיעורים" },
+                { to: "homework-board", label: "שיעורי בית" },
+                { to: "class-challenges", label: "אתגרי כיתה" },
+                { to: "student-accommodations", label: "התאמות לתלמידים" },
             ],
             STUDENT: [
                 { to: "student-dashboard", label: "מסך בית" },
@@ -115,6 +119,11 @@ function SideBar() {
                 { to: "question-practice-selector", label: "תרגול שאלות" },
                 { to: "test-configurator", label: "תרגול מבחנים" },
                 { to: "teacher-tests", label: "מבחנים" },
+                { to: "lessons", label: "שיעורים" },
+                { to: "homework", label: "שיעורי בית" },
+                { to: "study-plan", label: "תוכנית למידה" },
+                { to: "achievements", label: "ההתקדמות שלי" },
+                { to: "accessibility", label: "נגישות" },
             ],
         }[user.role] || [];
     };

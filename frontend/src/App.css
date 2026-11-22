@@ -1234,6 +1234,29 @@
 
 .animate-pop { animation: pop 0.35s var(--ease-spring); }
 
+/* Dyslexia-friendly reading mode (student accommodation, toggled on <html> by
+   Utils/accessibility.js): a plain sans font with clear Hebrew letters, wider letter, word and
+   line spacing, no italics. Numbers keep the mono font. */
+html.dyslexia-mode {
+    --font-sans: Arial, "Heebo", system-ui, sans-serif;
+    --font-display: Arial, "Heebo", system-ui, sans-serif;
+}
+html.dyslexia-mode body {
+    letter-spacing: 0.04em;
+    word-spacing: 0.16em;
+    line-height: 1.85;
+}
+html.dyslexia-mode p,
+html.dyslexia-mode li,
+html.dyslexia-mode label,
+html.dyslexia-mode td {
+    font-size: 1.06em;
+}
+html.dyslexia-mode em,
+html.dyslexia-mode i {
+    font-style: normal;
+}
+
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,

@@ -1,6 +1,6 @@
 
 
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import Cookies from 'universal-cookie';
@@ -10,6 +10,8 @@ import { FaExclamationCircle } from 'react-icons/fa';
 import {BEARER_PREFIX} from "../constants/shared.constant.js";
 import ProgressRing from "./ui/ProgressRing.jsx";
 import OrbitLoader from "./ui/OrbitLoader.jsx";
+import ReadAloudButton from "./ReadAloudButton.jsx";
+import { adjustedMinutes, useAccommodations } from "../Utils/accessibility.js";
 import {
     AND,
     AUTH_HEADER, CHECK_PRACTICE_TEST, CHECK_TEACHER_TEST, DIFFICULTY, GENERATE_PRACTICE_TEST,
@@ -46,6 +48,18 @@ const TestSession = ({ type }) => {
         else if (type === 'teacherTest') minutes = parseInt(timeLimitMinutes);
         return isNaN(minutes) ? 0 : minutes * 60;
     });
+
+    // Accommodations: the student's extra time is added to the timer once, when it arrives.
+    const { accommodations } = useAccommodations(user);
+    const extraTimeApplied = useRef(false);
+    useEffect(() => {
+        const percent = accommodations.extraTimePercent;
+        if (extraTimeApplied.current || !percent) return;
+        const base = parseInt(type === 'practiceTest' ? selectedTimeMinutes : timeLimitMinutes);
+        if (isNaN(base) || base <= 0) return;
+        extraTimeApplied.current = true;
+        setTimeLeft((prev) => prev + (adjustedMinutes(base, percent) - base) * 60);
+    }, [accommodations.extraTimePercent, type, selectedTimeMinutes, timeLimitMinutes]);
 
     const cookies = new Cookies();
     const token = cookies.get('token');
@@ -241,7 +255,10 @@ const TestSession = ({ type }) => {
                             <div className={`num text-5xl sm:text-6xl font-semibold ${timeLeft <= 60 ? 'text-danger' : 'text-ink'}`} dir="ltr">
                                 {formatTime(timeLeft)}
                             </div>
-                            <span className="faint text-xs">התקדמות במבחן</span>
+                            {accommodations.extraTimePercent > 0 && (
+                                <span className="chip chip--mint num">כולל תוספת זמן {accommodations.extraTimePercent}%</span>
+                            )}
+                            <span className="faint text-xs block">התקדמות במבחן</span>
                         </div>
                         <ProgressRing value={progress} size={112} stroke={9}>
                             <span className="num text-xl font-semibold text-ink">{Math.round(progress)}%</span>
@@ -325,6 +342,7 @@ const TestSession = ({ type }) => {
                             >
                                 <div className="flex items-center justify-between mb-4">
                                     <span className="num text-xs text-ink-3">Q{String(i + 1).padStart(2, '0')}</span>
+                                    {accommodations.readAloud && <ReadAloudButton text={q.questionText} label="הקרא את השאלה" />}
                                     <span className={`w-2 h-2 rotate-45 rounded-[2px] transition-all duration-500 ${userAnswers[q.id] ? 'bg-mint shadow-[0_0_10px_var(--mint)]' : 'bg-line-strong'}`} />
                                 </div>
                                 <label className="block num text-lg font-medium text-ink mb-4 text-left leading-snug">

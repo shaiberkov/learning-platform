@@ -8,7 +8,7 @@ const renderLogin = () => render(<MemoryRouter><Login /></MemoryRouter>);
 describe('Login', () => {
     it('keeps the submit button disabled until both fields are filled', () => {
         renderLogin();
-        const submit = screen.getByRole('button', { name: 'התחבר' });
+        const submit = screen.getByRole('button', { name: 'התחברות' });
         expect(submit).toBeDisabled();
 
         fireEvent.change(screen.getByPlaceholderText('תעודת זהות'), { target: { value: '123456789' } });

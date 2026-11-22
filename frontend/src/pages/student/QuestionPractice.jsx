@@ -1,7 +1,6 @@
 import {useContext, useEffect, useRef, useState} from "react";
 import {UserContext} from "../../context/UserContext.jsx";
 import {useParams} from "react-router-dom";
-import { serverErrorMessage } from "../../Utils/httpSetup.js";
 import axios from "axios";
 import AiTutorPanel from "../../components/ai/AiTutorPanel.jsx";
 import Cookies from "universal-cookie";

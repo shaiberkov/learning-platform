@@ -1,19 +1,13 @@
 import axios from "axios";
-import Cookies from "universal-cookie";
-import { AUTH_HEADER, BEARER_PREFIX } from "../constants/shared.constant.js";
 
-// Small helpers for the screens that use TanStack Query: they send the JWT like the
-// rest of the app and turn a BasicResponse with success=false into a thrown error whose
+// Small helpers for the screens that use TanStack Query. The session travels in httpOnly
+// cookies (axios withCredentials, Utils/httpSetup.js), so no header is added here. They turn a BasicResponse with success=false into a thrown error whose
 // message is the server's Hebrew errorCode.
 
 export class ApiError extends Error {}
 
 export function authConfig(extra = {}) {
-    const token = new Cookies().get("token");
-    return {
-        ...extra,
-        headers: { [AUTH_HEADER]: `${BEARER_PREFIX}${token}`, ...(extra.headers || {}) },
-    };
+    return extra;
 }
 
 function unwrap(response) {

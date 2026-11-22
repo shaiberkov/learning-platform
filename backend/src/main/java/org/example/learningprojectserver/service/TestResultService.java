@@ -32,6 +32,7 @@ public class TestResultService {
     private final TeacherTestRepository teacherTestRepository;
     private final UserRepository userRepository;
     private final StudentRepository studentRepository;
+    private final ExamFeedbackService examFeedbackService;
 
 
     public BasicResponse startTest(Long testId,String userId) {
@@ -106,6 +107,7 @@ public class TestResultService {
 
 
         practiceTestResultRepository.save(testResult);
+        examFeedbackService.recordExamAnswers(userid, test, ExamFeedbackService.PRACTICE_TEST, userAnswers);
 
 
 
@@ -182,6 +184,7 @@ public class TestResultService {
             testResult.setIncorrectQuestions(incorrectQuestions);
             testResult.setFinishTime(now.format(formatter));
             teacherTestResultRepository.save(testResult);
+            examFeedbackService.recordExamAnswers(userId, test, ExamFeedbackService.TEACHER_TEST, userAnswers);
 
 
             student.getTeacherTestsResult().add(testResult);

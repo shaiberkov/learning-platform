@@ -152,6 +152,25 @@ public final class ControllerConstants {
         public static final String RESET_PASSWORD            = "/reset-password";
         public static final String GET_USER_PHONE            = "/user/phone";
     }
+    /** Adaptive learning: mistakes notebook, mastery and skill map, hints, exam feedback. */
+    public static final class Adaptive {
+        private Adaptive() {}
+
+        public static final String STUDENT_ADAPTIVE_BASE_PATH = BASE_API + "/student";
+        public static final String REVIEW_DUE                 = "/review/due";
+        public static final String REVIEW_SUMMARY             = "/review/summary";
+        public static final String REVIEW_ANSWER              = "/review/answer";
+        public static final String SKILL_MAP                  = "/skill-map";
+        public static final String PRACTICE_HINT              = "/practice-hint";
+        public static final String EXAM_FEEDBACK              = "/exam-feedback";
+        public static final String EXAM_QUESTION_TIMES        = "/exam-question-times";
+
+        public static final String TEACHER_ADAPTIVE_BASE_PATH = BASE_API + "/teacher";
+        public static final String TEACHER_CLASSES            = "/classes";
+        public static final String CLASS_SKILL_MAP            = "/class-skill-map";
+        public static final String HINT_CATALOG               = "/hint-catalog";
+        public static final String HINT_TEMPLATE              = "/hint-template";
+    }
 
 
 }

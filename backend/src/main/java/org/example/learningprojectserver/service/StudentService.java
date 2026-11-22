@@ -13,6 +13,8 @@ import org.example.learningprojectserver.response.SubmitAnswerResponse;
 import org.example.learningprojectserver.service.QuestionGenerator.QuestionGenerator;
 import org.example.learningprojectserver.service.QuestionGenerator.QuestionGeneratorFactory;
 import org.example.learningprojectserver.service.QuestionGenerator.SubjectQuestionGenerator;
+import org.example.learningprojectserver.dto.AdaptiveDTOs.MasteryUpdateDTO;
+import org.example.learningprojectserver.service.adaptive.PracticeScoring;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -45,6 +47,8 @@ private final StudentEntityToStudentTestStatusDTOMapper studentEntityToStudentTe
 private final TestService testService;
 private final StudentRepository studentRepository;
 private final LessonRepository lessonRepository;
+private final MasteryService masteryService;
+private final ReviewService reviewService;
 
 
 
@@ -110,13 +114,15 @@ public List<StudentTestStatusDTO> getStudentTestsStatus(String userId) {
         skillLevels.putIfAbsent(subTopic, 1);
 
 
-        int level = skillLevels.get(subTopic);
+        int level = masteryService.pickLevel(userId, subject, subTopic);
         SubjectQuestionGenerator generator = QuestionGeneratorFactory.getSubjectQuestionGenerator(subject);
         QuestionGenerator questionGenerator = generator.getQuestionGenerator(topic, subTopic);
         QuestionEntity baseQuestion = questionGenerator.generateQuestion(level);
 
         PracticeQuestionEntity questionEntity = questionEntityToPracticeQuestionMapper.apply(baseQuestion);
 
+        questionEntity.setDifficultyLevel(level);
+        questionEntity.setHintsUsed(0);
         questionEntity.setProgressEntity(progress);
         questionEntity.setQuestionHistory(student.getStudentQuestionHistoryEntity());
         questionEntity.setQuestionText(questionEntity.getQuestionText().replaceAll("[\u200E\u200F]", ""));
@@ -156,6 +162,30 @@ public List<StudentTestStatusDTO> getStudentTestsStatus(String userId) {
         }
         boolean isCorrect = questionEntity.getAnswer().equalsIgnoreCase(answer.trim());
         historyEntity.addAnsweredQuestion(questionEntity, isCorrect);
+
+        int hintsUsed = 0;
+        Integer pointsEarned = null;
+        if (questionEntity instanceof PracticeQuestionEntity practice) {
+            hintsUsed = practice.getHintsUsed() == null ? 0 : practice.getHintsUsed();
+            if (practice.getPointsEarned() == null) {
+                pointsEarned = PracticeScoring.points(isCorrect, hintsUsed);
+                practice.setPointsEarned(pointsEarned);
+                questionRepository.save(practice);
+            }
+        }
+        MasteryUpdateDTO mastery = null;
+        boolean addedToReview = false;
+        // Count each practice question once toward mastery and the notebook.
+        if (pointsEarned != null) {
+            mastery = masteryService.recordAnswer(userId, questionEntity.getSubject(), questionEntity.getTopic(),
+                    questionEntity.getSubTopic(), questionEntity.getDifficultyLevel(),
+                    PracticeScoring.eloOutcome(isCorrect, hintsUsed), isCorrect);
+            // A question solved only after opening the full solution goes to the notebook too.
+            if (!isCorrect || hintsUsed >= PracticeScoring.FULL_SOLUTION_STEP) {
+                reviewService.addMistake(userId, questionEntity, "PRACTICE");
+                addedToReview = true;
+            }
+        }
         studentQuestionHistoryRepository.save(historyEntity);
 
         Map<String, Integer> subTopicSuccessStreak = studentProgressEntity.getSubTopicSuccessStreak();
@@ -196,6 +226,10 @@ public List<StudentTestStatusDTO> getStudentTestsStatus(String userId) {
         System.out.println(isCorrect);
         submitAnswerResponse.setCorrect(isCorrect);
         submitAnswerResponse.setMessage(isCorrect ? "תשובה נכונה כל הכבוד" : "תשובה לא נכונה ");
+        submitAnswerResponse.setHintsUsed(hintsUsed);
+        submitAnswerResponse.setPointsEarned(pointsEarned == null ? 0 : pointsEarned);
+        submitAnswerResponse.setMastery(mastery);
+        submitAnswerResponse.setAddedToReview(addedToReview);
         BasicResponse basicResponse = new BasicResponse(true, null);
         basicResponse.setData(submitAnswerResponse);
         return basicResponse;

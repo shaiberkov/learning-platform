@@ -15,6 +15,7 @@ public class QuestionEntityToQuestionDTOMapper  implements Mapper<QuestionEntity
          dto.setTopic(question.getTopic());
          dto.setSubTopic(question.getSubTopic());
          dto.setQuestionText(question.getQuestionText());
+         dto.setDifficultyLevel(question.getDifficultyLevel());
          return dto;
 
 

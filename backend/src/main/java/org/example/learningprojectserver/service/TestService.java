@@ -63,6 +63,7 @@ public class TestService {
             QuestionEntity questionEntity = questionGenerator.generateQuestion(level);
 
             TestQuestionEntity tqe = questionEntityToTestQuestionMapper.apply(questionEntity);
+            tqe.setDifficultyLevel(level);
             tqe.setTest(testEntity);
             result.add(tqe); // אל תשמור כאן עדיין
         }

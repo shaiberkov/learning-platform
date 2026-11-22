@@ -118,6 +118,22 @@ export const PagesConstants = {
         GET_UPCOMING_EVENTS: '/get-upcoming-events',
     },
 
+    Adaptive: {
+        STUDENT_ADAPTIVE_BASE_PATH: `${API_BASE_URL}${BASE_API}/student`,
+        REVIEW_DUE: '/review/due',
+        REVIEW_SUMMARY: '/review/summary',
+        REVIEW_ANSWER: '/review/answer',
+        SKILL_MAP: '/skill-map',
+        PRACTICE_HINT: '/practice-hint',
+        EXAM_FEEDBACK: '/exam-feedback',
+        EXAM_QUESTION_TIMES: '/exam-question-times',
+        TEACHER_ADAPTIVE_BASE_PATH: `${API_BASE_URL}${BASE_API}/teacher`,
+        TEACHER_CLASSES: '/classes',
+        CLASS_SKILL_MAP: '/class-skill-map',
+        HINT_CATALOG: '/hint-catalog',
+        HINT_TEMPLATE: '/hint-template',
+    },
+
     User: {
         USER_BASE_PATH: `${API_BASE_URL}${BASE_API}/user`,
         ADD_USER: '/add-user',
@@ -257,6 +273,23 @@ export const {
     UPCOMING_EVENTS_BASE_PATH,
     GET_UPCOMING_EVENTS,
 } = PagesConstants.UpcomingEvents;
+
+/* Adaptive learning */
+export const {
+    STUDENT_ADAPTIVE_BASE_PATH,
+    REVIEW_DUE,
+    REVIEW_SUMMARY,
+    REVIEW_ANSWER,
+    SKILL_MAP,
+    PRACTICE_HINT,
+    EXAM_FEEDBACK,
+    EXAM_QUESTION_TIMES,
+    TEACHER_ADAPTIVE_BASE_PATH,
+    TEACHER_CLASSES,
+    CLASS_SKILL_MAP,
+    HINT_CATALOG,
+    HINT_TEMPLATE,
+} = PagesConstants.Adaptive;
 
 export const {
     USER_BASE_PATH,

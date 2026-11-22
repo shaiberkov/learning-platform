@@ -1,6 +1,6 @@
 
 
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import Cookies from 'universal-cookie';
@@ -10,6 +10,8 @@ import { FaExclamationCircle } from 'react-icons/fa';
 import {BEARER_PREFIX} from "../constants/shared.constant.js";
 import ProgressRing from "./ui/ProgressRing.jsx";
 import OrbitLoader from "./ui/OrbitLoader.jsx";
+import ExamFeedback from "../features/adaptive/ExamFeedback.jsx";
+import { fetchExamFeedback, sendExamQuestionTimes } from "../features/adaptive/adaptiveApi.js";
 import {
     AND,
     AUTH_HEADER, CHECK_PRACTICE_TEST, CHECK_TEACHER_TEST, DIFFICULTY, GENERATE_PRACTICE_TEST,
@@ -39,6 +41,34 @@ const TestSession = ({ type }) => {
     const [showConfirm, setShowConfirm] = useState(false);
     const [fetchTestLoader, setFetchTestLoader] = useState(true);
     const [testResultLoader, setTestResultLoader] = useState(false);
+    const [feedback, setFeedback] = useState(null);
+    const [feedbackError, setFeedbackError] = useState(null);
+    // Time per question: the question whose answer field was focused last collects the time.
+    const questionTimesRef = useRef({});
+    const activeQuestionRef = useRef({ id: null, since: 0 });
+
+    const flushQuestionTime = () => {
+        const { id, since } = activeQuestionRef.current;
+        if (id === null) return;
+        const now = Date.now();
+        questionTimesRef.current[id] = (questionTimesRef.current[id] || 0) + (now - since);
+        activeQuestionRef.current = { id, since: now };
+    };
+
+    const focusQuestion = (qid) => {
+        flushQuestionTime();
+        activeQuestionRef.current = { id: qid, since: Date.now() };
+    };
+
+    const loadFeedback = async (checkedTestId) => {
+        const seconds = Object.fromEntries(
+            Object.entries(questionTimesRef.current).map(([qid, ms]) => [qid, Math.round(ms / 1000)])
+        );
+        await sendExamQuestionTimes(user.userId, checkedTestId, seconds);
+        const res = await fetchExamFeedback(user.userId, checkedTestId);
+        if (res.success) setFeedback(res.data);
+        else setFeedbackError(res.errorCode);
+    };
 
     const [timeLeft, setTimeLeft] = useState(() => {
         let minutes = 0;
@@ -116,6 +146,7 @@ const TestSession = ({ type }) => {
     }, [user?.userId, type, TeacherTestId]);
 
     const submitTest = async () => {
+        flushQuestionTime();
         setTestResultLoader(true)
         try {
             let url = '';
@@ -134,6 +165,9 @@ const TestSession = ({ type }) => {
             if (res){
                 setTestResults(res.data.data);
                 setTestResultLoader(false)
+                if (res.data.success !== false) {
+                    loadFeedback(type === 'practiceTest' ? testId : TeacherTestId);
+                }
             }
         } catch (err) {
             console.error(err);
@@ -306,6 +340,11 @@ const TestSession = ({ type }) => {
                             </ul>
                         </div>
                     </div>
+
+                    <div className="md:col-span-12">
+                        {feedback && <ExamFeedback feedback={feedback} />}
+                        {feedbackError && <p className="notice notice--danger">{feedbackError}</p>}
+                    </div>
                 </div>
             ) : (
                 <form
@@ -334,6 +373,7 @@ const TestSession = ({ type }) => {
                                     type="text"
                                     value={userAnswers[q.id] || ''}
                                     onChange={(e) => handleAnswerChange(q.id, e.target.value)}
+                                    onFocus={() => focusQuestion(q.id)}
                                     className="field num"
                                 />
                             </div>

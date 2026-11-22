@@ -19,6 +19,8 @@ Configured in `backend/src/main/resources/ehcache.xml` and enabled by `@EnableCa
 | `schoolDTO` | `SchoolService.getSchoolDTO(SchoolManagerId)` | `SchoolManagerId` | nothing | 100 |
 | `allSchools` | `SystemAdminService.getAllSchoolsDTO()` | (no args) | `SystemAdminService`: `assignUserAsSchoolManager`, `addNewSchoolToSystem`, `assignSchoolManagerToSchool`, `removeSchoolManagerFromSchool` (`allEntries = true`) | 100 |
 
+Not cached: the adaptive-learning reads (mistakes notebook, skill maps, hints, exam feedback) query MySQL on every call, because each practice answer changes them. A future cache there must be evicted from `StudentService.submitAnswer`, `ReviewService.answer`, `HintService.saveTemplate` and `ExamFeedbackService.recordExamAnswers`.
+
 ## 2. Hand-rolled in-memory maps
 
 Not Spring caches: plain `ConcurrentHashMap`s in singleton beans. Lost on restart, never shared between instances.

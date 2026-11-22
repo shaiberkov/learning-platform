@@ -16,6 +16,35 @@ import {API_BASE_URL, BASE_API} from "../constants/base.constants.js";
 
 export const UserContext = createContext();
 
+// The last validated user, kept so the app (offline practice) still works when the
+// session check cannot reach the server. Tied to the token it was validated with.
+const OFFLINE_USER_KEY = 'lp-offline-user';
+
+function rememberUser(token, user) {
+    try {
+        localStorage.setItem(OFFLINE_USER_KEY, JSON.stringify({ tokenTail: String(token).slice(-24), user }));
+    } catch {
+        /* storage unavailable: offline mode then needs a connection to start */
+    }
+}
+
+function rememberedUser(token) {
+    try {
+        const saved = JSON.parse(localStorage.getItem(OFFLINE_USER_KEY) || 'null');
+        return saved && saved.tokenTail === String(token).slice(-24) ? saved.user : null;
+    } catch {
+        return null;
+    }
+}
+
+export function forgetUser() {
+    try {
+        localStorage.removeItem(OFFLINE_USER_KEY);
+    } catch {
+        /* nothing to clear */
+    }
+}
+
 export const UserProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const cookies = new Cookies();
@@ -40,7 +69,8 @@ export const UserProvider = ({ children }) => {
                     location.pathname !== '/about' &&
                     location.pathname !== '/faq' &&
                     location.pathname !== '/privacy-policy' &&
-                    location.pathname !== '/terms-of-service'
+                    location.pathname !== '/terms-of-service' &&
+                    location.pathname !== '/accessibility'
                 ) {
                     navigate('/login');
                 }
@@ -67,12 +97,14 @@ export const UserProvider = ({ children }) => {
                     //     console.log("ℹ️ userId לא השתנה - לא מבצע setUser");
                     //     return;
                     // }
-                    setUser({
+                    const validated = {
                         userId:response.data.userId,
                         role:response.data.role,
                         username:response.data.username,
                         schoolCode:response.data.schoolCode
-                    });
+                    };
+                    setUser(validated);
+                    rememberUser(token, validated);
                     // userIdRef.current = newUserId;
                     console.log(`✅ טוקן תקף - userId: ${response.data.userId}, role: ${response.data.role}, username: ${response.data.username},schoolCode:${response.data.schoolCode}`);
                 } else {
@@ -90,7 +122,15 @@ export const UserProvider = ({ children }) => {
                     }
                 } else {
                     console.error('❌ שגיאה בבדיקת טוקן:', error.message);
+                    // No answer from the server (offline / server asleep): keep the last
+                    // validated user for this token instead of logging out.
+                    const offlineUser = axios.isAxiosError(error) ? rememberedUser(token) : null;
+                    if (offlineUser) {
+                        setUser(offlineUser);
+                        return;
+                    }
                 }
+                forgetUser();
                 navigate('/login');
                 cookies.remove('token');
                 setUser(null);

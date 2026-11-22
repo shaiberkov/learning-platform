@@ -1,10 +1,12 @@
 import Prism from "./Prism.jsx";
+import { useTranslation } from "react-i18next";
 
 // Split auth layout: an editorial 3D stage beside the form card.
 // On phones the stage collapses into a compact header above the card.
 export default function AuthShell({ eyebrow, title, subtitle, children }) {
+    const { i18n } = useTranslation();
     return (
-        <div className="page page--wide" dir="rtl">
+        <div className="page page--wide" dir={i18n.dir()}>
             <div className="grid lg:grid-cols-[1.05fr_1fr] gap-5 lg:gap-8 items-stretch">
                 <aside className="glass relative overflow-hidden p-6 sm:p-10 flex flex-col justify-between min-h-[15rem] lg:min-h-[34rem] reveal" style={{ "--i": 0 }}>
                     <div className="relative z-10 space-y-4">

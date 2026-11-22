@@ -8,6 +8,9 @@ export const NotificationContext = createContext();
 export function NotificationProvider({ children }) {
     const [messages, setMessages] = useState([]);
     const [tests, setTests] = useState([]);
+    // Live in-class quiz: the last state pushed to a student, the last results pushed to the teacher.
+    const [liveQuiz, setLiveQuiz] = useState(null);
+    const [liveQuizResults, setLiveQuizResults] = useState(null);
     const { user } = useContext(UserContext);
 
 
@@ -30,6 +33,10 @@ export function NotificationProvider({ children }) {
                     } else {
                         console.warn("User not authorized to receive test notifications");
                     }
+                } else if (data.type === "LIVE_QUIZ_STATE") {
+                    setLiveQuiz({ ...data.payload, receivedAt: Date.now() });
+                } else if (data.type === "LIVE_QUIZ_RESULTS") {
+                    setLiveQuizResults({ ...data.payload, receivedAt: Date.now() });
                 }
             } catch (err) {
                 console.error("Failed to parse SSE notification:", err);
@@ -47,7 +54,7 @@ export function NotificationProvider({ children }) {
     }, [user?.userId]);
 
     return (
-        <NotificationContext.Provider value={{ messages, tests }}>
+        <NotificationContext.Provider value={{ messages, tests, liveQuiz, liveQuizResults }}>
             {children}
         </NotificationContext.Provider>
     );

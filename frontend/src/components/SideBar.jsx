@@ -83,6 +83,7 @@ function SideBar() {
                     label: "כיתות",
                     children: [
                         { to: "classes-weekly-schedule", label: "מערכת שעות לפי כיתה" },
+                        { to: "attendance-report", label: "דוח היעדרויות" },
 
                     ],
                 },
@@ -108,6 +109,10 @@ function SideBar() {
                 { to: "teacher-dashboard", label: "מסך בית" },
                 { to: "teacher-weekly-schedule", label: "מערכת שעות" },
                 { to: "test-configurator", label: "יצירת מבחן לתלמידים" },
+                { to: "question-bank", label: "מאגר שאלות" },
+                { to: "gradebook", label: "יומן ציונים" },
+                { to: "live-quiz-host", label: "חידון בכיתה" },
+                { to: "attendance", label: "נוכחות" },
             ],
             STUDENT: [
                 { to: "student-dashboard", label: "מסך בית" },
@@ -115,6 +120,7 @@ function SideBar() {
                 { to: "question-practice-selector", label: "תרגול שאלות" },
                 { to: "test-configurator", label: "תרגול מבחנים" },
                 { to: "teacher-tests", label: "מבחנים" },
+                { to: "live-quiz", label: "חידון בכיתה" },
             ],
         }[user.role] || [];
     };

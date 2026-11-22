@@ -128,6 +128,47 @@ export const PagesConstants = {
         RESET_PASSWORD: '/reset-password',
         GET_USER_PHONE: '/user/phone',
     },
+
+    QuestionBank: {
+        QUESTION_BANK_BASE_PATH: `${API_BASE_URL}${BASE_API}/question-bank`,
+        ADD_BANK_QUESTION: '/add',
+        UPDATE_BANK_QUESTION: '/update',
+        DELETE_BANK_QUESTION: '/delete',
+        SEARCH_BANK_QUESTIONS: '/search',
+        SET_BANK_QUESTION_SHARED: '/set-shared',
+        IMPORT_BANK_QUESTIONS: '/import',
+        GET_BANK_TAGS: '/tags',
+    },
+
+    Gradebook: {
+        GRADEBOOK_BASE_PATH: `${API_BASE_URL}${BASE_API}/gradebook`,
+        GET_GRADEBOOK_CLASSES: '/classes',
+        GET_GRADEBOOK: '/table',
+        ADD_GRADEBOOK_ASSIGNMENT: '/add-assignment',
+        DELETE_GRADEBOOK_ASSIGNMENT: '/delete-assignment',
+        SET_GRADEBOOK_GRADE: '/set-grade',
+        SET_GRADEBOOK_WEIGHTS: '/set-weights',
+        EXPORT_GRADEBOOK: '/export',
+    },
+
+    LiveQuiz: {
+        LIVE_QUIZ_BASE_PATH: `${API_BASE_URL}${BASE_API}/live-quiz`,
+        START_LIVE_QUIZ: '/start',
+        PUSH_LIVE_QUESTION: '/push-question',
+        CLOSE_LIVE_QUESTION: '/close-question',
+        END_LIVE_QUIZ: '/end',
+        GET_LIVE_QUIZ_RESULTS: '/results',
+        GET_CURRENT_LIVE_QUIZ: '/current',
+        ANSWER_LIVE_QUESTION: '/answer',
+    },
+
+    Attendance: {
+        ATTENDANCE_BASE_PATH: `${API_BASE_URL}${BASE_API}/attendance`,
+        GET_ATTENDANCE_LESSONS: '/lessons-for-day',
+        GET_ATTENDANCE_SHEET: '/sheet',
+        MARK_ATTENDANCE: '/mark',
+        GET_ATTENDANCE_REPORT: '/report',
+    },
 };
 
 /* ActiveUser */
@@ -268,6 +309,51 @@ export const {
     RESET_PASSWORD,
     GET_USER_PHONE
 } = PagesConstants.User;
+
+/* QuestionBank */
+export const {
+    QUESTION_BANK_BASE_PATH,
+    ADD_BANK_QUESTION,
+    UPDATE_BANK_QUESTION,
+    DELETE_BANK_QUESTION,
+    SEARCH_BANK_QUESTIONS,
+    SET_BANK_QUESTION_SHARED,
+    IMPORT_BANK_QUESTIONS,
+    GET_BANK_TAGS,
+} = PagesConstants.QuestionBank;
+
+/* Gradebook */
+export const {
+    GRADEBOOK_BASE_PATH,
+    GET_GRADEBOOK_CLASSES,
+    GET_GRADEBOOK,
+    ADD_GRADEBOOK_ASSIGNMENT,
+    DELETE_GRADEBOOK_ASSIGNMENT,
+    SET_GRADEBOOK_GRADE,
+    SET_GRADEBOOK_WEIGHTS,
+    EXPORT_GRADEBOOK,
+} = PagesConstants.Gradebook;
+
+/* LiveQuiz */
+export const {
+    LIVE_QUIZ_BASE_PATH,
+    START_LIVE_QUIZ,
+    PUSH_LIVE_QUESTION,
+    CLOSE_LIVE_QUESTION,
+    END_LIVE_QUIZ,
+    GET_LIVE_QUIZ_RESULTS,
+    GET_CURRENT_LIVE_QUIZ,
+    ANSWER_LIVE_QUESTION,
+} = PagesConstants.LiveQuiz;
+
+/* Attendance */
+export const {
+    ATTENDANCE_BASE_PATH,
+    GET_ATTENDANCE_LESSONS,
+    GET_ATTENDANCE_SHEET,
+    MARK_ATTENDANCE,
+    GET_ATTENDANCE_REPORT,
+} = PagesConstants.Attendance;
 
 
 const QueryParams = {

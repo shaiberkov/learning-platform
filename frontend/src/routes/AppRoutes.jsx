@@ -40,6 +40,13 @@ import PrivacyPolicy from "../pages/footer/PrivacyPolicy.jsx";
 import Faq from "../pages/footer/Faq.jsx";
 import About from "../pages/footer/About.jsx";
 import Footer from "../components/Footer.jsx";
+import QuestionBank from "../pages/teacher/QuestionBank.jsx";
+import Gradebook from "../pages/teacher/Gradebook.jsx";
+import LiveQuizHost from "../pages/teacher/LiveQuizHost.jsx";
+import Attendance from "../pages/teacher/Attendance.jsx";
+import LiveQuizPlay from "../pages/student/LiveQuizPlay.jsx";
+import AttendanceReport from "../pages/manager/AttendanceReport.jsx";
+import LiveQuizBanner from "../components/LiveQuizBanner.jsx";
 export default function AppRoutes() {
 
     const {user}=useContext(UserContext)
@@ -54,6 +61,7 @@ export default function AppRoutes() {
 
 
             <main className="flex-1 px-4 sm:px-6 lg:px-10 pt-28 sm:pt-32">
+                {user?.role === 'STUDENT' && user?.schoolCode && <LiveQuizBanner />}
                 <div key={location.pathname} className="page-enter">
                 <Routes>
                     <Route element={<PublicOnlyRoutesLayout />}>
@@ -88,6 +96,7 @@ export default function AppRoutes() {
                             <Route path="/assign-teacher-to-class" element={<AsignTeacherToClassRooms />} />
                             <Route path="/assign-student-to-class" element={<AssignStudentToClass />} />
                             <Route path="/classes-weekly-schedule" element={<ClassScheduleViewerForManager />} />
+                            <Route path="/attendance-report" element={<AttendanceReport />} />
                         </>
                     )}
 
@@ -96,6 +105,10 @@ export default function AppRoutes() {
                             <Route path="/teacher-dashboard" element={<TeacherDashboard />} />
                             <Route path="/teacher-weekly-schedule" element={<TeacherWeeklySchedule />} />
                             <Route path="/test-configurator" element={<TestConfigurator type="teacher" />} />
+                            <Route path="/question-bank" element={<QuestionBank />} />
+                            <Route path="/gradebook" element={<Gradebook />} />
+                            <Route path="/live-quiz-host" element={<LiveQuizHost />} />
+                            <Route path="/attendance" element={<Attendance />} />
                         </>
                     )}
 
@@ -106,6 +119,7 @@ export default function AppRoutes() {
                             <Route path="/question-practice-selector" element={<QuestionPracticeSelector />} />
                             <Route path="/test-configurator" element={<TestConfigurator type="student" />} />
                             <Route path="/teacher-tests" element={<TestsTable />} />
+                            <Route path="/live-quiz" element={<LiveQuizPlay />} />
                             <Route path="/exercises/:subjectName/:topicName/:exerciseName" element={<QuestionPractice />} />
                             <Route path="/test/:selectedSubject/:selectedTopic/:selectedDifficulty/:selectedQuestionCount/:selectedTimeMinutes" element={<TestSession type="practiceTest" />} />
                             <Route path="/test/:TeacherTestId/:timeLimitMinutes" element={<TestSession type="teacherTest" />} />

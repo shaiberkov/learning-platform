@@ -8,6 +8,7 @@ import static org.example.learningprojectserver.constants.ControllerConstants.Im
 import static org.example.learningprojectserver.constants.ControllerConstants.Impersonation.START_IMPERSONATION;
 import static org.example.learningprojectserver.constants.ControllerConstants.Teacher.CHECK_TEACHER_TEST;
 import static org.example.learningprojectserver.constants.ControllerConstants.ChatGpt.CHAT_BASE_PATH;
+import static org.example.learningprojectserver.constants.ControllerConstants.Exam.EXAM_BASE_PATH;
 import static org.example.learningprojectserver.constants.ControllerConstants.Lesson.LESSON_BASE_PATH;
 import static org.example.learningprojectserver.constants.ControllerConstants.Message.MESSAGE_BASE_PATH;
 import static org.example.learningprojectserver.constants.ControllerConstants.Notification.NOTIFICATION_BASE_PATH;
@@ -80,6 +81,7 @@ public final class SecurityConstants {
         public static final String IMPERSONATION_ALL         = IMPERSONATION_BASE_PATH + CORS_MAPPING_PATH;
         // Students submit their teacher tests through the teacher controller.
         public static final String TEACHER_TEST_SUBMIT       = TEACHER_BASE_PATH      + CHECK_TEACHER_TEST;
+        public static final String EXAM_ALL                  = EXAM_BASE_PATH         + CORS_MAPPING_PATH;
 
         public static final String SYSTEM_ADMIN   = "SYSTEM_ADMIN";
         public static final String TEACHER        = "TEACHER";

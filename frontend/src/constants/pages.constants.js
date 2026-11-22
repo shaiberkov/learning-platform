@@ -113,6 +113,19 @@ export const PagesConstants = {
         GET_TEST: '/get-test',
     },
 
+    Exam: {
+        EXAM_BASE_PATH: `${API_BASE_URL}${BASE_API}/exam`,
+        START_ATTEMPT: '/start-attempt',
+        SAVE_ANSWERS: '/save-answers',
+        SUBMIT_ATTEMPT: '/submit-attempt',
+        INTEGRITY_EVENT: '/integrity-event',
+        CREATE_EXAM: '/create-exam',
+        CLONE_EXAM: '/clone-exam',
+        TEACHER_EXAMS: '/teacher-exams',
+        EXAM_ATTEMPTS: '/attempts',
+        ITEM_ANALYSIS: '/item-analysis',
+    },
+
     UpcomingEvents: {
         UPCOMING_EVENTS_BASE_PATH: `${API_BASE_URL}${BASE_API}/upcoming-events`,
         GET_UPCOMING_EVENTS: '/get-upcoming-events',
@@ -273,6 +286,20 @@ export const {
     GET_TEST,
 } = PagesConstants.Test;
 
+/* Exam */
+export const {
+    EXAM_BASE_PATH,
+    START_ATTEMPT,
+    SAVE_ANSWERS,
+    SUBMIT_ATTEMPT,
+    INTEGRITY_EVENT,
+    CREATE_EXAM,
+    CLONE_EXAM,
+    TEACHER_EXAMS,
+    EXAM_ATTEMPTS,
+    ITEM_ANALYSIS,
+} = PagesConstants.Exam;
+
 /* UpcomingEvents */
 export const {
     UPCOMING_EVENTS_BASE_PATH,
@@ -342,6 +369,8 @@ const QueryParams = {
     QUESTION_COUNT: 'questionCount=',
     TIME_LIMIT_MINUTES: 'timeLimitMinutes=',
     CLASS_ROOM_NAME: 'classRoomName=',
+    ATTEMPT_ID: 'attemptId=',
+    EVENT_TYPE: 'type=',
 
 
 };
@@ -373,7 +402,9 @@ export const {
     DIFFICULTY,
     QUESTION_COUNT,
     TIME_LIMIT_MINUTES,
-    CLASS_ROOM_NAME
+    CLASS_ROOM_NAME,
+    ATTEMPT_ID,
+    EVENT_TYPE
 
 
 }=QueryParams;

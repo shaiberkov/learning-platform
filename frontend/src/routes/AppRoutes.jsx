@@ -45,6 +45,11 @@ import SystemHealth from "../pages/admin/SystemHealth.jsx";
 import FeatureFlags from "../pages/admin/FeatureFlags.jsx";
 import Impersonate from "../pages/admin/Impersonate.jsx";
 import ImpersonationBanner from "../components/ImpersonationBanner.jsx";
+import ExamSession from "../pages/student/ExamSession.jsx";
+import ExamBuilder from "../pages/teacher/ExamBuilder.jsx";
+import TeacherExams from "../pages/teacher/TeacherExams.jsx";
+import ExamMonitor from "../pages/teacher/ExamMonitor.jsx";
+import ItemAnalysis from "../pages/teacher/ItemAnalysis.jsx";
 export default function AppRoutes() {
 
     const {user}=useContext(UserContext)
@@ -106,6 +111,10 @@ export default function AppRoutes() {
                             <Route path="/teacher-dashboard" element={<TeacherDashboard />} />
                             <Route path="/teacher-weekly-schedule" element={<TeacherWeeklySchedule />} />
                             <Route path="/test-configurator" element={<TestConfigurator type="teacher" />} />
+                            <Route path="/exam-builder" element={<ExamBuilder />} />
+                            <Route path="/teacher-exams" element={<TeacherExams />} />
+                            <Route path="/teacher-exams/:testId/monitor" element={<ExamMonitor />} />
+                            <Route path="/teacher-exams/:testId/analysis" element={<ItemAnalysis />} />
                         </>
                     )}
 
@@ -119,6 +128,7 @@ export default function AppRoutes() {
                             <Route path="/exercises/:subjectName/:topicName/:exerciseName" element={<QuestionPractice />} />
                             <Route path="/test/:selectedSubject/:selectedTopic/:selectedDifficulty/:selectedQuestionCount/:selectedTimeMinutes" element={<TestSession type="practiceTest" />} />
                             <Route path="/test/:TeacherTestId/:timeLimitMinutes" element={<TestSession type="teacherTest" />} />
+                            <Route path="/exam/:testId" element={<ExamSession />} />
                         </>
                     )}
                     {user?.role === 'STUDENT'&&!user?.schoolCode && (

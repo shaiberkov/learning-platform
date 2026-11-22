@@ -115,6 +115,7 @@ public class SecurityConfig {
                         // every other endpoint (info, metrics) needs a SYSTEM_ADMIN JWT.
                         .requestMatchers(EndpointRequest.to(HealthEndpoint.class)).permitAll()
                         .requestMatchers(EndpointRequest.toAnyEndpoint()).hasRole(SYSTEM_ADMIN)
+                        .requestMatchers(EXAM_ALL).hasAnyRole(STUDENT, TEACHER, SCHOOL_MANAGER, SYSTEM_ADMIN)
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(metricsFilter, UsernamePasswordAuthenticationFilter.class)

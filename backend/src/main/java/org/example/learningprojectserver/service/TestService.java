@@ -3,6 +3,7 @@ package org.example.learningprojectserver.service;
 import lombok.RequiredArgsConstructor;
 import org.example.learningprojectserver.dto.TestDTO;
 import org.example.learningprojectserver.entities.QuestionEntity;
+import org.example.learningprojectserver.entities.TeacherTestEntity;
 import org.example.learningprojectserver.entities.TestEntity;
 import org.example.learningprojectserver.entities.TestQuestionEntity;
 import org.example.learningprojectserver.mappers.QuestionEntityToTestQuestionMapper;
@@ -29,6 +30,10 @@ public class TestService {
 
     public TestDTO getTestDto(Long testId) {
     TestEntity testEntity = testRepository.findTestByTestId(testId);
+    if (testEntity instanceof TeacherTestEntity) {
+        // Teacher exam questions are served only inside a timed attempt (ExamAttemptService).
+        return new TestDTO(testEntity.getId(), List.of());
+    }
     List<TestQuestionEntity> testQuestionEntities=testEntity.getQuestions();
         Map<TestEntity, List<TestQuestionEntity>> testEntityListMap =new HashMap<>();
         testEntityListMap.put(testEntity, testQuestionEntities);

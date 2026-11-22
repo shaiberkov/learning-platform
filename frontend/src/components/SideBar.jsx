@@ -121,6 +121,8 @@ function SideBar() {
                 { to: "teacher-dashboard", label: "מסך בית" },
                 { to: "teacher-weekly-schedule", label: "מערכת שעות" },
                 { to: "test-configurator", label: "יצירת מבחן לתלמידים" },
+                { to: "exam-builder", label: "בניית מבחן מתקדם" },
+                { to: "teacher-exams", label: "המבחנים שלי" },
             ],
             STUDENT: [
                 { to: "student-dashboard", label: "מסך בית" },

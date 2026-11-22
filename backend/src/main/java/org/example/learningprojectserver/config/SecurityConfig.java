@@ -79,6 +79,8 @@ public class SecurityConfig {
                         .requestMatchers(LESSON_ALL).permitAll()
                         .requestMatchers(SCHEDULE_ALL).permitAll()
                         .requestMatchers(UPCOMING_EVENTS_ALL).permitAll()
+                        .requestMatchers(CALENDAR_ALL).permitAll() // the .ics feed is opened by calendar apps with only the URL token
+                        .requestMatchers(SEARCH_ALL).permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(metricsFilter, UsernamePasswordAuthenticationFilter.class)

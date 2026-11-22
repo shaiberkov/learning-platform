@@ -87,24 +87,22 @@ const TestConfigurator = ({type}) => {
 
 
     return (
-        <div className="max-w-xl mx-auto mt-20 p-4 bg-white rounded-3xl shadow-md space-y-6 mb-8" dir="rtl">
-            <h2 className="text-2xl font-bold text-center text-green-700 flex items-center justify-center gap-2">
-        <span className="group">
-            <FaClipboardList
-                className="text-green-500 transition-transform duration-300 group-hover:scale-125 group-hover:rotate-[35deg] group-hover:text-green-700"/>
-        </span>
-                יצירת מבחן
-            </h2>
+        <div className="page page--medium" dir="rtl">
+            <div className="glass p-6 sm:p-9 space-y-6 reveal">
+            <div className="space-y-3 pb-2">
+                <span className="eyebrow">{type === "teacher" ? "Test builder · יצירת מבחן" : "Mock exam · תרגול מבחנים"}</span>
+                <h2 className="display text-4xl sm:text-5xl flex items-center gap-3">
+                    <span className="icon-badge icon-badge--mint"><FaClipboardList /></span>
+                    יצירת מבחן
+                </h2>
+            </div>
 
-            <div className="space-y-1">
-                <label className="font-semibold flex items-center gap-2 text-gray-700">
-            <span className="group">
-                <FaBook
-                    className="text-blue-500 transition-transform duration-300 group-hover:scale-125 group-hover:rotate-[35deg] group-hover:text-blue-700"/>
-            </span>
+            <div className="reveal">
+                <label className="label">
+                    <FaBook />
                     בחר מקצוע:
                 </label>
-                <select className="w-full p-2 rounded-xl border" value={selectedSubject}
+                <select className="field" value={selectedSubject}
                         onChange={(e) => setSelectedSubject(e.target.value)}>
                     <option value="">-- בחר --</option>
                     {subjects.map((subject) => (
@@ -114,15 +112,12 @@ const TestConfigurator = ({type}) => {
             </div>
 
             {selectedSubject && (
-                <div className="space-y-1">
-                    <label className="font-semibold flex items-center gap-2 text-gray-700">
-                <span className="group">
-                    <FaLayerGroup
-                        className="text-purple-500 transition-transform duration-300 group-hover:scale-125 group-hover:rotate-[35deg] group-hover:text-purple-700"/>
-                </span>
+                <div className="reveal">
+                    <label className="label">
+                        <FaLayerGroup />
                         בחר נושא:
                     </label>
-                    <select className="w-full p-2 rounded-xl border" value={selectedTopic}
+                    <select className="field" value={selectedTopic}
                             onChange={(e) => setSelectedTopic(e.target.value)}>
                         <option value="">-- בחר --</option>
                         {topics[selectedSubject].map((topic) => (
@@ -133,15 +128,12 @@ const TestConfigurator = ({type}) => {
             )}
 
             {selectedTopic && (
-                <div className="space-y-1">
-                    <label className="font-semibold flex items-center gap-2 text-gray-700">
-                <span className="group">
-                    <FaSortAmountDown
-                        className="text-yellow-500 transition-transform duration-300 group-hover:scale-125 group-hover:rotate-[35deg] group-hover:text-yellow-700"/>
-                </span>
+                <div className="reveal">
+                    <label className="label">
+                        <FaSortAmountDown />
                         בחר רמת קושי:
                     </label>
-                    <select className="w-full p-2 rounded-xl border" value={selectedDifficulty}
+                    <select className="field" value={selectedDifficulty}
                             onChange={(e) => setSelectedDifficulty(e.target.value)}>
                         <option value="">-- בחר --</option>
                         {difficulties.map((level) => (
@@ -152,53 +144,46 @@ const TestConfigurator = ({type}) => {
             )}
 
             {selectedDifficulty && (
-                <div className="space-y-1">
-                    <label className="font-semibold flex items-center gap-2 text-gray-700">
-                <span className="group">
-                    <FaClipboardList
-                        className="text-orange-500 transition-transform duration-300 group-hover:scale-125 group-hover:rotate-[35deg] group-hover:text-orange-700"/>
-                </span>
-                        בחר מספר שאלות:
-                    </label>
-                    <select className="w-full p-2 rounded-xl border" value={selectedQuestionCount}
-                            onChange={(e) => setSelectedQuestionCount(parseInt(e.target.value))}>
-                        {questionCounts.map((count) => (
-                            <option key={count} value={count}>{count}</option>
-                        ))}
-                    </select>
-                </div>
-            )}
+                <div className="grid sm:grid-cols-2 gap-4 reveal">
+                    <div>
+                        <label className="label">
+                            <FaClipboardList />
+                            בחר מספר שאלות:
+                        </label>
+                        <select className="field num" value={selectedQuestionCount}
+                                onChange={(e) => setSelectedQuestionCount(parseInt(e.target.value))}>
+                            {questionCounts.map((count) => (
+                                <option key={count} value={count}>{count}</option>
+                            ))}
+                        </select>
+                    </div>
 
-            {selectedQuestionCount && (
-                <div className="space-y-1">
-                    <label className="font-semibold flex items-center gap-2 text-gray-700">
-                <span className="group">
-                    <FaClock
-                        className="text-indigo-500 transition-transform duration-300 group-hover:scale-125 group-hover:rotate-[35deg] group-hover:text-indigo-700"/>
-                </span>
-                        זמן בדקות:
-                    </label>
-                    <input
-                        type="number"
-                        min="1"
-                        className="w-full p-2 rounded-xl border"
-                        value={selectedTimeMinutes || ""}
-                        onChange={(e) => {
-                            const value = e.target.value;
-                            const parsedValue = value ? parseInt(value, 10) : "";
-                            setSelectedTimeMinutes(parsedValue);
-                        }}
-                    />
+                    {selectedQuestionCount && (
+                        <div className="reveal">
+                            <label className="label">
+                                <FaClock />
+                                זמן בדקות:
+                            </label>
+                            <input
+                                type="number"
+                                min="1"
+                                className="field num"
+                                value={selectedTimeMinutes || ""}
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    const parsedValue = value ? parseInt(value, 10) : "";
+                                    setSelectedTimeMinutes(parsedValue);
+                                }}
+                            />
+                        </div>
+                    )}
                 </div>
             )}
 
             {type === "teacher" && selectedSubject && selectedTopic && selectedDifficulty && selectedQuestionCount && selectedTimeMinutes > 0 && (
-                <div className="space-y-1">
-                    <label className="font-semibold flex items-center gap-2 text-gray-700">
-                <span className="group">
-                    <FaCalendarAlt
-                        className="text-teal-500 transition-transform duration-300 group-hover:scale-125 group-hover:rotate-[35deg] group-hover:text-teal-700"/>
-                </span>
+                <div className="reveal">
+                    <label className="label">
+                        <FaCalendarAlt />
                         בחר תאריך ושעה למבחן:
                     </label>
                     <DatePicker
@@ -210,24 +195,22 @@ const TestConfigurator = ({type}) => {
                         dateFormat="Pp"
                         locale={he}
                         placeholderText="בחר תאריך ושעה"
-                        className="w-full p-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+                        className="field num"
+                        wrapperClassName="w-full"
 
                     />
                 </div>
             )}
 
             {selectedSubject && selectedTopic && selectedDifficulty && selectedQuestionCount && selectedTimeMinutes > 0 && startTime && type === "teacher" && (
-                <div className="space-y-1">
-                    <label className="font-semibold flex items-center gap-2 text-gray-700">
-                <span className="group">
-                    <FaUserGraduate
-                        className="text-pink-500 transition-transform duration-300 group-hover:scale-125 group-hover:rotate-[35deg] group-hover:text-pink-700"/>
-                </span>
+                <div className="reveal">
+                    <label className="label">
+                        <FaUserGraduate />
                         הכנס ת"ז של תלמידים (מופרדים בפסיקים):
                     </label>
                     <textarea
                         rows={4}
-                        className="w-full p-2 rounded-xl border resize-none"
+                        className="field num resize-none"
                         value={studentsIdsInput}
                         onChange={(e) => setStudentsIdsInput(e.target.value)}
                         placeholder="123456789,987654321,..."
@@ -238,15 +221,13 @@ const TestConfigurator = ({type}) => {
 
             {(type === "teacher" && selectedSubject && selectedTopic && selectedDifficulty && selectedQuestionCount && selectedTimeMinutes > 0 && startTime) ||
             (type === "student" && selectedSubject && selectedTopic && selectedDifficulty && selectedQuestionCount && selectedTimeMinutes > 0) ? (
-                <div className=" mt-4 flex justify-center">
+                <div className="pt-2 reveal">
                     <button
                         onClick={type === "teacher" ? handleSubmit : navigateToTest}
-                        className="bg-green-600 text-white px-6 py-2 rounded-xl shadow-lg hover:bg-green-700 transition duration-300 flex items-center gap-2"
+                        className="btn btn-primary btn-block"
 
                     >
-                        <FaPlay
-                            className="transition-transform transition-colors duration-300 hover:scale-110 hover:rotate-[25deg]"
-                        />
+                        <FaPlay />
                         צור מבחן
                     </button>
                 </div>
@@ -254,10 +235,11 @@ const TestConfigurator = ({type}) => {
 
 
             {message && (
-                <div className="text-center text-sm text-blue-600 animate-pulse">
+                <div className="notice">
                     {message}
                 </div>
             )}
+            </div>
         </div>
 
     );

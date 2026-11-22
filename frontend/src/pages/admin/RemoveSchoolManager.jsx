@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import Cookies from "universal-cookie";
+import FormShell from "../../components/ui/FormShell.jsx";
 import {FaCheckCircle, FaIdCard} from "react-icons/fa";
 import {
     AUTH_HEADER,
@@ -49,21 +50,17 @@ function RemoveSchoolManager() {
     };
 
     return (
-        <div className="max-w-md mx-auto mt-20 p-6 bg-white rounded-3xl shadow-lg space-y-5" dir="rtl">
-            <h2 className="text-2xl font-bold text-center text-green-600 flex items-center justify-center gap-2">
-                הסרת מנהל מבית ספר
-            </h2>
+        <FormShell eyebrow="Schools · בתי ספר" title="הסרת מנהל מבית ספר" icon={<FaIdCard />} tone="icon-badge--danger">
 
             <div>
-                <div
-                    className="flex items-center gap-2 bg-gray-50 border border-gray-300 rounded-xl px-4 py-2 focus-within:ring-2 focus-within:ring-green-400">
-                    <FaIdCard className="text-gray-400"/>
+                <div className="field-wrap">
+                    <FaIdCard/>
                     <input
                         type="text"
                         value={schoolManagerId}
                         onChange={(e) => setSchoolManagerId(e.target.value)}
                         placeholder="תז של מנהל"
-                        className="w-full bg-transparent outline-none"
+                        className="field num"
                     />
                 </div>
             </div>
@@ -71,23 +68,18 @@ function RemoveSchoolManager() {
             <button
                 onClick={removeSchoolManagerFromSchool}
                 disabled={schoolManagerId.length === 0}
-                className={`w-full text-white font-bold py-2 rounded-xl transition duration-300 shadow-md ${
-                    schoolManagerId.length === 0
-                        ? 'bg-green-200'
-                        : 'bg-gradient-to-r from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 hover:shadow-lg'
-                }`}
+                className="btn btn-danger btn-block"
             >
                 הסר מנהל
             </button>
 
 
             {errorCode && (
-                <p className="text-center text-green-700 font-semibold flex items-center justify-center gap-2">
-                    <FaCheckCircle/>
+                <p className="notice">
                     {errorCode}
                 </p>
             )}
-        </div>
+        </FormShell>
     );
 }
 

@@ -8,13 +8,14 @@ import {BrowserRouter} from "react-router-dom";
 import {NotificationProvider} from "./context/NotificationContext.jsx";
 import Footer from "./components/Footer.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
+import AmbientBackdrop from "./components/ui/AmbientBackdrop.jsx";
 
 function App() {
 
 
         return (
             <>
-                <div className="fixed inset-0 -z-10 bg-gradient-to-br from-blue-100 to-green-100" />
+                <AmbientBackdrop />
 
                 <BrowserRouter>
                     <UserProvider>

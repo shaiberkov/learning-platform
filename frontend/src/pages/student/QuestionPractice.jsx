@@ -175,50 +175,67 @@ function QuestionPractice(){
     };
 
     return (
-        <div className="p-4 sm:p-8 font-sans  mt-20">
-            <section className="exercise-page text-center max-w-xl mx-auto space-y-6 animate-fade-in">
-                <h2 className="text-2xl sm:text-3xl font-bold text-slate-800">
-                    תרגיל: {exerciseName}
-                </h2>
+        <div className="page page--wide">
+            <section className="exercise-page grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5" dir="rtl">
+                <div className="lg:col-span-5 glass p-6 sm:p-8 space-y-6 reveal">
+                    <div className="space-y-2">
+                        <span className="eyebrow">Exercise · תרגיל</span>
+                        <h2 className="display text-3xl sm:text-4xl">
+                            תרגיל: {exerciseName}
+                        </h2>
+                    </div>
 
-                {exercise && (
-                    <>
-                        <h4 className="text-base sm:text-lg font-medium text-slate-700">
-                            {exercise.questionText}
-                        </h4>
+                    {exercise && (
+                        <>
+                            <div className="glass--sunk p-5 sm:p-6" dir="ltr">
+                                <span className="num text-[0.65rem] text-ink-3 tracking-[0.18em] uppercase">Question</span>
+                                <h4 className="num text-xl sm:text-2xl font-medium text-ink mt-2 leading-relaxed break-words">
+                                    {exercise.questionText}
+                                </h4>
+                            </div>
 
-                        <input
-                            type="text"
-                            placeholder="תשובה"
-                            value={answer}
-                            onChange={(e) => setAnswer(e.target.value)}
-                            className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-                        />
+                            <input
+                                type="text"
+                                placeholder="תשובה"
+                                value={answer}
+                                onChange={(e) => setAnswer(e.target.value)}
+                                className="field num !text-lg !min-h-[3.5rem]"
+                            />
 
-                        <button
-                            onClick={submitAnswer}
-                            disabled={!answer}
-                            className="mt-3 px-6 py-2 rounded-lg font-semibold text-white
-                       bg-gradient-to-r from-blue-500 to-green-500 shadow
-                       hover:from-blue-600 hover:to-green-600 transition-colors
-                       disabled:opacity-50"
+                            <button
+                                onClick={submitAnswer}
+                                disabled={!answer}
+                                className="btn btn-primary btn-block"
+                            >
+                                שלח תשובה
+                            </button>
+                        </>
+                    )}
+
+                    {responseMessage && (
+                        <p
+                            className={`notice ${
+                                isCorrect ? "notice--mint" : "notice--danger"
+                            }`}
                         >
-                            שלח תשובה
+                            {responseMessage}
+                        </p>
+                    )}
+                </div>
+
+                <div className="lg:col-span-7 glass p-4 sm:p-6 flex flex-col gap-4 reveal" style={{ "--i": 1 }}>
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <span className="eyebrow">Scratchpad · דף טיוטה</span>
+                            <p className="faint text-xs mt-1">שרטט, חשב ונסה — הדף נשאר רק אצלך.</p>
+                        </div>
+                        <button
+                            onClick={handleClearCanvas}
+                            className="btn btn-ghost btn-sm"
+                        >
+                            נקה
                         </button>
-                    </>
-                )}
-
-                {responseMessage && (
-                    <p
-                        className={`text-sm sm:text-base font-semibold ${
-                            isCorrect ? "text-green-600" : "text-red-600"
-                        }`}
-                    >
-                        {responseMessage}
-                    </p>
-                )}
-
-                <div className="flex flex-col items-center gap-3">
+                    </div>
                     <canvas
                         ref={canvasRef}
                         width={500}
@@ -227,27 +244,21 @@ function QuestionPractice(){
                         onMouseMove={handleMouseMove}
                         onMouseUp={handleMouseUp}
                         onMouseLeave={() => setIsDrawing(false)}
-                        className="w-full sm:w-[500px] h-52 sm:h-[300px]
-                     border-2 border-gray-400 rounded-lg shadow-md bg-white"
+                        className="w-full h-60 sm:h-[22rem] rounded-[20px] border border-line-strong cursor-crosshair
+                     shadow-[inset_0_2px_6px_rgba(0,0,0,0.06),var(--shadow-1)] bg-white"
                     />
-                    <button
-                        onClick={handleClearCanvas}
-                        className="px-4 py-1.5 rounded-lg bg-red-500 text-white text-sm hover:bg-red-600 transition-colors"
-                    >
-                        נקה
-                    </button>
                 </div>
             </section>
 
             <button
                 onClick={toggleChat}
-                className="fixed bottom-4 left-4 flex items-center gap-2
-                 px-5 py-2 rounded-full text-white font-semibold shadow-lg
-                 bg-gradient-to-r from-blue-600 to-green-500
-                 hover:from-blue-700 hover:to-green-600 transition
-                 animate-bounce"
+                className="fixed bottom-5 left-5 z-40 btn btn-primary !rounded-full !px-6 shadow-[var(--shadow-2)]"
             >
-                📢 צ'אט
+                <span className="relative flex w-2.5 h-2.5">
+                    <span className="absolute inline-flex h-full w-full rounded-full bg-white/70 animate-ping" />
+                    <span className="relative inline-flex w-2.5 h-2.5 rounded-full bg-white" />
+                </span>
+                צ'אט
         {/*        {newMessages > 0 && (*/}
         {/*            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-xs">*/}
         {/*  {newMessages}*/}
@@ -258,34 +269,38 @@ function QuestionPractice(){
 
             {isChatOpen && (
                 <div
-                    className="fixed bottom-24 left-4 w-96 max-w-[95vw] h-[50vh] sm:h-[450px] flex flex-col
-        bg-white border border-gray-300 rounded-xl shadow-2xl z-50
-        animate-[slide-up_0.5s_ease-out]"
+                    className="fixed bottom-24 left-4 w-96 max-w-[calc(100vw-2rem)] h-[60vh] sm:h-[480px] flex flex-col
+        glass glass--strong !rounded-[26px] overflow-hidden z-50 shadow-[var(--shadow-2)]"
+                    style={{ animation: "modal-in .6s var(--ease-spring) both" }}
                 >
 
 
-                    <header className="flex justify-between items-center px-4 py-3 bg-gradient-to-r from-blue-100 to-green-100
-    border-b rounded-t-xl shadow-sm">
+                    <header className="flex justify-between items-center px-5 py-4 border-b border-dashed border-line" dir="rtl">
 
-                        <div className="flex items-center gap-2 rtl:space-x-reverse">
-                            <span className="text-xl">📚</span>
-                            <span className="font-semibold text-base text-slate-700 tracking-wide">
-            צ'אט עם מורה
-        </span>
+                        <div className="flex items-center gap-3">
+                            <span className="icon-badge !w-9 !h-9 !rounded-xl">
+                                <span className="w-2.5 h-2.5 rotate-45 rounded-[3px] bg-current" />
+                            </span>
+                            <span className="grid">
+                                <span className="title text-base">
+                                    צ'אט עם מורה
+                                </span>
+                                <span className="eyebrow !text-[0.58rem]">AI tutor · online</span>
+                            </span>
                         </div>
 
                         <button
                             onClick={toggleChat}
-                            className="text-slate-500 hover:text-red-500 transition-colors text-xl font-bold"
+                            className="grid place-items-center w-9 h-9 rounded-xl text-ink-3 hover:text-danger hover:rotate-90 transition-all duration-500 ease-[var(--ease-spring)]"
                             title="סגור"
                         >
-                            ✖️
+                            ✕
                         </button>
                     </header>
 
 
                     {/* גוף הצ'אט – גלילה פנימית */}
-                    <main className="flex-1 overflow-y-auto  rounded-b-xl">
+                    <main className="flex-1 overflow-y-auto">
                         <ChatComponent
                             messages={messages}
                             userMessage={userMessage}

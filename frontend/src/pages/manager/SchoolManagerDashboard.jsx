@@ -6,6 +6,8 @@ import Cookies from "universal-cookie";
 import axios from "axios";
 import {getGreeting} from "../../Utils/Greeting.jsx";
 import EventForm from "../../components/EventForm.jsx";
+import { FaSchool } from "react-icons/fa";
+import DashboardHero from "../../components/ui/DashboardHero.jsx";
 import {
     AUTH_HEADER, GET_SCHOOL,
     QUESTION,
@@ -52,55 +54,61 @@ function SchoolManagerDashboard() {
 
 
     return (
-        <div className="min-h-screen mt-20 p-4 sm:p-8" dir="rtl">
-            <header className="max-w-6xl mx-auto mb-8">
-                <h1 className="text-3xl sm:text-4xl font-bold text-slate-800">
-                    {getGreeting()}, {user?.username}
-                </h1>
-                <h2 className="text-xl sm:text-2xl font-semibold text-green-600 mt-2">
-                    לוח ניהול בית הספר
-                </h2>
-            </header>
+        <div className="page" dir="rtl">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 items-stretch">
+                <DashboardHero
+                    className="lg:col-span-8"
+                    eyebrow="School manager · לוח ניהול"
+                    greeting={getGreeting()}
+                    name={user?.username}
+                    subtitle="לוח ניהול בית הספר"
+                />
 
-            <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-                {/* עמודה 1 - פרטי בית הספר (בצד ימין) */}
-                <div className="space-y-4">
+                {/* פרטי בית הספר */}
+                <div className="lg:col-span-4 reveal" style={{ "--i": 1 }}>
                     {schoolData ? (
-                        <div className="bg-white rounded-3xl shadow-md p-6 space-y-4">
-                            <p className="text-lg text-slate-800 font-semibold">
-                                🏫 שם בית הספר: <span className="font-normal">{schoolData.schoolName}</span>
-                            </p>
-                            <p className="text-slate-600">קוד: {schoolData.schoolCode}</p>
+                        <div className="glass tile p-6 h-full flex flex-col gap-5">
+                            <div className="panel-head !mb-0">
+                                <div className="flex items-center gap-3">
+                                    <span className="icon-badge"><FaSchool /></span>
+                                    <div>
+                                        <span className="eyebrow">בית הספר</span>
+                                        <p className="title text-xl mt-0.5">{schoolData.schoolName}</p>
+                                    </div>
+                                </div>
+                                <span className="chip num">קוד: {schoolData.schoolCode}</span>
+                            </div>
 
-                            <p className="text-slate-700">
-                                מספר מורים:{" "}
-                                {schoolData.teacherCount && schoolData.teacherCount > 0
-                                    ? <span className="font-bold">{schoolData.teacherCount}</span>
-                                    : <span className="text-gray-500">אין כרגע מורים רשומים</span>}
-                            </p>
-
-                            <p className="text-slate-700">
-                                מספר תלמידים:{" "}
-                                {schoolData.studentCount && schoolData.studentCount > 0
-                                    ? <span className="font-bold">{schoolData.studentCount}</span>
-                                    : <span className="text-gray-500">אין כרגע תלמידים רשומים</span>}
-                            </p>
+                            <div className="grid grid-cols-2 gap-3 flex-1">
+                                <div className="glass--sunk p-4 flex flex-col justify-between">
+                                    <span className="faint text-xs">מספר מורים</span>
+                                    {schoolData.teacherCount && schoolData.teacherCount > 0
+                                        ? <span className="num text-4xl font-semibold text-ink mt-3">{schoolData.teacherCount}</span>
+                                        : <span className="faint text-sm mt-3">אין כרגע מורים רשומים</span>}
+                                </div>
+                                <div className="glass--sunk p-4 flex flex-col justify-between">
+                                    <span className="faint text-xs">מספר תלמידים</span>
+                                    {schoolData.studentCount && schoolData.studentCount > 0
+                                        ? <span className="num text-4xl font-semibold text-mint mt-3">{schoolData.studentCount}</span>
+                                        : <span className="faint text-sm mt-3">אין כרגע תלמידים רשומים</span>}
+                                </div>
+                            </div>
                         </div>
                     ) : (
-                        <p className="text-center text-gray-500">{messageFromServer}</p>
+                        <p className="notice">{messageFromServer}</p>
                     )}
                 </div>
 
-                {/* עמודה 2 - אירועים קרובים */}
+                {/* אירועים קרובים */}
                 {user && (
-                    <div>
+                    <div className="lg:col-span-5 reveal" style={{ "--i": 2 }}>
                         <EventForm/>
                     </div>
                 )}
 
-                {/* עמודה 3 - הודעות */}
+                {/* הודעות */}
                 {user && (
-                    <div>
+                    <div className="lg:col-span-7 reveal" style={{ "--i": 3 }}>
                         <MessageList userId={user.userId}/>
                     </div>
                 )}

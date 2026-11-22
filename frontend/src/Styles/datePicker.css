@@ -1,99 +1,102 @@
+/* react-datepicker, themed with the app tokens (both modes) */
+.react-datepicker-popper { z-index: 70 !important; }
 
-/* גוף הלוח */
 .react-datepicker {
-    font-family: 'Segoe UI', sans-serif;
-    border: 1px solid #e2e8f0;
-    border-radius: 1rem;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-    background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
-    color: #1e293b; /* slate-800 */
+    font-family: var(--font-sans);
+    border: 1px solid var(--line-strong);
+    border-radius: 22px;
+    overflow: hidden;
+    background: var(--surface-strong);
+    backdrop-filter: blur(22px) saturate(160%);
+    -webkit-backdrop-filter: blur(22px) saturate(160%);
+    box-shadow: inset 0 1px 0 var(--inner), var(--shadow-2);
+    color: var(--ink);
+    animation: modal-in 0.5s var(--ease-spring) both;
 }
 
-/* כותרת */
+.react-datepicker__triangle { display: none; }
+
 .react-datepicker__header {
-    background: linear-gradient(90deg, #dbeafe, #c7d2fe); /* blue + indigo */
-    color: #1e3a8a;
-    border-bottom: 1px solid #cbd5e1;
-    border-top-left-radius: 1rem;
-    border-top-right-radius: 1rem;
-    padding: 1rem;
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);
+    background: var(--accent-soft);
+    color: var(--ink);
+    border-bottom: 1px dashed var(--line-strong);
+    padding: 1rem 0.75rem 0.6rem;
 }
 
-/* חודש נוכחי */
-.react-datepicker__current-month {
+.react-datepicker__current-month,
+.react-datepicker-time__header {
+    font-family: var(--font-display);
     font-weight: 700;
-    font-size: 1.25rem;
+    font-size: 1.05rem;
+    color: var(--ink);
 }
 
-/* ימי השבוע */
 .react-datepicker__day-name {
-    color: #3b82f6;
-    font-weight: 600;
-    font-size: 0.875rem;
+    color: var(--ink-3);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.08em;
 }
 
-/* יום רגיל */
+.react-datepicker__navigation-icon::before { border-color: var(--ink-3); }
+
 .react-datepicker__day {
-    color: #334155;
-    border-radius: 0.5rem;
-    padding: 0.5rem 0;
-    margin: 0.15rem;
-    transition: all 0.2s ease;
-    font-size: 0.95rem;
+    color: var(--ink-2);
+    border-radius: 10px;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    transition: transform 0.4s var(--ease-spring), background-color 0.2s;
 }
 
 .react-datepicker__day:hover {
-    background-color: #e0f2fe;
-    transform: scale(1.05);
-    cursor: pointer;
+    background-color: var(--accent-soft);
+    color: var(--accent);
+    border-radius: 10px;
+    transform: scale(1.08);
 }
 
-/* יום נבחר */
-.react-datepicker__day--selected {
-    background: linear-gradient(to right, #3b82f6, #6366f1);
-    color: #ffffff;
-    font-weight: bold;
-    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
-}
+.react-datepicker__day--outside-month,
+.react-datepicker__day--disabled { color: var(--ink-3); opacity: 0.5; }
 
-/* היום הנוכחי */
-.react-datepicker__day--today {
-    border: 1px solid #60a5fa;
-    background-color: #eff6ff;
+.react-datepicker__day--selected,
+.react-datepicker__day--keyboard-selected {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2)) !important;
+    color: var(--accent-ink) !important;
     font-weight: 600;
+    box-shadow: 0 6px 16px -6px var(--glow);
+}
+
+.react-datepicker__day--today {
+    font-weight: 700;
+    box-shadow: inset 0 0 0 1px var(--accent);
 }
 
 .react-datepicker__time-container {
-    background-color: #f1f5f9;
-    border-left: 1px solid #cbd5e1;
+    border-left: 1px dashed var(--line-strong) !important;
 }
 
-.react-datepicker__time-list {
-    padding: 0.5rem;
-    max-height: 15rem;
+.react-datepicker__time-container .react-datepicker__time,
+.react-datepicker__time-container .react-datepicker__time .react-datepicker__time-box {
+    background: transparent;
 }
 
 .react-datepicker__time-list-item {
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    font-size: 0.9rem;
-    transition: background-color 0.2s ease, transform 0.2s ease;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--ink-2);
+    border-radius: 8px;
+    margin: 2px 6px;
+    transition: background-color 0.2s;
 }
 
-.react-datepicker__time-list-item:hover {
-    background-color: #e0f2fe;
-    transform: scale(1.02);
-    cursor: pointer;
+.react-datepicker__time-container .react-datepicker__time .react-datepicker__time-box ul.react-datepicker__time-list li.react-datepicker__time-list-item:hover {
+    background-color: var(--accent-soft);
+    color: var(--accent);
 }
 
-.react-datepicker__time-list-item--selected {
-    background: linear-gradient(to right, #3b82f6, #6366f1);
-    color: #ffffff;
-    font-weight: bold;
-    box-shadow: 0 2px 6px rgba(99, 102, 241, 0.3);
+.react-datepicker__time-container .react-datepicker__time .react-datepicker__time-box ul.react-datepicker__time-list li.react-datepicker__time-list-item--selected {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: var(--accent-ink);
+    font-weight: 600;
 }
-
-

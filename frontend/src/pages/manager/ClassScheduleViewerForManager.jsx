@@ -55,74 +55,74 @@ function ClassScheduleViewerForManager() {
     return (
 
             <div
-                className="min-h-screen w-full flex flex-col items-center mt-20 justify-start bg-gradient-to-b from-teal-50 to-teal-100 px-4 py-8 sm:py-10"
+                className="page"
                 dir="rtl"
             >
-                <div className="w-full max-w-4xl bg-white/90 backdrop-blur-lg rounded-2xl shadow-2xl p-6 sm:p-10 animate-fade-in">
-                    <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-8 text-center">
-                        צפייה במערכת שעות לפי כיתה
-                    </h2>
+                <div className="glass p-6 sm:p-9 reveal">
+                    <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-5 pb-6 mb-6 border-b border-dashed border-line">
+                        <div className="space-y-2">
+                            <span className="eyebrow">Classes · כיתות</span>
+                            <h2 className="display text-3xl sm:text-4xl">
+                                צפייה במערכת שעות לפי כיתה
+                            </h2>
+                        </div>
 
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                        בחר כיתה:
-                    </label>
+                        <div className="w-full md:w-72">
+                            <label className="label">
+                                בחר כיתה:
+                            </label>
 
-                    <Select
-                        options={classOptions}
-                        onChange={(sel) => setSelectedClassName(sel?.value || "")}
-                        value={classOptions.find((o) => o.value === selectedClassName)}
-                        placeholder="בחר כיתה..."
-                        isClearable
-                        isSearchable
-                        menuPortalTarget={typeof window !== "undefined" ? document.body : null}
-                        menuPosition="fixed"
-                        menuPlacement="auto"
-                        classNames={{
-                            control: () =>
-                                "border-2 border-teal-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-400 transition-all",
-                            menu: () => "z-60 text-right",
-                        }}
-                        styles={{
-                            control: (base) => ({
-                                ...base,
-                                padding: "2px",
-                                borderColor: "#A7F3D0",
-                                boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
-                                direction: "rtl",
-                            }),
-                            menu: (base) => ({
-                                ...base,
-                                textAlign: "right",
-                            }),
-                            menuPortal: (base) => ({ ...base, zIndex: 60 }),
-                            option: (base, state) => ({
-                                ...base,
-                                textAlign: "right",
-                                backgroundColor: state.isFocused
-                                    ? "#ccfbf1"
-                                    : state.isSelected
-                                        ? "transparent"
-                                        : undefined,
-                                color: "#111827", // תמיד טקסט כהה
-                                fontWeight: state.isSelected ? "bold" : "normal",
-                            }),
-                            singleValue: (base) => ({
-                                ...base,
-                                textAlign: "right",
-                                color: "#111827",
-                            }),
-                        }}
-                    />
+                            <Select
+                                options={classOptions}
+                                onChange={(sel) => setSelectedClassName(sel?.value || "")}
+                                value={classOptions.find((o) => o.value === selectedClassName)}
+                                placeholder="בחר כיתה..."
+                                isClearable
+                                isSearchable
+                                classNamePrefix="lp-select"
+                                menuPortalTarget={typeof window !== "undefined" ? document.body : null}
+                                menuPosition="fixed"
+                                menuPlacement="auto"
+                                styles={{
+                                    control: (base) => ({
+                                        ...base,
+                                        direction: "rtl",
+                                    }),
+                                    menu: (base) => ({
+                                        ...base,
+                                        textAlign: "right",
+                                    }),
+                                    menuPortal: (base) => ({ ...base, zIndex: 60 }),
+                                    option: (base, state) => ({
+                                        ...base,
+                                        textAlign: "right",
+                                        fontWeight: state.isSelected ? "bold" : "normal",
+                                    }),
+                                    singleValue: (base) => ({
+                                        ...base,
+                                        textAlign: "right",
+                                    }),
+                                }}
+                            />
+                        </div>
+                    </div>
 
                     {message && (
-                        <div className="mt-4 text-sm text-red-600 text-center animate-pulse">
+                        <div className="notice">
                             {message}
                         </div>
                     )}
 
-                    {selectedClassName && (
-                        <div className="mt-10 overflow-x-auto">
+                    {selectedClassName ? (
+                        <div className="overflow-x-auto reveal">
                             <WeeklySchedule type="class" classRoomName={selectedClassName} />
+                        </div>
+                    ) : (
+                        <div className="py-16 flex flex-col items-center gap-3 text-center">
+                            <span className="w-14 h-14 rounded-2xl border border-dashed border-line-strong grid place-items-center rotate-45">
+                                <span className="-rotate-45 w-2.5 h-2.5 rounded-[3px] bg-accent shadow-[0_0_12px_var(--glow)]" />
+                            </span>
+                            <p className="faint text-sm">בחר כיתה כדי לראות את המערכת השבועית שלה</p>
                         </div>
                     )}
                 </div>

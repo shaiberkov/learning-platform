@@ -29,107 +29,132 @@ function QuestionPracticeSelector() {
         }
     };
 
+    const step = selectedExercise ? 3 : selectedTopic ? 2 : selectedSubject ? 1 : 0;
+
     return (
 
 
-        <div className="max-w-xl mx-auto mt-20 p-4 bg-white rounded-3xl shadow-md space-y-6 mb-8" dir="rtl">
-            <h2 className="text-2xl font-bold text-center text-green-700 flex items-center justify-center gap-2">
-                <FaPuzzlePiece
-                    className="text-green-500 transition-transform transition-colors duration-300 hover:scale-110 hover:text-green-700 hover:rotate-[25deg]"
-                />
-                בחר תרגול
-            </h2>
+        <div className="page page--wide" dir="rtl">
+            <div className="grid lg:grid-cols-[1fr_20rem] gap-4 sm:gap-5 items-start">
+                <div className="glass p-6 sm:p-9 space-y-8 reveal">
+                    <div className="space-y-3">
+                        <span className="eyebrow">Practice studio · תרגול</span>
+                        <h2 className="display text-4xl sm:text-5xl flex items-center gap-3">
+                            בחר תרגול
+                        </h2>
+                        <div className="track !h-1.5 max-w-sm"><span style={{ width: `${(step / 3) * 100}%` }} /></div>
+                    </div>
 
-            <div className="space-y-1">
-                <label className="font-semibold flex items-center gap-2 text-gray-700">
-                    <FaBook
-                        className="text-blue-500 transition-transform transition-colors duration-300 hover:scale-110 hover:text-blue-700 hover:rotate-[25deg]"
-                    />
-                    בחר מקצוע:
-                </label>
-                <div className="grid grid-cols-2 gap-2">
-                    {Object.keys(topicsData).map(subject => (
-                        <button
-                            key={subject}
-                            onClick={() => {
-                                setSelectedSubject(subject);
-                                setSelectedTopic(null);
-                                setSelectedExercise(null);
-                            }}
-                            className={`p-2 rounded-xl border shadow-sm text-sm hover:bg-blue-50 transition ${
-                                selectedSubject === subject ? "bg-blue-100 border-blue-400 font-bold" : ""
-                            }`}
-                        >
-                            {subject}
-                        </button>
-                    ))}
+                    <div className="space-y-3">
+                        <label className="label">
+                            <span className="num text-ink-3">01</span>
+                            <FaBook />
+                            בחר מקצוע:
+                        </label>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            {Object.keys(topicsData).map(subject => (
+                                <button
+                                    key={subject}
+                                    onClick={() => {
+                                        setSelectedSubject(subject);
+                                        setSelectedTopic(null);
+                                        setSelectedExercise(null);
+                                    }}
+                                    className={`choice ${
+                                        selectedSubject === subject ? "is-active" : ""
+                                    }`}
+                                >
+                                    {subject}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {selectedSubject && (
+                        <div className="space-y-3 reveal">
+                            <label className="label">
+                                <span className="num text-ink-3">02</span>
+                                <FaLayerGroup />
+                                בחר נושא:
+                            </label>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                {topicsData[selectedSubject].map((topic, index) => (
+                                    <button
+                                        key={topic.name}
+                                        onClick={() => {
+                                            setSelectedTopic(topic);
+                                            setSelectedExercise(null);
+                                        }}
+                                        className={`choice reveal ${
+                                            selectedTopic?.name === topic.name ? "is-active" : ""
+                                        }`}
+                                        style={{ "--i": index }}
+                                    >
+                                        {topic.name}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {selectedTopic && (
+                        <div className="space-y-3 reveal">
+                            <label className="label">
+                                <span className="num text-ink-3">03</span>
+                                <FaPuzzlePiece />
+                                בחר תרגיל מתוך "{selectedTopic.name}":
+                            </label>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                {selectedTopic.exercises.map((ex, index) => (
+                                    <button
+                                        key={ex}
+                                        onClick={() => setSelectedExercise(ex)}
+                                        className={`choice reveal ${
+                                            selectedExercise === ex ? "is-active" : ""
+                                        }`}
+                                        style={{ "--i": index }}
+                                    >
+                                        {ex}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </div>
+
+                <aside className="glass tile p-6 lg:sticky lg:top-32 space-y-5 reveal" style={{ "--i": 1 }}>
+                    <span className="eyebrow">המסלול שלך</span>
+                    <ol className="space-y-3">
+                        {[
+                            ["מקצוע", selectedSubject],
+                            ["נושא", selectedTopic?.name],
+                            ["תרגיל", selectedExercise],
+                        ].map(([label, value], i) => (
+                            <li key={label} className="flex items-center gap-3">
+                                <span className={`num grid place-items-center w-8 h-8 rounded-xl text-xs transition-all duration-500 ${value ? "bg-accent text-[var(--accent-ink)] shadow-[0_0_14px_var(--glow)]" : "bg-surface-sunk text-ink-3"}`}>
+                                    {String(i + 1).padStart(2, "0")}
+                                </span>
+                                <span className="grid">
+                                    <span className="faint text-xs">{label}</span>
+                                    <span className="text-sm font-semibold text-ink">{value || "—"}</span>
+                                </span>
+                            </li>
+                        ))}
+                    </ol>
+
+                    {selectedSubject && selectedTopic && selectedExercise && (
+                        <div className="reveal">
+                            <button
+                                onClick={handleNavigate}
+                                className="btn btn-primary btn-block"
+                            >
+                                <FaPlay />
+                                התחל תרגול
+                            </button>
+                        </div>
+                    )}
+                </aside>
             </div>
-
-            {selectedSubject && (
-                <div className="space-y-1">
-                    <label className="font-semibold flex items-center gap-2 text-gray-700">
-                        <FaLayerGroup
-                            className="text-purple-500 transition-transform transition-colors duration-300 hover:scale-110 hover:text-purple-700 hover:rotate-[25deg]"
-                        />
-                        בחר נושא:
-                    </label>
-                    <div className="grid grid-cols-2 gap-2">
-                        {topicsData[selectedSubject].map(topic => (
-                            <button
-                                key={topic.name}
-                                onClick={() => {
-                                    setSelectedTopic(topic);
-                                    setSelectedExercise(null);
-                                }}
-                                className={`p-2 rounded-xl border shadow-sm text-sm hover:bg-purple-50 transition ${
-                                    selectedTopic?.name === topic.name ? "bg-purple-100 border-purple-400 font-bold" : ""
-                                }`}
-                            >
-                                {topic.name}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-            )}
-
-            {selectedTopic && (
-                <div className="space-y-1">
-                    <label className="font-semibold flex items-center gap-2 text-gray-700">
-                        <FaPuzzlePiece
-                            className="text-yellow-500 transition-transform transition-colors duration-300 hover:scale-110 hover:text-yellow-700 hover:rotate-[25deg]"
-                        />
-                        בחר תרגיל מתוך "{selectedTopic.name}":
-                    </label>
-                    <div className="grid grid-cols-2 gap-2">
-                        {selectedTopic.exercises.map(ex => (
-                            <button
-                                key={ex}
-                                onClick={() => setSelectedExercise(ex)}
-                                className={`p-2 rounded-xl border shadow-sm text-sm hover:bg-yellow-50 transition ${
-                                    selectedExercise === ex ? "bg-yellow-100 border-yellow-400 font-bold" : ""
-                                }`}
-                            >
-                                {ex}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-            )}
-
-            {selectedSubject && selectedTopic && selectedExercise && (
-                <div className="mt-4 flex justify-center">
-                    <button
-                        onClick={handleNavigate}
-                        className="bg-green-600 text-white px-6 py-2 rounded-xl shadow-lg hover:bg-green-700 transition duration-300 flex items-center justify-center gap-2  "
-                    >
-                        <FaPlay
-                               className="transition-transform transition-colors duration-300 hover:scale-110 hover:rotate-[25deg]"
-                             />
-                        התחל תרגול
-                    </button>
-                </div>
-            )}
         </div>
 
     )

@@ -4,6 +4,7 @@ import axios from "axios";
 import { FaUser, FaSchool, FaKey } from "react-icons/fa";
 
 import Cookies from "universal-cookie";
+import FormShell from "../../components/ui/FormShell.jsx";
 import {
     ADD_NEW_SCHOOL_TO_SYSTEM,
     ASSIGN_SCHOOL_MANAGER, ASSIGN_SCHOOL_MANAGER_TO_SCHOOL, AUTH_HEADER,
@@ -93,78 +94,66 @@ function SchoolRegistration() {
 
 
     return (
-        <div
-            className="max-w-md mx-auto mt-20 mb-8 p-6 bg-white rounded-3xl shadow-lg space-y-5"
-            dir="rtl"
-        >
-            <h2 className="text-2xl font-bold text-center text-green-600 flex items-center justify-center gap-2">
-                מינוי מנהל והוספת בית ספר
-            </h2>
+        <FormShell eyebrow="Schools · בתי ספר" title="מינוי מנהל והוספת בית ספר" icon={<FaSchool />} tone="icon-badge--mint">
 
             <div>
-                <div
-                    className="flex items-center gap-2 bg-gray-50 border border-gray-300 rounded-xl px-4 py-2 focus-within:ring-2 focus-within:ring-green-400">
-                    <FaUser
-                        className="text-gray-400 transition-transform duration-300 hover:scale-[1.2] hover:text-blue-400"/>
+                <div className="field-wrap">
+                    <FaUser/>
                     <input
                         type="text"
                         placeholder="מזהה משתמש"
                         value={userId}
                         onChange={(e) => setUserId(e.target.value)}
-                        className="w-full bg-transparent outline-none"
+                        className="field num"
                     />
                 </div>
                 {userIdError && (
-                    <p className="text-red-500 text-sm mt-1">{userIdError}</p>
+                    <p className="field-error">{userIdError}</p>
                 )}
             </div>
 
             <div>
-                <div
-                    className="flex items-center gap-2 bg-gray-50 border border-gray-300 rounded-xl px-4 py-2 focus-within:ring-2 focus-within:ring-green-400">
-                    <FaSchool
-                        className="text-gray-400 transition-transform duration-300 hover:scale-[1.2] hover:text-blue-400"/>
+                <div className="field-wrap">
+                    <FaSchool/>
                     <input
                         type="text"
                         placeholder="שם בית הספר"
                         value={schoolName}
                         onChange={(e) => setSchoolName(e.target.value)}
-                        className="w-full bg-transparent outline-none"
+                        className="field"
                     />
                 </div>
             </div>
 
             <div>
-                <div
-                    className="flex items-center gap-2 bg-gray-50 border border-gray-300 rounded-xl px-4 py-2 focus-within:ring-2 focus-within:ring-green-400">
-                    <FaKey
-                        className="text-gray-400 transition-transform duration-300 hover:scale-[1.2] hover:text-blue-400"/>
+                <div className="field-wrap">
+                    <FaKey/>
                     <input
                         type="text"
                         placeholder="קוד בית הספר"
                         value={schoolCode}
                         onChange={(e) => setSchoolCode(e.target.value)}
-                        className="w-full bg-transparent outline-none"
+                        className="field num"
                     />
                 </div>
                 {schoolCodeError && (
-                    <p className="text-red-500 text-sm mt-1">{schoolCodeError}</p>
+                    <p className="field-error">{schoolCodeError}</p>
                 )}
             </div>
 
             <button
                 onClick={assignSchoolManager}
-                className="w-full bg-gradient-to-r from-lime-400 to-green-500 hover:from-lime-500 hover:to-green-600 text-white font-bold py-2 rounded-xl transition duration-300 shadow-md hover:shadow-lg"
+                className="btn btn-primary btn-block"
             >
                 הוסף
             </button>
 
             {message && (
-                <p className="text-center text-green-600 font-semibold flex items-center justify-center gap-2">
+                <p className="notice notice--mint">
                     {message}
                 </p>
             )}
-        </div>
+        </FormShell>
     );
 
 }

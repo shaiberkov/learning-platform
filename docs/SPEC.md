@@ -36,6 +36,7 @@ Everyone registers as a `STUDENT` with no school. The system admin turns a user 
 - Questions: `QuestionEntity`, `PracticeQuestionEntity`, `TestQuestionEntity`, `StudentQuestionHistoryEntity`, `StudentProgressEntity`, `StudentStatisticsEntity`.
 - Tests: `PracticeTestEntity` + `PracticeTestResultEntity` (student's own), `TeacherTestEntity` + `TeacherTestResultEntity` (assigned by a teacher), `TestEntity` / `TestResultEntity`.
 - `MessageEntity` (sender, recipient, title, body), `Session`.
+- AI: `AiUsageEntity` (one row per AI call: user, school, feature, tokens, estimated cost), `AiConversationMessageEntity` (tutor chat, kept `ai.retention.days`), `AiQuestionDraftEntity` → `BankQuestionEntity` (a `QuestionEntity` subclass: the teacher's question bank), `AiRubricEntity` + `AiOpenAnswerEntity` (open questions graded by rubric), `TestAnswerRecordEntity` (each answer of a checked teacher test) and `TeacherInsightEntity` (weekly insight).
 
 ## Main flows
 
@@ -49,6 +50,13 @@ Everyone registers as a `STUDENT` with no school. The system admin turns a user 
 
 **Timetable.** The manager adds lessons to a teacher for a class; overlaps are rejected. Class, teacher and student timetables are cached and evicted when a lesson is added.
 
+**AI.** Everything goes through `service/ai/AiGateway`: the provider (`AiProvider`, today `OpenAiProvider`, chosen by `ai.provider` / `ai.model`) needs `GPT_TOKEN` in the environment, and without it every AI screen answers with a Hebrew "not enabled" message. The gateway enforces a per-user daily quota, serves repeated one-shot prompts from the `aiPromptCache`, and records tokens and estimated cost per school. Routes under `/ai/**` need a valid JWT (the user is taken from it, never from a parameter) and `/ai/staff/**` needs a staff role: the first routes where `SecurityConfig` enforces roles.
+- *Tutor* (`POST /ai/tutor/stream`, SSE events `delta`/`replace`/`done`/`error`): Socratic, knows the practice question, its hidden answer and the student's typed answer; replies that give the answer away are withheld. `ExamGuard` turns it off while a teacher test is open for the student and for test questions. Photos go to the vision model; voice is the browser's Hebrew speech recognition, with `POST /ai/tutor/transcribe` as fallback.
+- *Safety*: `ContentSafetyFilter` runs before and after the model: distress gets a caring answer with the ERAN hotline (never sent to the model), explicit content and prompt injection are refused, ID numbers, phones and e-mails are redacted, student text is wrapped as data. Refused messages are flagged; school staff see only flagged messages (`/ai/staff/safety/flagged`). `AiRetentionJob` deletes conversations after `ai.retention.days` (30); students can delete theirs at any time.
+- *Question generation*: a teacher prompt → JSON questions (text, exact answer, explanation) → drafts queue → edit / approve / reject → `BankQuestionEntity`.
+- *Rubric grading*: the teacher publishes an open question with a rubric; students answer (`/ai/open-questions`), the AI suggests a score and reasoning, the teacher approves or changes it in one click; students see only approved scores.
+- *Insights*: `checkTeacherTest` also stores each answer (`TestAnswerRecorder`); `AiInsightsJob` (Sundays 07:00) computes struggling students by topic and suspicious questions (most students chose the same wrong answer) and asks the AI for a summary from pseudonymised numbers (S1, S2...).
+
 **Dashboard feed.** `upcoming-events` returns next lessons, tests and events for the user's role, built by the strategy for that role.
 
 ## API
@@ -57,4 +65,4 @@ About 60 endpoints in 17 controllers, all under `/Learning-App`. The full list w
 
 ## Background work
 
-Re-engagement email to inactive users (`InactiveUsersJob`), JWT validation cache cleared every 2 hours, holidays refreshed daily, and a self-ping that keeps the Render free tier from sleeping.
+Re-engagement email to inactive users (`InactiveUsersJob`), JWT validation cache cleared every 2 hours, holidays refreshed daily, a self-ping that keeps the Render free tier from sleeping, weekly AI teacher insights (`AiInsightsJob`, Sunday 07:00 Israel time) and the nightly AI retention cleanup (`AiRetentionJob`, 03:30).

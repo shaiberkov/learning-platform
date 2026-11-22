@@ -1,0 +1,153 @@
+@import "tailwindcss";
+
+
+
+
+
+/*@layer base {*/
+/*  body {*/
+/*    @apply min-h-screen bg-linear-45 from-blue-100 to-green-100  ;*/
+
+/*  }*/
+/*}*/
+/*html, body, #root {*/
+/*  @apply bg-linear-45 from-blue-100 to-green-100  min-h-screen;*/
+/*  background-attachment: fixed;*/
+/*}*/
+
+/*body {*/
+/*  background-color: transparent;*/
+/*  overscroll-behavior-y:none;*/
+/*}*/
+html,
+body,
+#root {
+  /* Tailwind utilities */
+  @apply bg-gradient-to-br from-blue-100 to-green-100 min-h-screen overflow-x-hidden;
+
+  /* CSS רגיל */
+  background-attachment: fixed;   /* הרקע “מודבק” גם בגלילה */
+  overscroll-behavior: none;      /* מונע bounce באנדרואיד/iOS */
+  margin: 0;
+  padding: 0;
+}
+@keyframes shine {
+  0%   { transform: translateX(-50%) rotate(12deg); }
+  100% { transform: translateX(150%) rotate(12deg); }
+}
+
+@keyframes scaleIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-scaleIn {
+  animation: scaleIn 0.3s ease-out;
+}
+
+
+@keyframes slide-up {
+  0% {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.slide-up {
+  animation: slide-up 0.4s ease-out;
+}
+
+
+@layer base {
+  html {
+    @apply scroll-smooth;
+  }
+}
+.scroll-container {
+  scroll-behavior: smooth;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ping-slow {
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+.animate-ping-slow {
+  animation: ping-slow 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.delay-150 {
+  animation-delay: 0.15s;
+}
+
+.delay-300 {
+  animation-delay: 0.3s;
+}
+/* index.css או global.css */
+@keyframes pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+.animate-pop {
+  animation: pop 0.2s ease;
+}
+
+/*#root {*/
+/*  max-width: 1280px;*/
+/*  margin: 0 auto;*/
+/*  padding: 2rem;*/
+/*  text-align: center;*/
+/*}*/
+
+/*.logo {*/
+/*  height: 6em;*/
+/*  padding: 1.5em;*/
+/*  will-change: filter;*/
+/*  transition: filter 300ms;*/
+/*}*/
+/*.logo:hover {*/
+/*  filter: drop-shadow(0 0 2em #646cffaa);*/
+/*}*/
+/*.logo.react:hover {*/
+/*  filter: drop-shadow(0 0 2em #61dafbaa);*/
+/*}*/
+
+/*@keyframes logo-spin {*/
+/*  from {*/
+/*    transform: rotate(0deg);*/
+/*  }*/
+/*  to {*/
+/*    transform: rotate(360deg);*/
+/*  }*/
+/*}*/
+
+/*@media (prefers-reduced-motion: no-preference) {*/
+/*  a:nth-of-type(2) .logo {*/
+/*    animation: logo-spin infinite 20s linear;*/
+/*  }*/
+/*}*/
+
+
+/*.read-the-docs {*/
+/*  color: #888;*/
+/*}*/

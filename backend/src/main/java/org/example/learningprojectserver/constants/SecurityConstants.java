@@ -7,6 +7,8 @@ import static org.example.learningprojectserver.constants.ControllerConstants.Au
 import static org.example.learningprojectserver.constants.ControllerConstants.Impersonation.IMPERSONATION_BASE_PATH;
 import static org.example.learningprojectserver.constants.ControllerConstants.Impersonation.START_IMPERSONATION;
 import static org.example.learningprojectserver.constants.ControllerConstants.Teacher.CHECK_TEACHER_TEST;
+import static org.example.learningprojectserver.constants.ControllerConstants.Ai.AI_BASE_PATH;
+import static org.example.learningprojectserver.constants.ControllerConstants.AiStaff.AI_STAFF_BASE_PATH;
 import static org.example.learningprojectserver.constants.ControllerConstants.ChatGpt.CHAT_BASE_PATH;
 import static org.example.learningprojectserver.constants.ControllerConstants.Exam.EXAM_BASE_PATH;
 import static org.example.learningprojectserver.constants.ControllerConstants.Lesson.LESSON_BASE_PATH;
@@ -92,6 +94,8 @@ public final class SecurityConstants {
         public static final String LESSON_CONTENT_ALL        = LESSON_CONTENT_BASE_PATH + CORS_MAPPING_PATH;
         public static final String HOMEWORK_ALL              = HOMEWORK_BASE_PATH     + CORS_MAPPING_PATH;
         public static final String ACCOMMODATION_ALL         = ACCOMMODATION_BASE_PATH + CORS_MAPPING_PATH;
+        public static final String AI_STAFF_ALL              = AI_STAFF_BASE_PATH     + CORS_MAPPING_PATH;
+        public static final String AI_ALL                    = AI_BASE_PATH           + CORS_MAPPING_PATH;
 
         public static final String SYSTEM_ADMIN   = "SYSTEM_ADMIN";
         public static final String TEACHER        = "TEACHER";

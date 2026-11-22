@@ -3,6 +3,7 @@ package org.example.learningprojectserver.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.learningprojectserver.dto.AdaptiveDTOs.*;
+import org.example.learningprojectserver.entities.TeacherTestEntity;
 import org.example.learningprojectserver.entities.TestAnswerRecordEntity;
 import org.example.learningprojectserver.entities.TestEntity;
 import org.example.learningprojectserver.entities.TestQuestionEntity;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 
 /**
@@ -43,6 +45,20 @@ public class ExamFeedbackService {
      * the mistakes notebook and moves the student's mastery in each sub-topic.
      */
     public void recordExamAnswers(String userId, TestEntity test, String source, Map<Long, String> userAnswers) {
+        recordExamAnswers(userId, test, source, userAnswers, (question, given) -> {
+            String expected = question.getAnswer() == null ? "" : question.getAnswer().trim();
+            return given != null && given.equalsIgnoreCase(expected);
+        });
+    }
+
+    /**
+     * Same, with the exam's own grader (teacher exams have several question kinds). Runs in its own
+     * transaction so a failure here cannot roll back the exam submission that called it.
+     */
+    @org.springframework.transaction.annotation.Transactional(
+            propagation = org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
+    public void recordExamAnswers(String userId, TestEntity test, String source, Map<Long, String> userAnswers,
+                                  BiPredicate<TestQuestionEntity, String> isCorrect) {
         if (test == null || testAnswerRecordRepository.existsByTestIdAndStudentUserId(test.getId(), userId)) {
             return;
         }
@@ -52,7 +68,7 @@ public class ExamFeedbackService {
         for (TestQuestionEntity question : test.getQuestions()) {
             String given = userAnswers == null ? null : userAnswers.get(question.getId());
             String expected = question.getAnswer() == null ? "" : question.getAnswer().trim();
-            boolean correct = given != null && given.equalsIgnoreCase(expected);
+            boolean correct = isCorrect.test(question, given);
 
             TestAnswerRecordEntity r = new TestAnswerRecordEntity();
             r.setTestId(test.getId());
@@ -60,12 +76,15 @@ public class ExamFeedbackService {
             r.setClassRoomId(classRoomId);
             r.setQuestionId(question.getId());
             r.setSource(source);
+            if (test instanceof TeacherTestEntity teacherTest && teacherTest.getTeacher() != null) {
+                r.setTeacherUserId(teacherTest.getTeacher().getUserId());
+            }
             r.setSubject(question.getSubject());
             String subTopic = SkillCatalog.canonicalSubTopic(question.getSubTopic());
             r.setSubTopic(subTopic);
             r.setTopic(SkillCatalog.topicOf(subTopic, question.getTopic()));
             r.setQuestionText(question.getQuestionText());
-            r.setGivenAnswer(given);
+            r.setGivenAnswer(given == null || given.length() <= 500 ? given : given.substring(0, 500));
             r.setCorrectAnswer(expected);
             r.setCorrect(correct);
             r.setCreatedAt(now);

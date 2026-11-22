@@ -33,4 +33,6 @@ public interface TeacherTestRepository extends JpaRepository<TeacherTestEntity, 
           AND t.publishAt IS NOT NULL AND t.publishAt <= :now
     """)
     List<Long> findIdsDueForPublish(@Param("now") LocalDateTime now);
+    @Query("SELECT COUNT(q) FROM TeacherTestEntity t JOIN t.questions q WHERE q.id = :questionId")
+    long countTeacherTestsWithQuestion(@Param("questionId") Long questionId);
 }

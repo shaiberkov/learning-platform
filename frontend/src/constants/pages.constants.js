@@ -166,6 +166,29 @@ export const PagesConstants = {
         HINT_TEMPLATE: '/hint-template',
     },
 
+    Ai: {
+        AI_BASE_PATH: `${API_BASE_URL}${BASE_API}/ai`,
+        AI_STATUS: '/status',
+        AI_TUTOR_STREAM: '/tutor/stream',
+        AI_TUTOR_HISTORY: '/tutor/history',
+        AI_TUTOR_TRANSCRIBE: '/tutor/transcribe',
+        AI_OPEN_QUESTIONS: '/open-questions',
+        AI_OPEN_QUESTION_ANSWERS: '/open-questions/answers',
+    },
+
+    AiStaff: {
+        AI_STAFF_BASE_PATH: `${API_BASE_URL}${BASE_API}/ai/staff`,
+        AI_QUESTIONS_GENERATE: '/questions/generate',
+        AI_QUESTION_DRAFTS: '/questions/drafts',
+        AI_QUESTION_BANK: '/questions/bank',
+        AI_RUBRICS: '/grading/rubrics',
+        AI_GRADING_ANSWERS: '/grading/answers',
+        AI_INSIGHTS_LATEST: '/insights/latest',
+        AI_INSIGHTS_GENERATE: '/insights/generate',
+        AI_USAGE: '/usage',
+        AI_SAFETY_FLAGGED: '/safety/flagged',
+    },
+
     User: {
         USER_BASE_PATH: `${API_BASE_URL}${BASE_API}/user`,
         ADD_USER: '/add-user',
@@ -400,6 +423,31 @@ export const {
     HINT_CATALOG,
     HINT_TEMPLATE,
 } = PagesConstants.Adaptive;
+
+/* Ai (paths with an id: `${AI_QUESTION_DRAFTS}/${id}/approve`, `${AI_RUBRICS}/${id}/answers`,
+   `${AI_GRADING_ANSWERS}/${id}/suggest|approve`, matching ControllerConstants.AiStaff) */
+export const {
+    AI_BASE_PATH,
+    AI_STATUS,
+    AI_TUTOR_STREAM,
+    AI_TUTOR_HISTORY,
+    AI_TUTOR_TRANSCRIBE,
+    AI_OPEN_QUESTIONS,
+    AI_OPEN_QUESTION_ANSWERS,
+} = PagesConstants.Ai;
+
+export const {
+    AI_STAFF_BASE_PATH,
+    AI_QUESTIONS_GENERATE,
+    AI_QUESTION_DRAFTS,
+    AI_QUESTION_BANK,
+    AI_RUBRICS,
+    AI_GRADING_ANSWERS,
+    AI_INSIGHTS_LATEST,
+    AI_INSIGHTS_GENERATE,
+    AI_USAGE,
+    AI_SAFETY_FLAGGED,
+} = PagesConstants.AiStaff;
 
 export const {
     USER_BASE_PATH,

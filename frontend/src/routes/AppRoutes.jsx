@@ -65,6 +65,12 @@ import LessonAuthoring from "../pages/teacher/LessonAuthoring.jsx";
 import HomeworkBoard from "../pages/teacher/HomeworkBoard.jsx";
 import StudentAccommodations from "../pages/teacher/StudentAccommodations.jsx";
 import ClassChallenges from "../pages/teacher/ClassChallenges.jsx";
+import AiQuestionStudio from "../pages/teacher/AiQuestionStudio.jsx";
+import AiGrading from "../pages/teacher/AiGrading.jsx";
+import AiInsights from "../pages/teacher/AiInsights.jsx";
+import AiTutorPage from "../pages/student/AiTutorPage.jsx";
+import OpenQuestions from "../pages/student/OpenQuestions.jsx";
+import AiSchoolOverview from "../pages/manager/AiSchoolOverview.jsx";
 export default function AppRoutes() {
 
     const {user}=useContext(UserContext)
@@ -119,6 +125,7 @@ export default function AppRoutes() {
                             <Route path="/assign-student-to-class" element={<AssignStudentToClass />} />
                             <Route path="/classes-weekly-schedule" element={<ClassScheduleViewerForManager />} />
                             <Route path="/audit-log" element={<AuditLog />} />
+                            <Route path="/ai-school" element={<AiSchoolOverview />} />
                         </>
                     )}
 
@@ -137,6 +144,9 @@ export default function AppRoutes() {
                             <Route path="/homework-board" element={<HomeworkBoard />} />
                             <Route path="/class-challenges" element={<ClassChallenges />} />
                             <Route path="/student-accommodations" element={<StudentAccommodations />} />
+                            <Route path="/ai-questions" element={<AiQuestionStudio />} />
+                            <Route path="/ai-grading" element={<AiGrading />} />
+                            <Route path="/ai-insights" element={<AiInsights />} />
                         </>
                     )}
 
@@ -149,6 +159,8 @@ export default function AppRoutes() {
                             <Route path="/teacher-tests" element={<TestsTable />} />
                             <Route path="/mistakes-notebook" element={<MistakesNotebook />} />
                             <Route path="/skill-map" element={<SkillMap />} />
+                            <Route path="/ai-tutor" element={<AiTutorPage />} />
+                            <Route path="/open-questions" element={<OpenQuestions />} />
                             <Route path="/exercises/:subjectName/:topicName/:exerciseName" element={<QuestionPractice />} />
                             <Route path="/test/:selectedSubject/:selectedTopic/:selectedDifficulty/:selectedQuestionCount/:selectedTimeMinutes" element={<TestSession type="practiceTest" />} />
                             <Route path="/test/:TeacherTestId/:timeLimitMinutes" element={<TestSession type="teacherTest" />} />

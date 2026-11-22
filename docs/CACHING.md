@@ -17,6 +17,7 @@ Configured in `backend/src/main/resources/ehcache.xml` and enabled by `@EnableCa
 | `studentSchedule` | `StudentService.getStudentSchedule(schoolCode, studentId)` | `studentId` | `TeacherService.addLessonToTeacher`: each student in the class | **missing from `ehcache.xml`** |
 | `studentTestsStatus` | `StudentService.getStudentTestsStatus(userId)` (lists only published teacher tests) | `userId` | `TestResultService.checkTeacherTest` (`@CacheEvict`); `TeacherService.generateTestForStudents`: each student; `ExamAttemptService` when it grades an attempt (submit, late submit, auto-submit): the student; `ExamAuthoringService` when an exam is published (on create, clone, or by `ExamSchedulerJob`): each student (`cacheManager`) | 1000 |
 | `schoolDTO` | `SchoolService.getSchoolDTO(SchoolManagerId)` | `SchoolManagerId` | nothing | 100 |
+| `aiPromptCache` | `AiGateway.complete(..., cacheable = true)` by hand (`cacheManager.getCache`), for question generation, rubric grading and insight summaries; never for the tutor chat | SHA-256 of provider + model + messages + settings | nothing: an identical prompt is meant to return the same answer for 24 hours. "Generate again" in the question studio skips the cache (`fresh=true`) | 500 |
 | `allSchools` | `SystemAdminService.getAllSchoolsDTO()` | (no args) | `SystemAdminService`: `assignUserAsSchoolManager`, `addNewSchoolToSystem`, `assignSchoolManagerToSchool`, `removeSchoolManagerFromSchool` (`allEntries = true`) | 100 |
 | `schoolFeatureFlags` | `FeatureFlagService.flagsForSchool(schoolCode)` (a `Map<String, Boolean>` of effective flags, read through `security/FeatureFlags`) | `schoolCode` | `FeatureFlagService.setFlag` (`@CacheEvict`, same key); `school_feature_flag` has no other writer | 200 |
 
@@ -36,7 +37,7 @@ Not Spring caches: plain `ConcurrentHashMap`s in singleton beans. Lost on restar
 | `UserService.otpStorage` (static) | password-reset OTP per user | removed after a successful reset |
 | `SessionService.tokenCache` | JWT validation results | whole map every 2 hours (`clearTokenCache`) |
 | `NotificationService.emitters` | one `SseEmitter` per connected user | on completion, timeout, error, or a failed send |
-| `ChatGptService.userConversations` (static) | AI tutor history per user | reset to empty by the `clear-conversation` endpoint |
+| `ChatGptService.userConversations` (static) | history of the legacy `/Chat` endpoints per user (the practice screen now uses the AI tutor, whose history is in MySQL: `ai_conversation_message`) | reset to empty by the `clear-conversation` endpoint |
 | `ActiveUserService.activeUsers` | who is online | `disconnectUser` |
 | `StatisticsService.userStats` | per-student statistics | currently unused (its writes are commented out) |
 | `filter/MetricsFilter` | request counts and response times | never |

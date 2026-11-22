@@ -44,6 +44,14 @@
         </expiry>
         <heap>1000</heap>
     </cache>
+    <!-- AI prompt cache: SHA-256 of (provider, model, messages, settings) -> model answer text.
+         Filled only for one-shot calls (question generation, grading, insights). -->
+    <cache alias="aiPromptCache">
+        <expiry>
+            <ttl unit="hours">24</ttl>
+        </expiry>
+        <heap>500</heap>
+    </cache>
 
 
 

@@ -12,6 +12,8 @@ import org.example.learningprojectserver.repository.*;
 import org.example.learningprojectserver.response.BasicResponse;
 import org.example.learningprojectserver.service.exam.ExamGrader;
 import org.example.learningprojectserver.service.exam.ExamQuestionCodec;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
@@ -51,6 +53,10 @@ public class ExamAttemptService {
     private final ExamQuestionCodec examQuestionCodec;
     private final ExamGrader examGrader;
     private final CacheManager cacheManager;
+    private final ExamFeedbackService examFeedbackService;
+    private final EngagementEvents engagementEvents;
+
+    private static final Logger log = LoggerFactory.getLogger(ExamAttemptService.class);
 
     @Transactional
     public BasicResponse<ExamAttemptView> startAttempt(String userId, Long testId) {
@@ -317,6 +323,8 @@ public class ExamAttemptService {
         examAttemptRepository.save(attempt);
 
         saveLegacyResult(attempt, test, score, correctCount, results.size(), now);
+        recordForFeedback(attempt.getStudentUserId(), test, answers);
+        engagementEvents.testCompleted(attempt.getStudentUserId(), score, true);
 
         ExamResultView view = new ExamResultView();
         view.setScore(score);
@@ -325,6 +333,19 @@ public class ExamAttemptService {
         view.setAutoSubmitted(auto);
         view.setQuestions(results);
         return view;
+    }
+
+    /**
+     * Post-exam feedback, mistakes notebook, mastery and teacher insights read test_answer_record.
+     * Failures are logged and never fail the submission.
+     */
+    private void recordForFeedback(String userId, TeacherTestEntity test, Map<Long, String> answers) {
+        try {
+            examFeedbackService.recordExamAnswers(userId, test, ExamFeedbackService.TEACHER_TEST, answers,
+                    examGrader::isCorrect);
+        } catch (RuntimeException e) {
+            log.warn("Could not record exam answers of test {} for {}: {}", test.getId(), userId, e.getMessage());
+        }
     }
 
     /** Keeps the student's tests table and statistics, which read TeacherTestResultEntity, working. */

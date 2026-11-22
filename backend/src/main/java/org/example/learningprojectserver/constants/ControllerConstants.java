@@ -257,4 +257,35 @@ public final class ControllerConstants {
     }
 
 
+    public static final class Ai {
+        private Ai() {}
+
+        public static final String AI_BASE_PATH          = BASE_API + "/ai";
+        public static final String STATUS                = "/status";
+        public static final String TUTOR_STREAM          = "/tutor/stream";
+        public static final String TUTOR_HISTORY         = "/tutor/history";
+        public static final String TUTOR_TRANSCRIBE      = "/tutor/transcribe";
+        public static final String OPEN_QUESTIONS        = "/open-questions";
+        public static final String OPEN_QUESTION_ANSWERS = "/open-questions/answers";
+    }
+    public static final class AiStaff {
+        private AiStaff() {}
+
+        public static final String AI_STAFF_BASE_PATH     = BASE_API + "/ai/staff";
+        public static final String QUESTIONS_GENERATE     = "/questions/generate";
+        public static final String QUESTION_DRAFTS        = "/questions/drafts";
+        public static final String QUESTION_DRAFT         = "/questions/drafts/{draftId}";
+        public static final String QUESTION_DRAFT_APPROVE = "/questions/drafts/{draftId}/approve";
+        public static final String QUESTION_DRAFT_REJECT  = "/questions/drafts/{draftId}/reject";
+        public static final String QUESTION_BANK          = "/questions/bank";
+        public static final String RUBRICS                = "/grading/rubrics";
+        public static final String RUBRIC_ANSWERS         = "/grading/rubrics/{rubricId}/answers";
+        public static final String ANSWER_SUGGEST         = "/grading/answers/{answerId}/suggest";
+        public static final String ANSWER_APPROVE         = "/grading/answers/{answerId}/approve";
+        public static final String INSIGHTS_LATEST        = "/insights/latest";
+        public static final String INSIGHTS_GENERATE      = "/insights/generate";
+        public static final String USAGE                  = "/usage";
+        public static final String SAFETY_FLAGGED         = "/safety/flagged";
+    }
+
 }

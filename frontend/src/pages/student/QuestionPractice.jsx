@@ -3,12 +3,12 @@ import {UserContext} from "../../context/UserContext.jsx";
 import {useParams} from "react-router-dom";
 import { serverErrorMessage } from "../../Utils/httpSetup.js";
 import axios from "axios";
-import ChatComponent from "../../components/ChatComponent.jsx";
+import AiTutorPanel from "../../components/ai/AiTutorPanel.jsx";
 import Cookies from "universal-cookie";
 import {
     AND,
-    AUTH_HEADER, CHAT_BASE_PATH, GENERATE_QUESTION, MESSAGE, QUESTION,
-    STUDENT_BASE_PATH, SUB_TOPIC, SUBJECT, SUBMIT_ANSWER, TEACHER_ID, TOPIC, USER_ID, WITH_MEMORY
+    AUTH_HEADER, GENERATE_QUESTION, QUESTION,
+    STUDENT_BASE_PATH, SUB_TOPIC, SUBJECT, SUBMIT_ANSWER, TOPIC, USER_ID
 } from "../../constants/pages.constants.js";
 import {BEARER_PREFIX} from "../../constants/shared.constant.js";
 import HintPanel from "../../features/adaptive/HintPanel.jsx";
@@ -26,9 +26,6 @@ function QuestionPractice(){
     const [isChatOpen, setIsChatOpen] = useState(false);
     const [newMessages, setNewMessages] = useState(0);
     const [isDrawing, setIsDrawing] = useState(false);
-    const [messages, setMessages] = useState([]);
-    const [userMessage, setUserMessage] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
     const [lastResult, setLastResult] = useState(null);
     const [sessionPoints, setSessionPoints] = useState(0);
     const cookies = new Cookies();
@@ -89,7 +86,6 @@ function QuestionPractice(){
 
     const fetchData = async () => {
         console.log(user.name,"ביקשתי שאלה")
-         setMessages([]);
 
         const response = await axios.get(
             `${STUDENT_BASE_PATH}${GENERATE_QUESTION}${QUESTION}${USER_ID}${user.userId}${AND}${SUBJECT}${subjectName}${AND}${TOPIC}${topicName}${AND}${SUB_TOPIC}${exerciseName}`,
@@ -143,42 +139,6 @@ function QuestionPractice(){
     const toggleChat = () => {
         setIsChatOpen(!isChatOpen);
         setNewMessages(0);
-    };
-
-    const sendMessage = async () => {
-        if (!userMessage.trim()) return;
-
-        setMessages((prevMessages) => [
-            ...prevMessages,
-            { sender: "user", content: userMessage },
-        ]);
-        setUserMessage("");
-        setIsLoading(true);
-
-        try {
-            const response = await axios.post(
-                `${CHAT_BASE_PATH}${WITH_MEMORY}${QUESTION}${USER_ID}${user.userId}${AND}${MESSAGE}${userMessage}`,
-                {
-                    headers: {
-                        [AUTH_HEADER]: `${BEARER_PREFIX}${token}`
-                    }
-                }
-            );
-
-            setMessages((prevMessages) => [
-                ...prevMessages,
-                { sender: "chatgpt", content: response.data },
-            ]);
-        } catch (error) {
-            console.error("Error sending message:", error);
-            const errorMessage = {
-                sender: "chatgpt",
-                content: serverErrorMessage(error) || "Failed to get response from ChatGPT.",
-            };
-            setMessages((prevMessages) => [...prevMessages, errorMessage]);
-        } finally {
-            setIsLoading(false);
-        }
     };
 
     return (
@@ -329,16 +289,9 @@ function QuestionPractice(){
                     </header>
 
 
-                    {/* גוף הצ'אט – גלילה פנימית */}
-                    <main className="flex-1 overflow-y-auto">
-                        <ChatComponent
-                            messages={messages}
-                            userMessage={userMessage}
-                            setUserMessage={setUserMessage}
-                            sendMessage={sendMessage}
-                            isLoading={isLoading}
-                            setIsOpen={setIsChatOpen}
-                        />
+                    {/* גוף הצ'אט – גלילה פנימית. המורה-עזר מכיר את התרגיל ואת התשובה שהתלמיד מקליד */}
+                    <main className="flex-1 min-h-0 overflow-hidden">
+                        <AiTutorPanel questionId={exercise?.id} studentAnswer={answer} />
                     </main>
                 </div>
             )}

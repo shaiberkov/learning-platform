@@ -97,6 +97,13 @@ function SideBar() {
                     ],
                 },
                 { to: "audit-log", label: "יומן פעולות" },
+
+                {
+                    label: "AI",
+                    children: [
+                        { to: "ai-school", label: "שימוש ובטיחות AI" },
+                    ],
+                },
             ];
         }
 
@@ -129,6 +136,9 @@ function SideBar() {
                 { to: "homework-board", label: "שיעורי בית" },
                 { to: "class-challenges", label: "אתגרי כיתה" },
                 { to: "student-accommodations", label: "התאמות לתלמידים" },
+                { to: "ai-questions", label: "יצירת שאלות עם AI" },
+                { to: "ai-grading", label: "בדיקת שאלות פתוחות" },
+                { to: "ai-insights", label: "תובנות שבועיות" },
             ],
             STUDENT: [
                 { to: "student-dashboard", label: "מסך בית" },
@@ -143,6 +153,8 @@ function SideBar() {
                 { to: "study-plan", label: "תוכנית למידה" },
                 { to: "achievements", label: "ההתקדמות שלי" },
                 { to: "accessibility", label: "נגישות" },
+                { to: "ai-tutor", label: "מורה-עזר AI" },
+                { to: "open-questions", label: "שאלות פתוחות" },
             ],
         }[user.role] || [];
     };

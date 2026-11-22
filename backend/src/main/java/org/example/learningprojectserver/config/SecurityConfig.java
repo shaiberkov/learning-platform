@@ -2,6 +2,7 @@ package org.example.learningprojectserver.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.DispatcherType;
 import org.example.learningprojectserver.filter.JwtAuthenticationFilter;
 import org.example.learningprojectserver.filter.LoggingFilter;
 import org.example.learningprojectserver.filter.MetricsFilter;
@@ -85,6 +86,9 @@ public class SecurityConfig {
                 // URL rules pick the roles; @PreAuthorize on the controllers (security/AccessGuard)
                 // checks that the user, school or test in the request belongs to the caller.
                 .authorizeHttpRequests(auth -> auth
+                        // The AI tutor streams over SSE: the stream's async/error dispatches carry no JWT,
+                        // the original request was already authorized.
+                        .dispatcherTypeMatchers(DispatcherType.ASYNC, DispatcherType.ERROR).permitAll()
                         .requestMatchers(
                                 V3_API_DOCS,
                                 SWAGGER_UI_RESOURCES,
@@ -121,6 +125,10 @@ public class SecurityConfig {
                         .requestMatchers(LESSON_CONTENT_ALL).hasAnyRole(STUDENT, TEACHER, SYSTEM_ADMIN)
                         .requestMatchers(HOMEWORK_ALL).hasAnyRole(STUDENT, TEACHER, SYSTEM_ADMIN)
                         .requestMatchers(ACCOMMODATION_ALL).hasAnyRole(STUDENT, TEACHER, SYSTEM_ADMIN)
+                        // AI routes are the first ones that really need the token: the userId comes from it
+                        // (quota, exam lock, ownership). Staff routes also check the role.
+                        .requestMatchers(AI_STAFF_ALL).hasAnyRole(TEACHER, SCHOOL_MANAGER, SYSTEM_ADMIN)
+                        .requestMatchers(AI_ALL).authenticated()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(metricsFilter, UsernamePasswordAuthenticationFilter.class)

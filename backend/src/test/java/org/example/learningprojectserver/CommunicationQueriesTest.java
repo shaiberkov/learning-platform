@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * so a query that does not parse or map fails here instead of at server start-up.
  */
 @DataJpaTest(properties = {
+        "spring.flyway.enabled=false",
         "spring.jpa.database-platform=org.hibernate.dialect.H2Dialect",
         "spring.jpa.hibernate.ddl-auto=create-drop",
         "spring.datasource.url=jdbc:h2:mem:lp;MODE=MySQL;DB_CLOSE_DELAY=-1"

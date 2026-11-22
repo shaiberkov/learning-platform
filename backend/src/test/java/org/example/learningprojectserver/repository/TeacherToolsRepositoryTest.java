@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @DataJpaTest
 @TestPropertySource(properties = {
+        "spring.flyway.enabled=false",
         "spring.datasource.driver-class-name=org.h2.Driver",
         "spring.jpa.database-platform=org.hibernate.dialect.H2Dialect",
         "spring.jpa.hibernate.ddl-auto=create-drop",

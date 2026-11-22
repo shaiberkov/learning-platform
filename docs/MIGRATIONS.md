@@ -1,94 +1,49 @@
 # Schema migrations
 
-There is no Flyway or Liquibase yet. Dev runs with `ddl-auto=update`, which creates new tables and adds new
-columns but never changes an existing column's type. Production runs with `ddl-auto=none`, so every schema
-change below must be applied to the production database **before** the code that needs it is deployed.
+The schema is managed by Flyway (`backend/src/main/resources/db/migration`, settings in
+`application.properties`). Production runs `ddl-auto=validate`: Hibernate checks the schema Flyway built and
+the app refuses to start when an entity and the database disagree. Dev still runs `ddl-auto=update`, after
+Flyway.
 
-## School administration and parents (branch `improve/g09-school`)
+| Version | What |
+|---|---|
+| `V1__baseline_schema.sql` | the schema of the entities before the improvement branches. Existing databases are recorded as version 1 without running it (`baseline-on-migrate=true`). |
+| `V2__improvement_branches.sql` | everything the improvement branches added (below). |
 
-Apply in this order. All statements are MySQL 8.
+## What V2 adds
 
-### 1. `user_entity.role`: allow `PARENT` (required, blocking)
+- New tables: `refresh_tokens` (auth), `audit_log`, `school_feature_flag`, `exam_attempt`, `exam_attempt_answer`,
+  `exam_integrity_event`, `review_item`, `topic_mastery`, `sub_topic_hint`, `test_answer_record`,
+  `student_engagement`, `student_daily_activity`, `student_badge`, `class_challenge`, `study_plan_task`,
+  `lesson_content`, `lesson_content_example`, `lesson_progress`, `homework`, `homework_student`,
+  `homework_submission`, `student_accommodation`, `ai_usage`, `ai_conversation_message`, `ai_question_draft`,
+  `ai_rubric`, `ai_open_answer`, `teacher_insight`, `bank_question`, `gradebook_assignment`, `gradebook_grade`,
+  `gradebook_weight`, `attendance_record`, `parent_entity`, `parent_student`, `school_year`, `semester`,
+  `archived_student_record`, `notification_entity`, `notification_preference_entity`,
+  `push_subscription_entity`, `calendar_token_entity`, `message_attachment_entity`.
+- New nullable columns: `lesson_entity.room`; `message_entity.read_at`, `batch_id`, `thread_id`,
+  `parent_message_id`, `attachment_id`, `scheduled_for`, `pending`; `practice_question_entity.hints_used`,
+  `points_earned`; `question_entity.difficulty_level`; `teacher_test_entity.title`, `published` (null =
+  published), `publish_at`, `template`, `version_label`, `exam_group_id`, `source_test_id`,
+  `shuffle_questions`, `shuffle_options`; `test_question_entity.kind`, `prompt`, `options_json`,
+  `answer_key_json`, `tolerance`, `points`, `position`.
+- `user_entity.role` changes from a native `ENUM` (which could not hold `PARENT`: saving a parent failed with
+  "Data truncated") to `VARCHAR(32)`.
+- Indexes and unique constraints of the new entities, plus `idx_user_username`, `idx_class_room_name`,
+  `idx_message_batch`, `idx_message_thread`, `idx_message_pending_schedule`.
 
-Hibernate 6 created `role` as a native `ENUM('SCHOOLMANAGER','STUDENT','SYSTEM_ADMIN','TEACHER')` (confirmed on
-the local dev database). Saving a user with `role = 'PARENT'` fails with `Data truncated for column 'role'`, which
-breaks linking a parent and rolls back any bulk import that contains a parent row. The entity now maps the
-column as `VARCHAR(32)`, so a fresh schema gets the right type, but existing databases need:
+V2 is safe on a database where `ddl-auto=update` already created some of this (a dev machine that ran one of
+the branches): tables use `IF NOT EXISTS`, and every column, index and constraint is added only when
+`information_schema` does not list it. On such a database, check that the existing tables match the entities
+(the app's `validate` run in a staging copy shows any difference).
 
-```sql
-ALTER TABLE user_entity MODIFY role VARCHAR(32) NOT NULL;
-```
+## Adding a migration
 
-In the `dev` profile `DevSchemaPatcher` runs this once at startup when it finds the old ENUM.
+1. Change the entity.
+2. Export the schema the entities map to: `./mvnw test -Dtest=SchemaExportTool -Dschema.export=target/schema.sql`.
+3. Write `V<n>__<what>.sql` with the difference (new tables, `ALTER TABLE ... ADD COLUMN`, indexes). Never edit
+   a migration that has shipped.
+4. Run the Testcontainers integration tests (they build an empty MySQL from all migrations and start the app
+   with `validate`).
 
-### 2. `lesson_entity.room` (required, blocking)
-
-`LessonEntity` now maps `room`. Without the column every lesson query fails, which breaks the existing
-teacher, class and student schedules and the upcoming-events feed, not only the timetable builder.
-
-```sql
-ALTER TABLE lesson_entity ADD COLUMN room VARCHAR(255) NULL;
-```
-
-### 3. Parents
-
-```sql
-CREATE TABLE parent_entity (
-    id BIGINT NOT NULL,
-    PRIMARY KEY (id),
-    CONSTRAINT fk_parent_entity_user FOREIGN KEY (id) REFERENCES user_entity (id)
-);
-
-CREATE TABLE parent_student (
-    parent_id  BIGINT NOT NULL,
-    student_id BIGINT NOT NULL,
-    CONSTRAINT fk_parent_student_parent  FOREIGN KEY (parent_id)  REFERENCES parent_entity (id),
-    CONSTRAINT fk_parent_student_student FOREIGN KEY (student_id) REFERENCES student_entity (id)
-);
-```
-
-### 4. School years, semesters and the year-close archive
-
-```sql
-CREATE TABLE school_year (
-    id         BIGINT NOT NULL AUTO_INCREMENT,
-    school_id  BIGINT NOT NULL,
-    name       VARCHAR(255) NOT NULL,
-    start_date DATE NULL,
-    end_date   DATE NULL,
-    active     BIT NOT NULL,
-    closed     BIT NOT NULL,
-    closed_at  DATETIME(6) NULL,
-    PRIMARY KEY (id),
-    CONSTRAINT fk_school_year_school FOREIGN KEY (school_id) REFERENCES school_entity (id)
-);
-
-CREATE TABLE semester (
-    id             BIGINT NOT NULL AUTO_INCREMENT,
-    school_year_id BIGINT NOT NULL,
-    name           VARCHAR(255) NOT NULL,
-    start_date     DATE NULL,
-    end_date       DATE NULL,
-    PRIMARY KEY (id),
-    CONSTRAINT fk_semester_school_year FOREIGN KEY (school_year_id) REFERENCES school_year (id)
-);
-
-CREATE TABLE archived_student_record (
-    id               BIGINT NOT NULL AUTO_INCREMENT,
-    school_year_id   BIGINT NOT NULL,
-    student_user_id  VARCHAR(255) NULL,
-    student_name     VARCHAR(255) NULL,
-    grade_name       VARCHAR(255) NULL,
-    class_name       VARCHAR(255) NULL,
-    tests_count      INT NOT NULL,
-    average_score    DOUBLE NULL,
-    outcome          VARCHAR(255) NULL,
-    next_grade_name  VARCHAR(255) NULL,
-    next_class_name  VARCHAR(255) NULL,
-    PRIMARY KEY (id),
-    CONSTRAINT fk_archive_school_year FOREIGN KEY (school_year_id) REFERENCES school_year (id)
-);
-CREATE INDEX idx_archive_year ON archived_student_record (school_year_id);
-```
-
-When Flyway is introduced, these become one versioned migration (for example `V2__school_admin_and_parents.sql`).
+Before the first production deploy with Flyway, follow `docs/BACKUP.md` ("Before the first production deploy").

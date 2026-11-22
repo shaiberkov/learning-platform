@@ -12,4 +12,7 @@ import org.springframework.stereotype.Repository;
 public interface TeacherTestRepository extends JpaRepository<TeacherTestEntity, Long> {
     @Query("SELECT t FROM TeacherTestEntity t WHERE t.id = :testId")
     TeacherTestEntity findTeacherTestByTestId(@Param("testId") Long testId);
+
+    @Query("SELECT COUNT(t) > 0 FROM TeacherTestEntity t JOIN t.questions q WHERE q.id = :questionId")
+    boolean isTeacherTestQuestion(@Param("questionId") Long questionId);
 }

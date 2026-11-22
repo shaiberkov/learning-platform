@@ -10,6 +10,7 @@ import org.example.learningprojectserver.enums.Role;
 import org.example.learningprojectserver.repository.*;
 import org.example.learningprojectserver.response.BasicResponse;
 import org.example.learningprojectserver.response.TestResultResponse;
+import org.example.learningprojectserver.service.ai.insights.TestAnswerRecorder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,7 @@ public class TestResultService {
     private final TeacherTestRepository teacherTestRepository;
     private final UserRepository userRepository;
     private final StudentRepository studentRepository;
+    private final TestAnswerRecorder testAnswerRecorder;
 
 
     public BasicResponse startTest(Long testId,String userId) {
@@ -182,6 +184,7 @@ public class TestResultService {
             testResult.setIncorrectQuestions(incorrectQuestions);
             testResult.setFinishTime(now.format(formatter));
             teacherTestResultRepository.save(testResult);
+            testAnswerRecorder.record(test.getId(), teacher.getUserId(), userId, test.getQuestions(), userAnswers);
 
 
             student.getTeacherTestsResult().add(testResult);

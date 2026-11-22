@@ -1,5 +1,6 @@
 package org.example.learningprojectserver.config;
 
+import jakarta.servlet.DispatcherType;
 import org.example.learningprojectserver.filter.JwtAuthenticationFilter;
 import org.example.learningprojectserver.filter.LoggingFilter;
 import org.example.learningprojectserver.filter.MetricsFilter;
@@ -58,6 +59,9 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        // The AI tutor streams over SSE: the stream's async/error dispatches carry no JWT,
+                        // the original request was already authorized.
+                        .dispatcherTypeMatchers(DispatcherType.ASYNC, DispatcherType.ERROR).permitAll()
                         .requestMatchers(
                                 V3_API_DOCS,
                                 SWAGGER_UI_RESOURCES,
@@ -79,6 +83,10 @@ public class SecurityConfig {
                         .requestMatchers(LESSON_ALL).permitAll()
                         .requestMatchers(SCHEDULE_ALL).permitAll()
                         .requestMatchers(UPCOMING_EVENTS_ALL).permitAll()
+                        // AI routes are the first ones that really need the token: the userId comes from it
+                        // (quota, exam lock, ownership). Staff routes also check the role.
+                        .requestMatchers(AI_STAFF_ALL).hasAnyRole(TEACHER, SCHOOL_MANAGER, SYSTEM_ADMIN)
+                        .requestMatchers(AI_ALL).authenticated()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(metricsFilter, UsernamePasswordAuthenticationFilter.class)

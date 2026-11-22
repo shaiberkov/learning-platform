@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { FaUser, FaLock } from 'react-icons/fa';
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { serverErrorMessage } from "../../Utils/httpSetup.js";
 import AuthShell from "../../components/ui/AuthShell.jsx";
 import {LOGIN, QUESTION, USER_BASE_PATH} from "../../constants/pages.constants.js";
 
@@ -43,6 +44,7 @@ function Login() {
             }
         } catch (error) {
             console.error('Error during login:', error);
+            setError(serverErrorMessage(error) || 'אירעה שגיאה במהלך ההתחברות');
         }
     };
 

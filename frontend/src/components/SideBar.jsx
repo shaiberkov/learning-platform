@@ -5,7 +5,8 @@ import React, {useContext, useEffect, useRef, useState} from "react";
 import {Link, NavLink, Route, useNavigate} from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 import logo from '../assets/logo.png';
-import Cookies from "universal-cookie";
+import axios from "axios";
+import {LOGOUT, USER_BASE_PATH} from "../constants/pages.constants.js";
 import ThemeDial from "./ui/ThemeDial.jsx";
 
 function SideBar() {
@@ -14,8 +15,6 @@ function SideBar() {
     const [openSubmenus, setOpenSubmenus] = useState({});
 
     const navigate = useNavigate();
-    const cookies = new Cookies();
-    const token = cookies.get('token');
 
     const toggleSubmenu = (label) => {
         setOpenSubmenus((prev) => ({
@@ -24,8 +23,12 @@ function SideBar() {
         }));
     };
 
-    const handleLogout = () => {
-        cookies.remove("token");
+    const handleLogout = async () => {
+        try {
+            await axios.post(`${USER_BASE_PATH}${LOGOUT}`);
+        } catch (error) {
+            console.error('Error during logout:', error);
+        }
         setUser(null);
         navigate("/login");
     };
@@ -184,7 +187,7 @@ function SideBar() {
                         </span>
                     )}
 
-                    {!token && (
+                    {!user && (
                         <div className="flex items-center gap-2">
                             <button
                                 className="btn btn-ghost btn-sm"

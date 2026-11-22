@@ -127,6 +127,8 @@ export const PagesConstants = {
         FORGOT_PASSWORD: '/forgot-password',
         RESET_PASSWORD: '/reset-password',
         GET_USER_PHONE: '/user/phone',
+        REFRESH_TOKEN: '/refresh-token',
+        LOGOUT: '/logout',
     },
 };
 
@@ -266,7 +268,9 @@ export const {
     VERIFY_OTP,
     FORGOT_PASSWORD,
     RESET_PASSWORD,
-    GET_USER_PHONE
+    GET_USER_PHONE,
+    REFRESH_TOKEN,
+    LOGOUT
 } = PagesConstants.User;
 
 

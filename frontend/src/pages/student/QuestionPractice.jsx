@@ -1,6 +1,7 @@
 import {useContext, useEffect, useRef, useState} from "react";
 import {UserContext} from "../../context/UserContext.jsx";
 import {useParams} from "react-router-dom";
+import { serverErrorMessage } from "../../Utils/httpSetup.js";
 import axios from "axios";
 import ChatComponent from "../../components/ChatComponent.jsx";
 import Cookies from "universal-cookie";
@@ -166,7 +167,7 @@ function QuestionPractice(){
             console.error("Error sending message:", error);
             const errorMessage = {
                 sender: "chatgpt",
-                content: "Failed to get response from ChatGPT.",
+                content: serverErrorMessage(error) || "Failed to get response from ChatGPT.",
             };
             setMessages((prevMessages) => [...prevMessages, errorMessage]);
         } finally {

@@ -3,6 +3,7 @@ import axios from "axios";
 import { UserContext } from "../../context/UserContext.jsx";
 import Cookies from "universal-cookie";
 import Select from "react-select";
+import FormShell from "../../components/ui/FormShell.jsx";
 import {FiBook, FiCheckCircle, FiUser} from "react-icons/fi";
 import {BEARER_PREFIX} from "../../constants/shared.constant.js";
 import {
@@ -89,29 +90,25 @@ function AssignStudentToClass() {
 
     return (
 
-        <div
-            className="w-full max-w-sm mb-8 mx-auto p-6 bg-white rounded-2xl shadow-xl mt-20 animate-fade-in text-right"
-            dir="rtl"
-        >
-            <h2 className="text-2xl font-bold text-green-600 mb-6 text-center">
-                שיבוץ תלמיד לכיתה
-            </h2>
+        <FormShell eyebrow="Students · תלמידים" title="שיבוץ תלמיד לכיתה" icon={<FiUser />} tone="icon-badge--mint">
 
-            <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-2">
-                <FiUser className="text-green-500"/>
-                ת"ז תלמיד:
-            </label>
-            <input
-                type="text"
-                value={studentId}
-                onChange={(e) => setStudentId(e.target.value)}
-                placeholder="הכנס תז"
-                className="w-full px-4 py-2 mb-4 border-2 border-green-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 transition-all duration-300"
-            />
+            <div>
+                <label className="label">
+                    <FiUser/>
+                    ת"ז תלמיד:
+                </label>
+                <input
+                    type="text"
+                    value={studentId}
+                    onChange={(e) => setStudentId(e.target.value)}
+                    placeholder="הכנס תז"
+                    className="field num"
+                />
+            </div>
 
-            <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-2">
-                    <FiBook className="text-green-500"/>
+            <div>
+                <label className="label">
+                    <FiBook/>
                     בחר כיתה:
                 </label>
                 <Select
@@ -122,14 +119,12 @@ function AssignStudentToClass() {
                     isClearable
                     isSearchable
                     className="text-right z-50"
+                    classNamePrefix="lp-select"
                     menuPortalTarget={typeof window !== "undefined" ? document.body : null}
                     menuPosition="fixed"
                     styles={{
                         control: (base) => ({
                             ...base,
-                            borderRadius: "0.5rem",
-                            borderColor: "#A7F3D0",
-                            boxShadow: "0 1px 4px rgba(0,0,0,0.1)",
                             direction: "rtl",
                             zIndex: 50,
                         }),
@@ -156,18 +151,18 @@ function AssignStudentToClass() {
 
             <button
                 onClick={assignStudent}
-                className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 rounded-lg shadow-md transition-all duration-300 hover:scale-[1.02] flex items-center justify-center gap-2"
+                className="btn btn-primary btn-block"
             >
-                <FiCheckCircle className="text-white"/>
+                <FiCheckCircle/>
                 שיבוץ תלמיד
             </button>
 
             {message && (
-                <div className="mt-4 text-sm text-red-600 text-center animate-pulse">
+                <div className="notice">
                     {message}
                 </div>
             )}
-        </div>
+        </FormShell>
         )
 
 }

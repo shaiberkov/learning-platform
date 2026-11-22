@@ -105,45 +105,49 @@ function TestsTable() {
     return (
 
 
-        <div className="max-w-4xl mx-auto p-4 bg-white rounded-3xl mt-20 shadow-md space-y-6 mb-8" dir="rtl">
-            <div className="bg-gradient-to-r from-green-400 via-lime-400 to-emerald-500 text-white py-4 px-6 rounded-t-3xl shadow-md">
-                <h2 className="text-2xl font-bold text-center flex items-center justify-center gap-2">
-                    <FaClipboardList className="text-white animate-pulse transform transition-transform duration-300 hover:scale-125 hover:rotate-6" />
-                    רשימת המבחנים שלך
-                </h2>
+        <div className="page page--wide" dir="rtl">
+            <div className="glass p-5 sm:p-8 space-y-6 reveal">
+            <div className="flex flex-wrap items-end justify-between gap-4">
+                <div className="space-y-2">
+                    <span className="eyebrow">Assessments · מבחנים</span>
+                    <h2 className="display text-4xl sm:text-5xl flex items-center gap-3">
+                        רשימת המבחנים שלך
+                    </h2>
+                </div>
+                <span className="chip num"><FaClipboardList /> {combinedTests.length}</span>
             </div>
 
             {combinedTests.length > 0 ? (
-                <div className="overflow-x-auto">
-                    <table className="w-full table-auto text-right border-collapse">
-                        <thead className="bg-gray-100 text-gray-700 font-semibold">
+                <div className="overflow-x-auto -mx-2 px-2">
+                    <table className="data-table min-w-[640px] text-right">
+                        <thead>
                         <tr>
-                            <th className="p-3 text-center align-middle">
-                                ציון / פעולה
+                            <th>
                                 <FaChartBar
-                                    className="inline text-indigo-500 mr-2 transform transition-transform duration-300 hover:scale-125 hover:text-indigo-700 hover:rotate-6"
+                                    className="inline ml-2"
                                 />
+                                ציון / פעולה
                             </th>
-                            <th className="p-3 text-center align-middle">
-                                משך המבחן
+                            <th>
                                 <FaClock
-                                    className="inline text-indigo-500 mr-2 transform transition-transform duration-300 hover:scale-125 hover:text-indigo-700 hover:rotate-8"/>
+                                    className="inline ml-2"/>
+                                משך המבחן
                             </th>
-                            <th className="p-3 text-center align-middle">
-                                תאריך
+                            <th>
                                 <FaRegCalendarAlt
-                                    className="inline text-indigo-500 mr-2 transform transition-transform duration-300 hover:scale-125 hover:text-indigo-700 hover:rotate-6"
+                                    className="inline ml-2"
                                 />
+                                תאריך
                             </th>
-                            <th className="p-3 text-center align-middle">
-                                תת נושא
+                            <th>
                                 <FaLayerGroup
-                                    className="inline text-purple-500 mr-2 transform transition-transform duration-300 hover:scale-125 hover:text-purple-700 hover:rotate-6"/>
+                                    className="inline ml-2"/>
+                                תת נושא
                             </th>
-                            <th className="p-3 text-center align-middle">
-                                נושא
+                            <th>
                                 <FaBookOpen
-                                    className="inline text-blue-500 mr-2 transform transition-transform duration-300 hover:scale-125 hover:text-blue-700 hover:rotate-6"/>
+                                    className="inline ml-2"/>
+                                נושא
                             </th>
                         </tr>
                         </thead>
@@ -151,17 +155,15 @@ function TestsTable() {
 
                         <tbody>
                         {combinedTests.map((test) => (
-                            <tr key={test.testId} className="hover:bg-gray-50 border-b">
-                                <td className="p-3 text-center">
+                            <tr key={test.testId}>
+                                <td>
                                     {test.score !== -1 ? (
                                         <span
-                                            className="text-black font-semibold flex items-center justify-center gap-1">
+                                            className={`chip num !text-sm !px-3 !py-1 ${test.score >= 60 ? 'chip--mint' : 'chip--danger'}`}>
             {test.score >= 60 ? (
-                <FaCheckCircle
-                    className="text-green-500 transition-transform duration-300 hover:scale-125 hover:rotate-6"/>
+                <FaCheckCircle/>
             ) : (
-                <FaTimesCircle
-                    className="text-red-500 transition-transform duration-300 hover:scale-125 hover:rotate-6"/>
+                <FaTimesCircle/>
             )}
                                             {test.score}
           </span>
@@ -174,18 +176,17 @@ function TestsTable() {
                                                     test.startTime
                                                 )
                                             }
-                                            className="bg-green-500 text-white px-4 py-1 rounded-xl shadow hover:bg-green-700 transition duration-300 flex items-center justify-center gap-1 mx-auto"
+                                            className="btn btn-primary btn-sm mx-auto"
                                         >
-                                            <FaPlay
-                                                className="transition-transform duration-300 hover:scale-125 hover:rotate-6"/>
+                                            <FaPlay/>
                                             התחל
                                         </button>
                                     )}
                                 </td>
-                                <td className="p-3 text-center">{test.timeLimitMinutes}</td>
-                                <td className="p-3 text-center">{test.startTime}</td>
-                                <td className="p-3 text-center">{test.topic}</td>
-                                <td className="p-3 text-center">{test.subject}</td>
+                                <td className="num">{test.timeLimitMinutes}</td>
+                                <td className="num" dir="ltr">{test.startTime}</td>
+                                <td>{test.topic}</td>
+                                <td className="font-semibold !text-ink">{test.subject}</td>
                             </tr>
                         ))}
                         </tbody>
@@ -193,28 +194,28 @@ function TestsTable() {
                     </table>
                 </div>
             ) : (
-                <p className="text-center text-gray-600 font-semibold mt-4">
+                <p className="faint text-center py-10">
                     אין מבחנים זמינים כעת
                 </p>
             )}
+            </div>
 
             {/* Modal */}
             {showModal && (
 
 
                 <div
-                    className="fixed inset-0  bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 px-4">
+                    className="modal-backdrop">
                     <div
-                        className="bg-white p-6 rounded-3xl shadow-2xl w-full max-w-md space-y-4 text-right animate-scaleIn"
+                        className="modal space-y-5 text-right"
                         dir="rtl"
                     >
-                        <div className="flex items-center gap-2 text-green-600 text-xl font-bold">
-                            <FaExclamationCircle
-                                className="text-green-500 text-2xl transition-transform duration-300 hover:rotate-12 hover:scale-125"/>
-                            הודעה
+                        <div className="flex items-center gap-3">
+                            <span className="icon-badge"><FaExclamationCircle/></span>
+                            <span className="title text-xl">הודעה</span>
                         </div>
 
-                        <p className="text-gray-800 leading-relaxed">{modalMessage}</p>
+                        <p className="muted leading-relaxed">{modalMessage}</p>
 
                         <div className="flex justify-end gap-2 pt-2">
                             {pendingNavigation ? (
@@ -227,7 +228,7 @@ function TestsTable() {
                                             const updatedLimit = pendingNavigation.timeLimit - diff;
                                             navigate(`/test/${pendingNavigation.testId}/${updatedLimit}`);
                                         }}
-                                        className="bg-green-600 text-white px-4 py-2 rounded-xl hover:bg-green-700 transition duration-300"
+                                        className="btn btn-primary"
                                     >
                                         המשך
                                     </button>
@@ -236,7 +237,7 @@ function TestsTable() {
                                             setShowModal(false);
                                             setPendingNavigation(null);
                                         }}
-                                        className="bg-gray-300 text-gray-800 px-4 py-2 rounded-xl hover:bg-gray-400 transition duration-300"
+                                        className="btn btn-ghost"
                                     >
                                         חזור
                                     </button>
@@ -244,7 +245,7 @@ function TestsTable() {
                             ) : (
                                 <button
                                     onClick={() => setShowModal(false)}
-                                    className="bg-gray-300 text-gray-800 px-4 py-2 rounded-xl hover:bg-gray-400 transition duration-300"
+                                    className="btn btn-ghost"
                                 >
                                     סגור
                                 </button>

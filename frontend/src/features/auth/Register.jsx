@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {FaUser, FaEnvelope, FaLock, FaKey, FaPhone} from 'react-icons/fa';
 import {useNavigate} from 'react-router-dom';
 import axios from "axios";
+import AuthShell from "../../components/ui/AuthShell.jsx";
 import {ADD_USER, LOGIN, QUESTION, USER_BASE_PATH} from "../../constants/pages.constants.js";
 
 function Register() {
@@ -163,159 +164,164 @@ function Register() {
 
     return (
 
-        <div className="flex justify-center mt-15 px-4 py-10 pt-12 animate-fade-in">
+        <AuthShell
+            eyebrow="Create account · הרשמה"
+            title={<>מרחב שלם <span className="gradient-text">ללמוד בו.</span></>}
+            subtitle="חשבון אחד לכל הכלים: מערכת שעות, תרגול אינטראקטיבי, מבחנים והודעות מבית הספר."
+        >
             <form
                 onSubmit={handleSubmit}
-                className="bg-green p-8 rounded-4xl shadow-xl w-full max-w-md space-y-4 transition duration-300"
+                className="glass glass--strong p-6 sm:p-9 w-full space-y-4"
             >
-                <h2 className="text-2xl font-bold text-center text-gray-800 mb-3">
-                    הרשמה
-                </h2>
+                <div className="space-y-1 mb-3">
+                    <span className="eyebrow">01 — פרטים אישיים</span>
+                    <h2 className="title text-3xl">
+                        הרשמה
+                    </h2>
+                </div>
 
                 {/* שם משתמש */}
-                <div className="relative">
-                    <FaUser
-                        className="absolute top-3 left-3 text-blue-500 drop-shadow-md hover:scale-120 transition duration-200"/>
-                    <input
-                        type="text"
-                        name="username"
-                        value={formData.username}
-                        onChange={handleChange}
-                        placeholder="שם מלא"
-                        required
-                        className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 transition"
-                    />
+                <div>
+                    <div className="field-wrap">
+                        <FaUser/>
+                        <input
+                            type="text"
+                            name="username"
+                            value={formData.username}
+                            onChange={handleChange}
+                            placeholder="שם מלא"
+                            required
+                            className="field"
+                        />
+                    </div>
                     {errors.username && formData.username && (
-                        <p className="text-red-500 text-sm mt-1">{errors.username}</p>
+                        <p className="field-error">{errors.username}</p>
                     )}
                 </div>
 
-                {/* ת"ז */}
-                <div className="relative">
-                    <FaUser
-                        className="absolute top-3 left-3 text-purple-500 drop-shadow-md hover:scale-120 transition duration-200"/>
-                    <input
-                        type="number"
-                        name="userId"
-                        value={formData.userId}
-                        onChange={handleChange}
-                        placeholder="תז"
-                        required
-                        className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-300 transition"
-                    />
-                    {errors.userId && formData.userId && (
-                        <p className="text-red-500 text-sm mt-1">{errors.userId}</p>
-                    )}
+                <div className="grid sm:grid-cols-2 gap-4">
+                    {/* ת"ז */}
+                    <div>
+                        <div className="field-wrap">
+                            <FaUser/>
+                            <input
+                                type="number"
+                                name="userId"
+                                value={formData.userId}
+                                onChange={handleChange}
+                                placeholder="תז"
+                                required
+                                className="field num"
+                            />
+                        </div>
+                        {errors.userId && formData.userId && (
+                            <p className="field-error">{errors.userId}</p>
+                        )}
+                    </div>
+
+                    {/* טלפון */}
+                    <div>
+                        <div className="field-wrap">
+                            <FaPhone/>
+                            <input
+                                type="tel"
+                                name="phone"
+                                value={formData.phone}
+                                onChange={handleChange}
+                                placeholder="מספר טלפון"
+                                required
+                                className="field num"
+                            />
+                        </div>
+                        {errors.phone && formData.phone && (
+                            <p className="field-error">{errors.phone}</p>
+                        )}
+                    </div>
                 </div>
 
                 {/* אימייל */}
-                <div className="relative">
-                    <FaEnvelope
-                        className="absolute top-3 left-3 text-orange-500 drop-shadow-md hover:scale-120 transition duration-200"/>
-                    <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        placeholder="אימייל"
-                        required
-                        className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300 transition"
-                    />
+                <div>
+                    <div className="field-wrap">
+                        <FaEnvelope/>
+                        <input
+                            type="email"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            placeholder="אימייל"
+                            required
+                            className="field"
+                        />
+                    </div>
                     {errors.email && formData.email && (
-                        <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+                        <p className="field-error">{errors.email}</p>
                     )}
                 </div>
 
-                {/* טלפון */}
-                <div className="relative">
-                    <FaPhone
-                        className="absolute top-3 left-3 text-green-500 drop-shadow-md hover:scale-120 transition duration-200"/>
-                    <input
-                        type="tel"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleChange}
-                        placeholder="מספר טלפון"
-                        required
-                        className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-300 transition"
-                    />
-                    {errors.phone && formData.phone && (
-                        <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
-                    )}
-                </div>
+                <div className="grid sm:grid-cols-2 gap-4">
+                    {/* סיסמה */}
+                    <div>
+                        <div className="field-wrap">
+                            <FaLock/>
+                            <input
+                                type="password"
+                                name="password"
+                                value={formData.password}
+                                onChange={handleChange}
+                                placeholder="סיסמא"
+                                required
+                                className="field"
+                            />
+                        </div>
+                        {errors.password && formData.password && (
+                            <p className="field-error">{errors.password}</p>
+                        )}
+                    </div>
 
-                {/* סיסמה */}
-                <div className="relative">
-                    <FaLock
-                        className="absolute top-3 left-3 text-red-500 drop-shadow-md hover:scale-120 transition duration-200"/>
-                    <input
-                        type="password"
-                        name="password"
-                        value={formData.password}
-                        onChange={handleChange}
-                        placeholder="סיסמא"
-                        required
-                        className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-300 transition"
-                    />
-                    {errors.password && formData.password && (
-                        <p className="text-red-500 text-sm mt-1">{errors.password}</p>
-                    )}
-                </div>
-
-                {/* אימות סיסמה */}
-                <div className="relative">
-                    <FaKey
-                        className="absolute top-3 left-3 text-cyan-500 drop-shadow-md hover:scale-120 transition duration-200"/>
-                    <input
-                        type="password"
-                        name="confirmPassword"
-                        value={formData.confirmPassword}
-                        onChange={handleChange}
-                        placeholder="אימות סיסמא"
-                        required
-                        className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-300 transition"
-                    />
-                    {errors.confirmPassword && formData.confirmPassword && (
-                        <p className="text-red-500 text-sm mt-1">
-                            {errors.confirmPassword}
-                        </p>
-                    )}
+                    {/* אימות סיסמה */}
+                    <div>
+                        <div className="field-wrap">
+                            <FaKey/>
+                            <input
+                                type="password"
+                                name="confirmPassword"
+                                value={formData.confirmPassword}
+                                onChange={handleChange}
+                                placeholder="אימות סיסמא"
+                                required
+                                className="field"
+                            />
+                        </div>
+                        {errors.confirmPassword && formData.confirmPassword && (
+                            <p className="field-error">
+                                {errors.confirmPassword}
+                            </p>
+                        )}
+                    </div>
                 </div>
 
 
                 <button
                     type="submit"
                     disabled={hasEmptyFields()}
-                    className="w-full relative py-2 rounded-lg bg-gradient-to-r from-blue-400 to-green-400 text-white font-semibold shadow-md hover:from-blue-600 hover:to-green-600 transition-all duration-300 ease-in-out disabled:opacity-50 overflow-hidden"
+                    className="btn btn-primary btn-block !mt-6"
                 >
-                        <span
-                            className="absolute inset-0 rounded-lg bg-white opacity-0 hover:opacity-10 transition-opacity duration-300"></span>
                     <span className="z-10 relative">הרשם</span>
                 </button>
 
-                <p className="text-center text-sm text-gray-700 mt-6">
+                <p className="muted text-center text-sm pt-4 border-t border-dashed border-line">
                     <a
                         href="/login"
-                        className="inline-block text-green-500 font-semibold relative group transition duration-300"
+                        className="link"
                     >
-
-                        <span
-                            className="absolute left-0 bottom-0 w-full h-0.5 bg-green-500 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300"/>
-
-                        <span
-                            className="relative z-10 group-hover:text-green-800 flex items-center justify-center gap-1">
-                            <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                 😀
-                         </span>
-                            התחבר כאן
-                            </span>
+                        התחבר כאן
                     </a>{" "}?
                     אם כבר יש לך חשבון
                 </p>
 
 
             </form>
-        </div>
+        </AuthShell>
 
     );
 }

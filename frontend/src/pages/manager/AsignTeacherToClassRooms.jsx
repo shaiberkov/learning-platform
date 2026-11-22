@@ -5,6 +5,7 @@ import Cookies from "universal-cookie";
 import { UserContext } from "../../context/UserContext.jsx";
 import axios from "axios";
 import Select from "react-select";
+import FormShell from "../../components/ui/FormShell.jsx";
 import {FiUserCheck, FiUsers} from "react-icons/fi";
 import {BEARER_PREFIX} from "../../constants/shared.constant.js";
 import {
@@ -88,36 +89,31 @@ function AssignTeacherToClassRooms() {
     const classOptions = classesName.map(name => ({ label: name, value: name }));
 
     return (
-        <div
-            className="w-full max-w-xs sm:max-w-sm mx-auto p-4 sm:p-6 bg-white rounded-2xl shadow-xl mt-20 animate-fade-in text-right mb-8"
-            dir="rtl"
-        >
-            <h2 className="text-xl sm:text-2xl font-bold text-black-600 mb-6 text-center">
-                שיבוץ מורה לכיתה
-            </h2>
+        <FormShell eyebrow="Teachers · מורים" title="שיבוץ מורה לכיתה" icon={<FiUsers />}>
 
             {/* מזהה מורה */}
-            <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-2">
-                <FiUserCheck
-                    className="text-green-500 transition-colors duration-300 hover:text-blue-600 hover:scale-110"/>
-                מזהה מורה:
-            </label>
-            <input
-                type="text"
-                value={teacherId}
-                onChange={(e) => setTeacherId(e.target.value)}
-                placeholder="תז..."
-                className="w-full px-3 py-2 mb-4 border-2 border-green-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 transition-all duration-300"
-                required
-            />
+            <div>
+                <label className="label">
+                    <FiUserCheck/>
+                    מזהה מורה:
+                </label>
+                <input
+                    type="text"
+                    value={teacherId}
+                    onChange={(e) => setTeacherId(e.target.value)}
+                    placeholder="תז..."
+                    className="field num"
+                    required
+                />
+            </div>
 
             {/* בחירת כיתות */}
-            <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-2">
-                <FiUsers className="text-green-500 transition-colors duration-300 hover:text-blue-600 hover:scale-110"/>
-                בחר כיתות:
-            </label>
-            <div className="mb-4 z-[999]"
+            <div className="z-[999]"
             >
+                <label className="label">
+                    <FiUsers/>
+                    בחר כיתות:
+                </label>
                 <Select
                     isMulti
                     options={classOptions}
@@ -128,17 +124,12 @@ function AssignTeacherToClassRooms() {
                     placeholder="בחר כיתות..."
                     noOptionsMessage={() => "לא נמצאו כיתות מתאימות"}
                     className="react-select-container"
-                    classNamePrefix="react-select"
+                    classNamePrefix="lp-select"
                     menuPortalTarget={document.body}
                     styles={{
                         control: (base) => ({
                             ...base,
-                            borderColor: "#A7F3D0",
-                            boxShadow: "none",
                             direction: "rtl", // תיבת הבחירה הראשית
-                            "&:hover": {
-                                borderColor: "#34D399",
-                            },
                         }),
                         menu: (base) => ({
                             ...base,
@@ -163,19 +154,19 @@ function AssignTeacherToClassRooms() {
             {/* כפתור */}
             <button
                 onClick={handleAssign}
-                className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 rounded-lg shadow-md transition-all duration-300 hover:scale-[1.02] flex items-center justify-center gap-2"
+                className="btn btn-primary btn-block"
             >
-                <FiUsers className="text-white transition-transform duration-300 hover:scale-110"/>
+                <FiUsers/>
                 שבץ מורה
             </button>
 
             {/* הודעה */}
             {message && (
-                <div className="mt-4 text-sm text-red-600 text-center animate-pulse">
+                <div className="notice">
                     {message}
                 </div>
             )}
-        </div>
+        </FormShell>
 
     );
 }

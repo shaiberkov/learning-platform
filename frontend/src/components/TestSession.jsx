@@ -8,6 +8,8 @@ import { UserContext } from '../context/UserContext.jsx';
 import { FiBookOpen, FiSend } from 'react-icons/fi';
 import { FaExclamationCircle } from 'react-icons/fa';
 import {BEARER_PREFIX} from "../constants/shared.constant.js";
+import ProgressRing from "./ui/ProgressRing.jsx";
+import OrbitLoader from "./ui/OrbitLoader.jsx";
 import {
     AND,
     AUTH_HEADER, CHECK_PRACTICE_TEST, CHECK_TEACHER_TEST, DIFFICULTY, GENERATE_PRACTICE_TEST,
@@ -151,73 +153,19 @@ const TestSession = ({ type }) => {
 
     if(testResultLoader){
         return (
-            <div className="flex flex-col justify-center items-center h-screen w-full px-4 animate-fadeIn">
-                <div className="relative w-24 h-24 sm:w-20 sm:h-20 mb-6">
-                    <div className="absolute inset-0 rounded-full border-[6px] border-green-400 border-t-transparent animate-spin shadow-green-300 shadow-xl" />
-                    <div className="absolute inset-3 bg-white rounded-full flex items-center justify-center">
-                        <svg
-                            className="w-8 h-8 sm:w-6 sm:h-6 text-green-600 animate-ping-slow"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            viewBox="0 0 24 24"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M12 8v4l3 3"
-                            />
-                        </svg>
-                    </div>
-                </div>
-
-                <h2 className="text-green-800 text-2xl sm:text-xl font-bold text-center mb-2 animate-bounce">
-                    מחשב את התשובות שלך...
-                </h2>
-
-                <div className="flex space-x-1 mt-2">
-                    <span className="w-2 h-2 bg-green-500 rounded-full animate-bounce" />
-                    <span className="w-2 h-2 bg-green-500 rounded-full animate-bounce delay-150" />
-                    <span className="w-2 h-2 bg-green-500 rounded-full animate-bounce delay-300" />
-                </div>
-
-                <p className="text-gray-600 mt-4 text-sm sm:text-xs text-center max-w-xs animate-fadeIn delay-500">
-                    אנחנו מנתחים את התשובות שלך כדי להציג את התוצאה המדויקת ביותר
-                </p>
-            </div>
+            <OrbitLoader
+                title="מחשב את התשובות שלך..."
+                subtitle="אנחנו מנתחים את התשובות שלך כדי להציג את התוצאה המדויקת ביותר"
+            />
         );
 
     }
     if (fetchTestLoader) {
         return (
-            <div className="flex flex-col justify-center items-center h-screen w-full bg-transparent px-4 animate-fadeIn">
-                <div className="relative w-24 h-24 sm:w-20 sm:h-20 mb-6">
-                    <div className="absolute inset-0 rounded-full border-[6px] border-t-green-500 border-b-green-300 border-l-transparent border-r-transparent animate-spin shadow-lg shadow-green-300" />
-                    <div className="absolute inset-2 bg-white rounded-full flex items-center justify-center">
-                        <svg
-                            className="w-8 h-8 sm:w-6 sm:h-6 text-green-600 animate-pulse drop-shadow-md"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            viewBox="0 0 24 24"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                            />
-                        </svg>
-                    </div>
-                </div>
-
-                <h2 className="text-green-700 text-2xl sm:text-xl font-extrabold text-center animate-bounce">
-                    טוען את המבחן...
-                </h2>
-
-                <p className="text-gray-600 mt-4 text-sm sm:text-xs text-center max-w-xs animate-fadeIn delay-500">
-                    אנא המתן מספר שניות בזמן שהמערכת מכינה עבורך את המבחן
-                </p>
-            </div>
+            <OrbitLoader
+                title="טוען את המבחן..."
+                subtitle="אנא המתן מספר שניות בזמן שהמערכת מכינה עבורך את המבחן"
+            />
         );
     }
 
@@ -226,125 +174,132 @@ const TestSession = ({ type }) => {
 
     return (
         <div
-            className="w-full max-w-full sm:max-w-2xl mx-auto p-4 sm:p-6 bg-white rounded-2xl shadow-xl mt-20 text-right animate-fade-in mb-8"
+            className="page page--wide space-y-4 sm:space-y-5"
             dir="rtl"
         >
-            {type === 'teacherTest' && (
-                <div className="mb-6">
-                    <div className="flex items-center justify-center gap-3 bg-green-100 rounded-xl py-3 px-4 shadow-inner mb-4">
-                        <FiBookOpen className="text-green-600 text-2xl" />
-                        <h2 className="text-2xl font-bold text-green-700">פרטי המבחן</h2>
-                    </div>
-                    <div className="bg-gray-50 border border-gray-200 rounded-2xl shadow-md px-5 py-4 space-y-3">
-                        <p className="text-sm text-gray-700">
-                            <span className="font-semibold text-green-700">📘 מקצוע: </span>
-                            {questions[0]?.subject || 'לא צוין'}
-                        </p>
-                        <p className="text-sm text-gray-700">
-                            <span className="font-semibold text-green-700">📚 נושא: </span>
-                            {questions[0]?.topic || 'לא צוין'}
-                        </p>
-                        <p className="text-sm text-gray-700">
-                            <span className="font-semibold text-green-700">🔢 מספר שאלות: </span>
-                            {questions.length}
-                        </p>
-                    </div>
-                </div>
-            )}
-
-            {type === 'practiceTest' && (
-                <div className="mb-6">
-                    <div className="flex items-center justify-center gap-3 bg-green-100 rounded-xl py-3 px-4 shadow-inner mb-4">
-                        <FiBookOpen className="text-green-600 text-2xl" />
-                        <h2 className="text-2xl font-bold text-green-700">מבחן תרגול</h2>
-                    </div>
-                    <div className="bg-gray-50 border border-gray-200 rounded-2xl shadow-md px-5 py-4 space-y-3">
-                        <p className="text-sm text-gray-700">
-                            <span className="font-semibold text-green-700">📘 מקצוע: </span>
-                            {selectedSubject || 'לא נבחר'}
-                        </p>
-                        <p className="text-sm text-gray-700">
-                            <span className="font-semibold text-green-700">📚 נושא: </span>
-                            {selectedTopic || 'לא נבחר'}
-                        </p>
-                        <p className="text-sm text-gray-700">
-                            <span className="font-semibold text-green-700">🎯 רמה: </span>
-                            {selectedDifficulty || 'לא נבחר'}
-                        </p>
-                        <p className="text-sm text-gray-700">
-                            <span className="font-semibold text-green-700">🔢 מספר שאלות: </span>
-                            {selectedQuestionCount || 0}
-                        </p>
-                    </div>
-                </div>
-            )}
-
-            {!testResults && (
-                <>
-                    <div className="mb-6">
-                        <div className="w-full h-4 bg-gray-200 rounded-full overflow-hidden">
-                            <div
-                                className="h-full bg-gradient-to-r from-green-400 to-emerald-500 transition-all duration-300"
-                                style={{ width: `${progress}%` }}
-                            />
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-5">
+                {type === 'teacherTest' && (
+                    <div className="md:col-span-7 glass p-6 sm:p-7 reveal">
+                        <div className="flex items-center gap-3 mb-5">
+                            <span className="icon-badge icon-badge--mint"><FiBookOpen /></span>
+                            <div>
+                                <span className="eyebrow">Exam · מבחן</span>
+                                <h2 className="title text-2xl mt-0.5">פרטי המבחן</h2>
+                            </div>
                         </div>
-                        <p className="text-sm mt-1 text-center text-gray-600">
-                            {Math.round(progress)}%
-                        </p>
+                        <dl className="grid grid-cols-3 gap-3">
+                            <div className="glass--sunk p-3">
+                                <dt className="faint text-xs">מקצוע</dt>
+                                <dd className="font-semibold text-ink mt-1">{questions[0]?.subject || 'לא צוין'}</dd>
+                            </div>
+                            <div className="glass--sunk p-3">
+                                <dt className="faint text-xs">נושא</dt>
+                                <dd className="font-semibold text-ink mt-1">{questions[0]?.topic || 'לא צוין'}</dd>
+                            </div>
+                            <div className="glass--sunk p-3">
+                                <dt className="faint text-xs">מספר שאלות</dt>
+                                <dd className="num font-semibold text-ink mt-1">{questions.length}</dd>
+                            </div>
+                        </dl>
                     </div>
-                    <div className="mb-6 text-sm flex items-center justify-center gap-2 text-gray-800">
-                        <strong>⏰ זמן נותר:</strong> {formatTime(timeLeft)}
+                )}
+
+                {type === 'practiceTest' && (
+                    <div className="md:col-span-7 glass p-6 sm:p-7 reveal">
+                        <div className="flex items-center gap-3 mb-5">
+                            <span className="icon-badge"><FiBookOpen /></span>
+                            <div>
+                                <span className="eyebrow">Practice · תרגול</span>
+                                <h2 className="title text-2xl mt-0.5">מבחן תרגול</h2>
+                            </div>
+                        </div>
+                        <dl className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                            <div className="glass--sunk p-3">
+                                <dt className="faint text-xs">מקצוע</dt>
+                                <dd className="font-semibold text-ink mt-1">{selectedSubject || 'לא נבחר'}</dd>
+                            </div>
+                            <div className="glass--sunk p-3">
+                                <dt className="faint text-xs">נושא</dt>
+                                <dd className="font-semibold text-ink mt-1">{selectedTopic || 'לא נבחר'}</dd>
+                            </div>
+                            <div className="glass--sunk p-3">
+                                <dt className="faint text-xs">רמה</dt>
+                                <dd className="font-semibold text-ink mt-1">{selectedDifficulty || 'לא נבחר'}</dd>
+                            </div>
+                            <div className="glass--sunk p-3">
+                                <dt className="faint text-xs">מספר שאלות</dt>
+                                <dd className="num font-semibold text-ink mt-1">{selectedQuestionCount || 0}</dd>
+                            </div>
+                        </dl>
                     </div>
-                </>
-            )}
+                )}
+
+                {!testResults && (
+                    <div className="md:col-span-5 glass tile p-6 sm:p-7 flex items-center justify-between gap-6 reveal" style={{ "--i": 1 }}>
+                        <div className="space-y-2">
+                            <span className="eyebrow">זמן נותר</span>
+                            <div className={`num text-5xl sm:text-6xl font-semibold ${timeLeft <= 60 ? 'text-danger' : 'text-ink'}`} dir="ltr">
+                                {formatTime(timeLeft)}
+                            </div>
+                            <span className="faint text-xs">התקדמות במבחן</span>
+                        </div>
+                        <ProgressRing value={progress} size={112} stroke={9}>
+                            <span className="num text-xl font-semibold text-ink">{Math.round(progress)}%</span>
+                        </ProgressRing>
+                    </div>
+                )}
+            </div>
 
             {testResults ? (
-                <div className="bg-white rounded-3xl p-5 shadow-md space-y-6" dir="ltr">
-                    <h3 className="text-lg font-bold text-center text-green-700 border-b pb-2">
-                        📊 תוצאות המבחן
-                    </h3>
-                    <div className="flex flex-col gap-1 items-end sm:items-center">
-                        <p className="text-base text-gray-700">
-                            🧠 ציון:{' '}
-                            <span className="font-bold text-green-600">
-                {testResults.score}
-              </span>
-                        </p>
-                        <p className="text-base text-gray-700">
-                            🎯 תשובות נכונות:{' '}
-                            <span className="text-green-600 font-semibold">
-                {testResults.correctAnswers} מתוך {questions.length}
-              </span>
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-5">
+                    <div className="md:col-span-5 glass tile p-7 sm:p-9 flex flex-col items-center justify-center text-center gap-5 reveal">
+                        <span className="eyebrow">תוצאות המבחן</span>
+                        <ProgressRing value={testResults.score} size={190} stroke={14}>
+                            <span className="grid">
+                                <span className="num text-5xl font-semibold text-ink">{testResults.score}</span>
+                                <span className="faint text-xs mt-1">ציון</span>
+                            </span>
+                        </ProgressRing>
+                        <p className="muted">
+                            תשובות נכונות:{' '}
+                            <span className="num font-semibold text-mint">
+                                {testResults.correctAnswers} מתוך {questions.length}
+                            </span>
                         </p>
                     </div>
-                    <div className="flex flex-col md:flex-row gap-6 md:justify-between">
-                        <div className="flex-1">
-                            <h4 className="font-semibold text-green-600 mb-2 flex items-center gap-1">
-                                ✅ שאלות נכונות:
+
+                    <div className="md:col-span-7 grid sm:grid-cols-2 gap-4 sm:gap-5" dir="ltr">
+                        <div className="glass p-6 reveal" style={{ "--i": 1 }} dir="rtl">
+                            <h4 className="title text-lg mb-4 flex items-center gap-2">
+                                <span className="w-2.5 h-2.5 rotate-45 rounded-[3px] bg-mint shadow-[0_0_12px_var(--mint)]" />
+                                שאלות נכונות:
                             </h4>
-                            <ul className="list-disc pr-5 space-y-1 text-green-700">
+                            <ul className="space-y-2" dir="ltr">
                                 {testResults.correctAnswerList.map((q, i) => (
                                     <li
                                         key={i}
-                                        className="flex items-center gap-2 hover:scale-[1.02] transition"
+                                        className="row-card !py-2.5 num text-sm text-ink flex items-center gap-2 !border-[color-mix(in_oklab,var(--mint)_35%,transparent)] reveal"
+                                        style={{ "--i": Math.min(i, 8) }}
                                     >
-                                        <span className="animate-bounce text-green-400">😊</span>
+                                        <span className="text-mint">✓</span>
                                         <span>{q}</span>
                                     </li>
                                 ))}
                             </ul>
                         </div>
-                        <div className="flex-1">
-                            <h4 className="font-semibold text-red-600 mb-2 flex items-center gap-1">
-                                ❌ שאלות לא נכונות:
+                        <div className="glass p-6 reveal" style={{ "--i": 2 }} dir="rtl">
+                            <h4 className="title text-lg mb-4 flex items-center gap-2">
+                                <span className="w-2.5 h-2.5 rotate-45 rounded-[3px] bg-danger shadow-[0_0_12px_var(--danger)]" />
+                                שאלות לא נכונות:
                             </h4>
-                            <ul className="list-disc pr-5 space-y-1 text-red-700">
+                            <ul className="space-y-2" dir="ltr">
                                 {testResults.incorrectAnswerList.map((q, i) => (
                                     <li
                                         key={i}
-                                        className="flex items-center gap-2 hover:scale-[1.02] transition"
+                                        className="row-card !py-2.5 num text-sm text-ink flex items-center gap-2 !border-[color-mix(in_oklab,var(--danger)_30%,transparent)] reveal"
+                                        style={{ "--i": Math.min(i, 8) }}
                                     >
-                                        <span className="animate-pulse text-red-400">😞</span>
+                                        <span className="text-danger">✕</span>
                                         <span>{q}</span>
                                     </li>
                                 ))}
@@ -359,43 +314,53 @@ const TestSession = ({ type }) => {
                         if (type === 'teacherTest') setShowConfirm(true);
                         else submitTest();
                     }}
-                    className="space-y-6"
+                    className="space-y-5"
                 >
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         {questions.map((q, i) => (
-                            <div key={q.id} className="mb-4" dir="ltr">
-                                <label className="block font-semibold mb-1 text-left">
+                            <div
+                                key={q.id}
+                                className={`glass tile p-5 reveal-scroll ${userAnswers[q.id] ? '!border-[color-mix(in_oklab,var(--mint)_45%,transparent)]' : ''}`}
+                                dir="ltr"
+                            >
+                                <div className="flex items-center justify-between mb-4">
+                                    <span className="num text-xs text-ink-3">Q{String(i + 1).padStart(2, '0')}</span>
+                                    <span className={`w-2 h-2 rotate-45 rounded-[2px] transition-all duration-500 ${userAnswers[q.id] ? 'bg-mint shadow-[0_0_10px_var(--mint)]' : 'bg-line-strong'}`} />
+                                </div>
+                                <label className="block num text-lg font-medium text-ink mb-4 text-left leading-snug">
                                     {i + 1}. {q.questionText}
                                 </label>
                                 <input
                                     type="text"
                                     value={userAnswers[q.id] || ''}
                                     onChange={(e) => handleAnswerChange(q.id, e.target.value)}
-                                    className="w-full px-4 py-2 border-2 border-emerald-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 transition"
+                                    className="field num"
                                 />
                             </div>
                         ))}
                     </div>
 
-                    <button
-                        type="submit"
-                        disabled={!questions.every((q) => userAnswers[q.id])}
-                        className="w-full bg-green-600 hover:bg-green-500 disabled:bg-green-300 text-white font-bold py-2 rounded-lg shadow-md transition hover:scale-105 flex items-center justify-center gap-2"
-                    >
-                        <FiSend className="transition-transform hover:rotate-45 hover:scale-125" />
-                        הגש מבחן
-                    </button>
+                    <div className="sticky bottom-4 z-20">
+                        <button
+                            type="submit"
+                            disabled={!questions.every((q) => userAnswers[q.id])}
+                            className="btn btn-primary btn-block !min-h-[3.5rem] shadow-[var(--shadow-2)]"
+                        >
+                            <FiSend />
+                            הגש מבחן
+                        </button>
+                    </div>
                 </form>
             )}
 
             {showConfirm && (
-                <div className="fixed inset-0 bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 px-4">
-                    <div className="bg-white p-6 rounded-3xl shadow-2xl w-full max-w-md space-y-4 text-right animate-scaleIn">
-                        <div className="flex items-center gap-2 text-green-600 text-xl font-bold">
-                            <FaExclamationCircle className="text-green-500 text-2xl transform hover:rotate-12 hover:scale-125 transition" />
-                            אישור הגשה
+                <div className="modal-backdrop">
+                    <div className="modal space-y-5 text-right" dir="rtl">
+                        <div className="flex items-center gap-3">
+                            <span className="icon-badge icon-badge--amber"><FaExclamationCircle /></span>
+                            <span className="title text-xl">אישור הגשה</span>
                         </div>
-                        <p className="text-gray-800">
+                        <p className="muted leading-relaxed">
                             האם אתה בטוח שברצונך להגיש את המבחן? לא תוכל לשנות תשובות
                             לאחר מכן.
                         </p>
@@ -405,13 +370,13 @@ const TestSession = ({ type }) => {
                                     setShowConfirm(false);
                                     submitTest();
                                 }}
-                                className="bg-green-600 text-white px-4 py-2 rounded-xl hover:bg-green-700 transition"
+                                className="btn btn-primary"
                             >
                                 הגש
                             </button>
                             <button
                                 onClick={() => setShowConfirm(false)}
-                                className="bg-gray-300 text-gray-800 px-4 py-2 rounded-xl hover:bg-gray-400 transition"
+                                className="btn btn-ghost"
                             >
                                 חזור
                             </button>

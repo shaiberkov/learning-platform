@@ -88,28 +88,27 @@ function WeeklySchedule({ type, classRoomName, singleDayMode = false }) {
     };
 
     const tableStyle =
-        "min-w-[200px] max-w-[800px] w-full border-collapse text-center text-sm sm:text-base";
+        "w-full min-w-[260px] border-separate border-spacing-1 text-center text-sm sm:text-[0.92rem]";
     const thStyle =
-        "border-2 border-gray-300 p-2 sm:p-3 bg-blue-300 font-bold text-gray-800";
+        "px-2 py-3 rounded-xl bg-surface-sunk font-mono text-[0.68rem] font-medium uppercase tracking-[0.14em] text-ink-3";
 
     const tdStyle =
-        "border-2 border-gray-300 p-2 sm:p-3 bg-white";
+        "p-1 sm:p-1.5 rounded-xl bg-[color-mix(in_oklab,var(--surface-strong)_55%,transparent)] min-w-[4.5rem] h-9";
     const rowSpanCellStyle =
-        "bg-blue-50 font-semibold text-blue-800";
+        "relative !p-2.5 !bg-[linear-gradient(150deg,var(--accent-soft),color-mix(in_oklab,var(--accent-2)_10%,transparent))] shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--accent)_35%,transparent)] text-ink transition-transform duration-500 ease-[var(--ease-spring)] hover:scale-[1.03]";
 
     const scheduleTable = useMemo(() => {
         const coveredSlots = {};
 
         return (
             <div
-                className="relative overflow-x-auto rounded-xl shadow-lg border border-gray-300 mx-2 max-w-3xl ">
+                className="relative overflow-x-auto rounded-2xl">
 
-                <div className=" h-full w-12 pointer-events-none bg-gradient-to-l "></div>
                 <table className={tableStyle} dir="rtl">
                     <thead>
                     <tr>
                         <th
-                            className={`${thStyle} sticky right-0 z-30 bg-yellow-300 text-gray-900`}
+                            className={`${thStyle} sticky right-0 z-30 !bg-surface-strong`}
                         >
                             שעה
                         </th>
@@ -124,10 +123,10 @@ function WeeklySchedule({ type, classRoomName, singleDayMode = false }) {
                     {timeSlots.map((slot) => (
                         <tr
                             key={slot}
-                            className="hover:bg-blue-50 hover:shadow-sm transition-all duration-300 rounded-md"
+                            className="group"
                         >
                             <td
-                                className=" border-2 border-gray-300 p-2 sm:p-3 bg-yellow-100 font-semibold text-gray-800 sticky right-0 z-20 shadow-md"
+                                className="px-2 py-1 rounded-xl font-mono text-[0.75rem] text-ink-3 sticky right-0 z-20 bg-surface-strong group-hover:text-accent transition-colors"
                             >
                                 {slot}
                             </td>
@@ -155,24 +154,28 @@ function WeeklySchedule({ type, classRoomName, singleDayMode = false }) {
                                             rowSpan={rowSpan}
                                             className={`${tdStyle} ${rowSpanCellStyle} align-middle`}
                                         >
-                                            <div className="text-base font-bold">
+                                            <span className="absolute top-2 right-2 w-1.5 h-1.5 rotate-45 rounded-[2px] bg-accent shadow-[0_0_10px_var(--glow)]" />
+                                            <div className="title text-[0.92rem]">
                                                 {lesson.subject}
                                             </div>
                                             {type === "teacher" && (
-                                                <div className="text-sm text-gray-600">
+                                                <div className="text-xs text-ink-2 mt-0.5">
                                                     כיתה {lesson.classRoomName}
                                                 </div>
                                             )}
                                             {type === "class" && (
-                                                <div className="text-sm text-gray-600">
+                                                <div className="text-xs text-ink-2 mt-0.5">
                                                     מורה {lesson.teacherName}
                                                 </div>
                                             )}
                                             {type === "student" && (
-                                                <div className="text-sm text-gray-600">
+                                                <div className="text-xs text-ink-2 mt-0.5">
                                                     {lesson.teacherName}
                                                 </div>
                                             )}
+                                            <div className="num text-[0.65rem] text-ink-3 mt-1" dir="ltr">
+                                                {lesson.startTime}–{lesson.endTime}
+                                            </div>
                                         </td>
                                     );
                                 } else {
@@ -191,32 +194,48 @@ function WeeklySchedule({ type, classRoomName, singleDayMode = false }) {
 
     return (
 
-        <div className={`px-3 py-4 sm:p-4 md:p-6 ${!singleDayMode ? 'mt-20' : ''}`}>
+        <div className={singleDayMode ? 'h-full' : `page ${type === 'class' ? '' : 'page--wide'}`} dir="rtl">
 
-            {singleDayMode && (
-                <h2 className="text-center  text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6 text-blue-800 flex items-center justify-center gap-2 flex-wrap text-balance">
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-6 w-6 sm:h-7 sm:w-7 text-blue-600 transition-transform duration-300 hover:scale-110 hover:rotate-[35deg]"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                    >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M8 7V3m8 4V3m-9 8h10m-12 4h14M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                        />
-                    </svg>
-                    <span className="whitespace-nowrap ">
-        מערכת השעות ליום {daysInHebrew[displayedDays[0]]}
-      </span>
-                </h2>
-            )}
+            <div className={type === 'class' && !singleDayMode ? '' : `glass ${singleDayMode ? 'tile h-full' : ''} p-4 sm:p-6`}>
+                {singleDayMode ? (
+                    <div className="panel-head">
+                        <div className="flex items-center gap-3">
+                            <span className="icon-badge">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="h-5 w-5"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="1.8"
+                                        d="M8 7V3m8 4V3m-9 8h10m-12 4h14M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                    />
+                                </svg>
+                            </span>
+                            <div>
+                                <span className="eyebrow">Today</span>
+                                <h2 className="title text-xl mt-0.5 text-balance">
+                                    מערכת השעות ליום {daysInHebrew[displayedDays[0]]}
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                ) : type !== 'class' && (
+                    <div className="panel-head">
+                        <div>
+                            <span className="eyebrow">Weekly · שבועי</span>
+                            <h2 className="display text-3xl sm:text-4xl mt-2">מערכת שעות</h2>
+                        </div>
+                    </div>
+                )}
 
-            <div className="w-full max-w-full sm:max-w-2xl md:max-w-3xl lg:max-w-4xl mx-auto overflow-x-auto">
-                <div className="w-full table-fixed">{scheduleTable}</div>
+                <div className={`w-full max-w-full overflow-x-auto ${singleDayMode ? 'max-h-[34rem] scroll-area' : ''}`}>
+                    <div className="w-full">{scheduleTable}</div>
+                </div>
             </div>
         </div>
 

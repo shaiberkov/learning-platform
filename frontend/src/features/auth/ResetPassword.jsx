@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import AuthShell from "../../components/ui/AuthShell.jsx";
 import { useNavigate } from "react-router-dom";
 import {FaKey, FaLock, FaUser} from "react-icons/fa";
 import {
@@ -93,96 +94,103 @@ function ResetPassword() {
 
     const isButtonDisabled = errors.password || !formData.newPassword || !formData.otp || !formData.userId;
     return (
-        <div className="flex justify-center mt-15 px-4 pt-12 animate-fade-in">
+        <AuthShell
+            eyebrow="Recovery · שחזור"
+            title={<>מתחילים <span className="gradient-text">מחדש.</span></>}
+            subtitle="נשלח קוד לאיפוס, תבחר סיסמה חדשה, וחוזרים ללמוד תוך דקה."
+        >
             <form
                 onSubmit={(e) => e.preventDefault()}
-                className="bg-green p-8 rounded-2xl shadow-xl w-full max-w-md space-y-5 transition duration-300"
+                className="glass glass--strong p-6 sm:p-9 w-full h-full flex flex-col justify-center space-y-5"
             >
-                <h2 className="text-2xl font-bold text-center text-gray-800 mb-4">
-                    איפוס סיסמה
-                </h2>
+                <div className="space-y-1 mb-2">
+                    <span className="eyebrow">{step === 1 ? "שלב 1 / 2" : "שלב 2 / 2"}</span>
+                    <h2 className="title text-3xl">
+                        איפוס סיסמה
+                    </h2>
+                    <div className="track !h-1.5 mt-4"><span style={{ width: step === 1 ? "50%" : "100%" }} /></div>
+                </div>
 
                 {step === 1 ? (
                     <>
                         {/* ת״ז */}
-                        <div className="relative">
-                            <FaUser
-                                className="absolute top-3 left-3 text-blue-500 drop-shadow-md hover:scale-110 transition duration-200"/>
-                            <input
-                                name="userId"
-                                type="text"
-                                placeholder="תעודת זהות"
-                                value={formData.userId}
-                                onChange={setData}
-                                required
-                                className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 transition"
-                            />
+                        <div>
+                            <div className="field-wrap">
+                                <FaUser/>
+                                <input
+                                    name="userId"
+                                    type="text"
+                                    placeholder="תעודת זהות"
+                                    value={formData.userId}
+                                    onChange={setData}
+                                    required
+                                    className="field"
+                                />
+                            </div>
                             {errors.userId && (
-                                <p className="text-red-500 text-sm mt-1">{errors.userId}</p>
+                                <p className="field-error">{errors.userId}</p>
                             )}
                         </div>
 
                         <button
                             onClick={requestOtp}
                             disabled={formData.userId === ""}
-                            className="w-full relative py-2 rounded-lg bg-gradient-to-r from-blue-400 to-green-400 text-white font-semibold shadow-md hover:from-blue-600 hover:to-green-600 transition-all duration-300 ease-in-out disabled:opacity-50 overflow-hidden"
+                            className="btn btn-primary btn-block"
                         >
-                            <span
-                                className="absolute inset-0 rounded-lg bg-white opacity-0 hover:opacity-10 transition-opacity duration-300"/>
                             <span className="relative z-10">שלח קוד לאיפוס סיסמה</span>
                         </button>
                     </>
                 ) : (
                     <>
                         {/* קוד אימות */}
-                        <div className="relative">
-                            <FaKey
-                                className="absolute top-3 left-3 text-yellow-500 drop-shadow-md hover:scale-110 transition duration-200"/>
-                            <input
-                                name="otp"
-                                type="text"
-                                placeholder="קוד אימות"
-                                value={formData.otp}
-                                onChange={setData}
-                                required
-                                className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-300 transition"
-                            />
+                        <div>
+                            <div className="field-wrap">
+                                <FaKey/>
+                                <input
+                                    name="otp"
+                                    type="text"
+                                    placeholder="קוד אימות"
+                                    value={formData.otp}
+                                    onChange={setData}
+                                    required
+                                    className="field num"
+                                />
+                            </div>
                             {errors.otp && (
-                                <p className="text-red-500 text-sm mt-1">{errors.otp}</p>
+                                <p className="field-error">{errors.otp}</p>
                             )}
                         </div>
 
                         {/* סיסמה חדשה */}
-                        <div className="relative">
-                            <FaLock
-                                className="absolute top-3 left-3 text-red-500 drop-shadow-md hover:scale-110 transition duration-200"/>
-                            <input
-                                name="newPassword"
-                                type="password"
-                                placeholder="סיסמה חדשה"
-                                value={formData.newPassword}
-                                onChange={setData}
-                                required
-                                className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-300 transition"
-                            />
+                        <div>
+                            <div className="field-wrap">
+                                <FaLock/>
+                                <input
+                                    name="newPassword"
+                                    type="password"
+                                    placeholder="סיסמה חדשה"
+                                    value={formData.newPassword}
+                                    onChange={setData}
+                                    required
+                                    className="field"
+                                />
+                            </div>
                             {errors.password && (
-                                <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+                                <p className="field-error">{errors.password}</p>
                             )}
                         </div>
 
                         <button
                             onClick={resetPassword}
                             disabled={isButtonDisabled}
-                            className="w-full relative py-2 rounded-lg bg-gradient-to-r from-blue-400 to-green-400 text-white font-semibold shadow-md hover:from-blue-600 hover:to-green-600 transition-all duration-300 ease-in-out disabled:opacity-50 overflow-hidden"
+                            className="btn btn-primary btn-block"
                         >
-                            <span
-                                className="absolute inset-0 rounded-lg bg-white opacity-0 hover:opacity-10 transition-opacity duration-300"/>
                             <span className="relative z-10">אפס סיסמה</span>
                         </button>
                     </>
                 )}
             </form>
-        </div>
+        </AuthShell>
     );
 }
 export default ResetPassword;

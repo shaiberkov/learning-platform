@@ -133,6 +133,7 @@ import { FaKey } from 'react-icons/fa';
 import Cookies from "universal-cookie";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
+import AuthShell from "../../components/ui/AuthShell.jsx";
 import {
     QUESTION,
     SEND_OTP,
@@ -217,44 +218,35 @@ function TwoFactorAuthForm() {
     };
 
     return (
-        <div className="flex justify-center mt-15 px-4 py-10 pt-12 animate-fade-in">
+        <AuthShell
+            eyebrow="Verification · אימות"
+            title={<>צעד אחד <span className="gradient-text">ואתה בפנים.</span></>}
+            subtitle="שלחנו לך קוד חד-פעמי. הזן אותו כדי לאשר שזה באמת אתה."
+        >
             {loading && (
-                <div className="fixed inset-0 flex items-center justify-center z-50">
-                    <div className="w-[280px] h-[280px] bg-white rounded-[2rem] shadow-[0_15px_50px_rgba(0,128,0,0.3)] flex flex-col items-center justify-center gap-6 border-t-4 border-b-4 border-green-300 animate-fade-in">
-                        <div className="relative w-24 h-24">
-                            <div className="absolute inset-0 rounded-full border-[6px] border-green-500 border-t-transparent animate-spin"></div>
-                            <div className="absolute inset-[10px] bg-white rounded-full flex items-center justify-center shadow-inner">
-                                <svg
-                                    className="w-10 h-10 text-green-600 animate-pulse"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="2"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                                    />
-                                </svg>
-                            </div>
-                        </div>
-                        <p className="text-green-700 text-lg font-semibold text-center px-4 animate-pulse">
+                <div className="modal-backdrop">
+                    <div className="modal flex flex-col items-center justify-center gap-6 !max-w-[18rem] py-10">
+                        <div className="orbit-loader"><span /></div>
+                        <p className="title text-lg text-center">
                             מאמת קוד...
                         </p>
+                        <div className="dot-pulse"><span /><span /><span /></div>
                     </div>
                 </div>
             )}
             <form
                 onSubmit={handleSubmit}
-                className="bg-green p-8 rounded-4xl shadow-xl w-full max-w-md space-y-6 transition duration-300"
+                className="glass glass--strong p-6 sm:p-9 w-full h-full flex flex-col justify-center space-y-7"
             >
-                <h2 className="text-2xl font-bold text-center text-gray-800 mb-3">
-                    הכנס את קוד האימות
-                </h2>
+                <div className="space-y-1">
+                    <span className="eyebrow">02 — קוד חד-פעמי</span>
+                    <h2 className="title text-3xl flex items-center gap-3">
+                        <span className="icon-badge icon-badge--amber"><FaKey /></span>
+                        הכנס את קוד האימות
+                    </h2>
+                </div>
 
-                <div className="flex justify-center gap-2 relative">
-                    <FaKey className="absolute -top-8 left-1 text-yellow-500 text-xl" />
+                <div className="flex justify-center gap-2 sm:gap-3" dir="ltr">
                     {[...Array(5)].map((_, index) => (
                         <input
                             key={index}
@@ -264,30 +256,30 @@ function TwoFactorAuthForm() {
                             value={verificationCode[index] || ''}
                             onChange={e => handleInputChange(e, index)}
                             onKeyDown={e => handleKeyDown(e, index)}
-                            className={`w-12 h-14 text-center text-2xl font-bold border border-gray-300 rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-yellow-300 transition-all 
-    ${verificationCode[index] ? 'animate-pop' : ''}`}                        />
+                            className={`field num !w-12 sm:!w-14 !h-16 !px-0 text-center !text-2xl font-semibold !rounded-2xl
+    ${verificationCode[index] ? 'animate-pop !border-accent shadow-[0_0_0_4px_var(--accent-soft)]' : ''}`}                        />
                     ))}
                 </div>
 
                 {error && (
-                    <p className="text-red-500 text-sm mt-1 text-center">
+                    <p className="notice notice--danger">
                         {error}
                     </p>
                 )}
 
                 <button
                     type="submit"
-                    className="w-full py-2 rounded-lg bg-gradient-to-r from-blue-400 to-green-400 text-white font-semibold shadow-md hover:from-blue-600 hover:to-green-600 transition-all duration-300 ease-in-out disabled:opacity-50"
+                    className="btn btn-primary btn-block"
                 >
                     אמת קוד
                 </button>
 
-                <p className="text-sm text-gray-600 text-center mt-2">
+                <p className="faint text-sm text-center leading-relaxed">
                     הקוד תקף ל-2 דקות בלבד. הקוד נשלח למספר טלפון<br />
-                    {phoneNumber?.slice(0, 3)}******{phoneNumber?.slice(-3)}
+                    <span className="num text-ink-2" dir="ltr">{phoneNumber?.slice(0, 3)}******{phoneNumber?.slice(-3)}</span>
                 </p>
             </form>
-        </div>
+        </AuthShell>
     );
 }
 

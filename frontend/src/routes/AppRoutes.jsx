@@ -43,16 +43,18 @@ import Footer from "../components/Footer.jsx";
 export default function AppRoutes() {
 
     const {user}=useContext(UserContext)
+    const location = useLocation();
 
 
     return (
-        <div className="flex flex-col min-h-screen  text-gray-800">
+        <div className="flex flex-col min-h-screen text-ink">
 
 
                 <SideBar />
 
 
-            <main className="flex-1 overflow-y-auto px-4 md:px-8 pt-6">
+            <main className="flex-1 px-4 sm:px-6 lg:px-10 pt-28 sm:pt-32">
+                <div key={location.pathname} className="page-enter">
                 <Routes>
                     <Route element={<PublicOnlyRoutesLayout />}>
                         <Route path="/login" element={<Login />} />
@@ -120,6 +122,7 @@ export default function AppRoutes() {
                     <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                     <Route path="/terms-of-service" element={<TermsOfService />} />
                 </Routes>
+                </div>
             </main>
 
             <Footer />

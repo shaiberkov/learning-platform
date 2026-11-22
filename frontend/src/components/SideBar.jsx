@@ -2,10 +2,11 @@
 
 
 import React, {useContext, useEffect, useRef, useState} from "react";
-import {Link, Route, useNavigate} from "react-router-dom";
+import {Link, NavLink, Route, useNavigate} from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 import logo from '../assets/logo.png';
 import Cookies from "universal-cookie";
+import ThemeDial from "./ui/ThemeDial.jsx";
 
 function SideBar() {
     const { user, setUser } = useContext(UserContext);
@@ -118,139 +119,193 @@ function SideBar() {
         }[user.role] || [];
     };
 
+    const roleLabel = {
+        SYSTEM_ADMIN: "מנהל מערכת",
+        SCHOOLMANAGER: "מנהל בית ספר",
+        TEACHER: "מורה",
+        STUDENT: "תלמיד",
+    }[user?.role];
+
+    const navItemClass = ({ isActive }) =>
+        `group flex items-center gap-3 rounded-2xl px-4 py-3 text-[0.92rem] font-medium transition-all duration-500 ease-[var(--ease-spring)] ${
+            isActive
+                ? "bg-accent-soft text-accent shadow-[inset_0_0_0_1px_var(--accent)]"
+                : "text-ink-2 hover:bg-surface-strong hover:text-ink hover:-translate-x-1"
+        }`;
+
     return (
         <>
 
             <nav
                 id="navbar"
-                className="fixed top-0 left-0 z-50 w-full flex flex-row justify-end bg-teal-600 px-4 sm:justify-between shadow-md bg-opacity-100"
+                dir="rtl"
+                className="fixed top-3 inset-x-3 sm:top-4 sm:inset-x-6 z-50 flex items-center justify-between gap-3 rounded-[22px] px-3 sm:px-4 py-2.5 glass glass--strong"
             >
-                <div className="w-full flex justify-start p-4">
-                    <ul className="flex items-center  text-lg text-white">
-                        <li>
-                            <img src={logo} alt="Logo" className="w-20 transition-transform duration-300 hover:cursor-pointer my-[-10px] hover:scale-120 h-auto"/>
-                        </li>
-                    </ul>
+                <div className="flex items-center gap-3 min-w-0">
+                    {user && (
+                        <button
+                            type="button"
+                            onClick={() => setOpen(!open)}
+                            className="grid place-items-center w-11 h-11 rounded-2xl bg-surface-sunk text-ink border border-line hover:border-accent hover:text-accent transition-all duration-500 ease-[var(--ease-spring)] hover:scale-105 active:scale-95"
+                            aria-label={open ? "סגור תפריט" : "פתח תפריט"}
+                        >
+                            {open ? (
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none"
+                                     stroke="currentColor" strokeWidth="1.8">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                            ) : (
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none"
+                                     stroke="currentColor" strokeWidth="1.8">
+                                    <path strokeLinecap="round" strokeLinejoin="round"
+                                          d="M4 7h16M4 12h10M4 17h16"/>
+                                </svg>
+                            )}
+                        </button>
+                    )}
+                    <div className="flex items-center gap-3 min-w-0">
+                        <span className="grid place-items-center w-11 h-11 rounded-2xl bg-surface-strong border border-line shadow-[inset_0_1px_0_var(--inner)] overflow-hidden">
+                            <img src={logo} alt="Logo" className="w-9 h-auto transition-transform duration-700 ease-[var(--ease-spring)] hover:scale-110 hover:rotate-6"/>
+                        </span>
+                        <div className="hidden sm:grid leading-tight min-w-0">
+                            <span className="title text-[0.95rem] truncate">מרחב הלמידה</span>
+                            <span className="eyebrow !text-[0.6rem]">
+                                {user ? roleLabel : "Spatial Academy"}
+                            </span>
+                        </div>
+                    </div>
                 </div>
 
+                <div className="flex items-center gap-2">
+                    {user && (
+                        <span className="hidden md:inline-flex items-center gap-2 rounded-full px-3 py-1.5 bg-surface-sunk border border-line text-sm text-ink-2">
+                            <span className="w-2 h-2 rounded-full bg-mint shadow-[0_0_10px_var(--mint)]" />
+                            {user.username}
+                        </span>
+                    )}
 
+                    {!token && (
+                        <div className="flex items-center gap-2">
+                            <button
+                                className="btn btn-ghost btn-sm"
+                                onClick={() => navigate("/register")}
+                            >
+                                הרשמה
+                            </button>
+                            <button
+                                className="btn btn-primary btn-sm"
+                                onClick={() => navigate("/login")}
+                            >
+                                התחברות
+                            </button>
+                        </div>
+                    )}
 
-                {!token && (
-                    <div className="flex justify-center py-2 gap-4 ">
-                        <button
-                            className="px-6 py-2 bg-blue-600 text-white text-lg font-semibold rounded-2xl shadow-lg hover:bg-blue-700 transition duration-300"
-                            onClick={() => navigate("/register")}
-                        >
-                            הרשמה
-                        </button>
-                        <button
-                            className="px-6 py-2 bg-green-600 text-white text-lg font-semibold rounded-2xl shadow-lg hover:bg-green-700 transition duration-300"
-                            onClick={() => navigate("/login")}
-                        >
-                            התחברות
-                        </button>
-                    </div>
-                )}
-
-
-                {user && (
-                    <button
-                        type="button"
-                        onClick={() => setOpen(!open)}
-                        className="py-4 text-2xl text-white hover:text-gray-200"
-                    >
-                        {open ? (
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" viewBox="0 0 24 24" fill="none"
-                                 stroke="currentColor" strokeWidth="1.5">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/>
-                            </svg>
-                        ) : (
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" viewBox="0 0 24 24" fill="none"
-                                 stroke="currentColor" strokeWidth="1.5">
-                                <path strokeLinecap="round" strokeLinejoin="round"
-                                      d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/>
-                            </svg>
-                        )}
-                    </button>
-                )}
+                    <ThemeDial />
+                </div>
 
             </nav>
+
+            {user && open && (
+                <div
+                    className="fixed inset-0 z-[55] bg-[color-mix(in_oklab,var(--bg)_40%,transparent)] backdrop-blur-sm"
+                    style={{ animation: "fade .35s var(--ease-out-expo) both" }}
+                    onClick={() => setOpen(false)}
+                    aria-hidden="true"
+                />
+            )}
 
             {user && (
                 <nav
                     id="sidebar"
-                    className={`fixed top-0 right-0 z-60 flex h-screen w-3/4 transform flex-col overflow-y-auto bg-teal-700
-                                    pt-6 pb-8 transition-transform duration-300 sm:max-w-xs lg:w-80 ${
-                        open ? "translate-x-0" : "translate-x-full rtl:translate-x-full"
+                    className={`fixed !top-0 right-0 z-60 flex h-[100dvh] w-[86vw] max-w-[22rem] transform flex-col
+                                    p-3 transition-transform duration-700 ease-[var(--ease-out-expo)] ${
+                        open ? "translate-x-0" : "translate-x-[110%]"
                     }`}
                 >
-                    <div className="flex justify-end px-4">
-                        <button
-                            type="button"
-                            onClick={() => setOpen(false)}
-                            className="text-white hover:text-gray-300"
-                            aria-label="סגור סיידבר"
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" viewBox="0 0 24 24" fill="none"
-                                 stroke="currentColor" strokeWidth="1.5">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/>
-                            </svg>
-                        </button>
-                    </div>
+                    <div className="glass glass--strong flex flex-col h-full rounded-[28px] p-4 overflow-y-auto" dir="rtl">
+                        <div className="flex items-center justify-between px-2 pb-4 mb-3 border-b border-dashed border-line">
+                            <div className="grid">
+                                <span className="eyebrow">ניווט</span>
+                                <span className="title text-lg mt-1">{user.username}</span>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => setOpen(false)}
+                                className="grid place-items-center w-10 h-10 rounded-xl text-ink-2 hover:text-accent hover:rotate-90 transition-all duration-500 ease-[var(--ease-spring)]"
+                                aria-label="סגור סיידבר"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none"
+                                     stroke="currentColor" strokeWidth="1.8">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                            </button>
+                        </div>
 
-                    <ul className="mb-8 text-sm font-medium text-white" dir="rtl">
-                        {getLinks().map((item) => {
-                            if (item.children) {
-                                return (
-                                    <li key={item.label}>
-                                        <button
-                                            onClick={() => toggleSubmenu(item.label)}
-                                            className="flex w-full items-center justify-between rounded py-3 pl-3 pr-4 hover:bg-gray-600"
-                                        >
-                                            {item.label}
-                                            <span>{openSubmenus[item.label] ? "▲" : "▼"}</span>
-                                        </button>
-                                        {openSubmenus[item.label] && (
-                                            <ul className="mr-4 mt-1 space-y-1 border-r border-gray-500 pr-2 text-sm">
-                                                {item.children.map((child) => (
-                                                    <li key={child.to}>
-                                                        <Link
-                                                            to={child.to}
-                                                            className="block rounded py-2 pr-4 hover:bg-gray-600"
-                                                            onClick={() => setOpen(false)}
-                                                        >
-                                                            {child.label}
-                                                        </Link>
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        )}
-                                    </li>
-                                );
-                            } else {
-                                return (
-                                    <li key={item.to}>
-                                        <Link
-                                            to={item.to}
-                                            className="flex items-center rounded py-3 pl-3 pr-4 hover:bg-gray-600"
-                                            onClick={() => setOpen(false)}
-                                        >
-                                            {item.label}
-                                        </Link>
-                                    </li>
-                                );
-                            }
-                        })}
+                        <ul className="flex-1 space-y-1 text-sm">
+                            {getLinks().map((item, index) => {
+                                if (item.children) {
+                                    return (
+                                        <li key={item.label} className={open ? "reveal" : ""} style={{ "--i": index }}>
+                                            <button
+                                                onClick={() => toggleSubmenu(item.label)}
+                                                className="flex w-full items-center justify-between rounded-2xl px-4 py-3 text-[0.92rem] font-semibold text-ink hover:bg-surface-strong transition-colors"
+                                            >
+                                                {item.label}
+                                                <svg
+                                                    className={`h-4 w-4 transition-transform duration-500 ease-[var(--ease-spring)] ${openSubmenus[item.label] ? "rotate-180 text-accent" : "text-ink-3"}`}
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+                                                >
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 9l6 6 6-6"/>
+                                                </svg>
+                                            </button>
+                                            {openSubmenus[item.label] && (
+                                                <ul className="mr-5 mt-1 mb-2 space-y-1 border-r border-line pr-2" style={{ animation: "rise .5s var(--ease-out-expo) both" }}>
+                                                    {item.children.map((child) => (
+                                                        <li key={child.to}>
+                                                            <NavLink
+                                                                to={child.to}
+                                                                className={navItemClass}
+                                                                onClick={() => setOpen(false)}
+                                                            >
+                                                                <span className="w-1.5 h-1.5 rotate-45 rounded-[2px] bg-current opacity-60" />
+                                                                {child.label}
+                                                            </NavLink>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            )}
+                                        </li>
+                                    );
+                                } else {
+                                    return (
+                                        <li key={item.to} className={open ? "reveal" : ""} style={{ "--i": index }}>
+                                            <NavLink
+                                                to={item.to}
+                                                className={navItemClass}
+                                                onClick={() => setOpen(false)}
+                                            >
+                                                <span className="w-1.5 h-1.5 rotate-45 rounded-[2px] bg-current opacity-60" />
+                                                {item.label}
+                                            </NavLink>
+                                        </li>
+                                    );
+                                }
+                            })}
+                        </ul>
 
-                        <li>
+                        <div className="pt-3 mt-3 border-t border-dashed border-line">
                             <button
                                 onClick={handleLogout}
-                                className="w-full text-left py-3 pl-3 pr-4 text-red-300 hover:bg-gray-600"
+                                className="btn btn-ghost btn-block !justify-between !text-danger hover:!border-danger"
                             >
                                 התנתק
+                                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 12H3m0 0l4-4m-4 4l4 4M13 5h5a2 2 0 012 2v10a2 2 0 01-2 2h-5"/>
+                                </svg>
                             </button>
-                        </li>
-                    </ul>
+                        </div>
+                    </div>
 
                 </nav>
             )}
@@ -259,7 +314,3 @@ function SideBar() {
 }
 
 export default SideBar;
-
-
-
-

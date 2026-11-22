@@ -45,37 +45,49 @@ function MessageList({ userId }) {
     const combinedMessages = [...messages, ...messagesList];
 
     return (
-        <div className="flex justify-center px-4  animate-fade-in">
+        <div className="h-full">
             <div
-                className="bg-white rounded-4xl shadow-xl w-full max-w-md overflow-hidden transition-all duration-300 flex flex-col h-[375px]"
+                className="glass tile w-full h-full min-h-[24rem] overflow-hidden flex flex-col p-5 sm:p-6"
                 dir="rtl"
             >
-                {/* כותרת ירוקה */}
-                <div className="bg-green-400 p-4 rounded-t-4xl text-center">
-                    <h2 className="text-2xl font-bold text-white">הודעות</h2>
+                <div className="panel-head">
+                    <div className="flex items-center gap-3">
+                        <span className="icon-badge">
+                            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16v10H8l-4 4V6z"/></svg>
+                        </span>
+                        <div>
+                            <span className="eyebrow">Inbox</span>
+                            <h2 className="title text-xl mt-0.5">הודעות</h2>
+                        </div>
+                    </div>
+                    <span className="chip num">{combinedMessages.length}</span>
                 </div>
 
                 {combinedMessages.length > 0 ? (
-                    <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 pr-1 scrollbar-thin scrollbar-thumb-green-300 scrollbar-track-green-100 scroll-container">
-                        <ul className="space-y-4 mr-3">
+                    <div className="flex-1 max-h-[22rem] scroll-area -mx-1 px-1 py-2">
+                        <ul className="space-y-3">
                             {combinedMessages.map((message, index) => (
                                 <li
                                     key={index}
-                                    className="bg-gradient-to-r from-green-100 to-green-50 p-4 rounded-xl shadow-sm hover:shadow-lg transition duration-300 transform hover:scale-[1.01]"
+                                    className="row-card reveal"
+                                    style={{ "--i": Math.min(index, 6) }}
                                 >
-                                    <div className="flex justify-between items-center text-sm text-gray-600 mb-1">
-                                        <span>{new Date(message.sentAt).toLocaleString()}</span>
-                                        <span className="font-semibold text-green-700">{message.senderName}</span>
+                                    <div className="flex justify-between items-center gap-3 mb-2">
+                                        <span className="chip">{message.senderName}</span>
+                                        <span className="num faint text-[0.7rem]" dir="ltr">{new Date(message.sentAt).toLocaleString()}</span>
                                     </div>
-                                    <p className="text-lg font-bold text-gray-800">{message.title}</p>
-                                    <p className="text-gray-700 mt-1 leading-relaxed break-words">{message.content}</p>
+                                    <p className="title text-base">{message.title}</p>
+                                    <p className="muted text-sm mt-1 leading-relaxed break-words">{message.content}</p>
                                 </li>
                             ))}
                         </ul>
                     </div>
                 ) : (
-                    <div className="flex-1 flex items-center justify-center p-4">
-                        <p className="text-center text-gray-500">אין הודעות להציג.</p>
+                    <div className="flex-1 flex flex-col items-center justify-center gap-3 p-4 text-center">
+                        <span className="w-14 h-14 rounded-2xl border border-dashed border-line-strong grid place-items-center text-ink-3 rotate-45">
+                            <span className="-rotate-45 num">0</span>
+                        </span>
+                        <p className="faint">אין הודעות להציג.</p>
                     </div>
                 )}
             </div>

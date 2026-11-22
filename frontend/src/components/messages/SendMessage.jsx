@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import {UserContext} from "../../context/UserContext.jsx";
 import Cookies from "universal-cookie";
+import FormShell from "../ui/FormShell.jsx";
 import {FaEnvelopeOpenText, FaPaperPlane} from "react-icons/fa";
 import {
     AND,
@@ -71,19 +72,15 @@ function SendMessage() {
 
 
     return (
-        <div className="max-w-md mx-auto mb-8 mt-20 p-6 bg-white rounded-3xl shadow-lg space-y-6" dir="rtl">
-            <h2 className="text-2xl font-bold text-center text-blue-600 flex items-center justify-center gap-2">
-                <FaEnvelopeOpenText />
-                שליחת הודעה
-            </h2>
+        <FormShell eyebrow="Broadcast · הודעות" title="שליחת הודעה" icon={<FaEnvelopeOpenText />} width="medium">
 
             {/* סוג נמענים */}
-            <div className="space-y-1">
-                <label className="block text-sm font-semibold text-gray-700">סוג נמענים:</label>
+            <div>
+                <label className="label">סוג נמענים:</label>
                 <select
                     value={recipientType}
                     onChange={(e) => setRecipientType(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    className="field"
                 >
                     <option key="default" value="">בחר נמען</option>
                     {availableRecipientTypes.map((type) => (
@@ -93,24 +90,24 @@ function SendMessage() {
             </div>
 
             {/* כותרת */}
-            <div className="space-y-1">
-                <label className="block text-sm font-semibold text-gray-700">כותרת:</label>
+            <div>
+                <label className="label">כותרת:</label>
                 <input
                     type="text"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    className="field"
                     placeholder="כתוב כותרת"
                 />
             </div>
 
             {/* תוכן ההודעה */}
-            <div className="space-y-1">
-                <label className="block text-sm font-semibold text-gray-700">תוכן ההודעה:</label>
+            <div>
+                <label className="label">תוכן ההודעה:</label>
                 <textarea
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-400 min-h-[100px] resize-none"
+                    className="field min-h-[9rem] resize-none"
                     placeholder="כתוב את ההודעה כאן..."
                 />
             </div>
@@ -118,7 +115,7 @@ function SendMessage() {
             {/* כפתור שליחה */}
             <button
                 onClick={handleSubmit}
-                className="w-full bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold py-2 rounded-xl shadow-md hover:from-blue-600 hover:to-blue-800 hover:shadow-lg transition duration-300 flex items-center justify-center gap-2"
+                className="btn btn-primary btn-block"
             >
                 <FaPaperPlane />
                 שלח הודעה
@@ -126,9 +123,9 @@ function SendMessage() {
 
             {/* הודעת הצלחה או שגיאה */}
             {message && (
-                <p className="text-center text-blue-600 font-semibold">{message}</p>
+                <p className="notice">{message}</p>
             )}
-        </div>
+        </FormShell>
     );
 }
 export default SendMessage

@@ -48,28 +48,37 @@ function EventForm() {
 
     return (
     <div
-        className="max-w-md mx-auto  mb-8 p-4 h-[375px] bg-white rounded-3xl shadow-xl space-y-4"
+        className="glass tile w-full h-full min-h-[17rem] p-5 sm:p-6 flex flex-col"
         dir="rtl"
     >
-        <div className="flex items-center  justify-center gap-2 bg-green-100 py-2 px-4 rounded-xl shadow-inner">
-            <FaCalendarAlt className="text-green-600 text-xl transition-transform duration-300 hover:rotate-12 hover:scale-110 hover:drop-shadow-[0_0_6px_rgba(34,197,94,0.6)] hover:brightness-125" />
-            <h2 className="text-xl font-bold text-green-800">האירועים הקרובים שלך</h2>
+        <div className="panel-head">
+            <div className="flex items-center gap-3">
+                <span className="icon-badge icon-badge--amber"><FaCalendarAlt /></span>
+                <div>
+                    <span className="eyebrow">Upcoming</span>
+                    <h2 className="title text-xl mt-0.5">האירועים הקרובים שלך</h2>
+                </div>
+            </div>
         </div>
 
-        <div className="max-h-72 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-green-400 scrollbar-track-green-100 rounded-xl">
+        <div className="flex-1 max-h-72 scroll-area -mx-1 px-1 py-1">
             {events.length === 0 ? (
-                <p className="text-center text-gray-500">אין אירועים קרובים</p>
+                <p className="faint text-center py-8">אין אירועים קרובים</p>
             ) : (
-                <ul className="space-y-3">
+                <ul className="space-y-2.5">
                     {events.map((event, index) => (
                         <li
                             key={index}
-                            className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 shadow-sm hover:shadow-md transition"
+                            className="row-card flex items-center justify-between gap-3 reveal"
+                            style={{ "--i": Math.min(index, 6) }}
                         >
-                            <div className="text-base font-semibold text-green-700">
-                                {event.eventName}
+                            <div className="flex items-center gap-3 min-w-0">
+                                <span className="w-2 h-2 rotate-45 rounded-[2px] bg-amber shadow-[0_0_10px_var(--amber)] shrink-0" />
+                                <span className="font-semibold text-ink truncate">
+                                    {event.eventName}
+                                </span>
                             </div>
-                            <div className="text-sm text-gray-500">בעוד {event.eventInDays} ימים </div>
+                            <span className="chip chip--amber num">בעוד {event.eventInDays} ימים </span>
                         </li>
                     ))}
                 </ul>

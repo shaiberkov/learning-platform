@@ -1,33 +1,32 @@
 import React from "react";
+import ProsePage from "../../components/ui/ProsePage.jsx";
 
 export default function About() {
 
 
 
         return (
-            <div dir="rtl" className="flex justify-center mt-15 mb-10 px-4 pt-12 animate-fade-in">
-                <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-4xl space-y-6 transition duration-300 border border-gray-200">
-                    <h1 className="text-3xl font-bold text-center text-green-500 mb-4">אודות מערכת ניהול בתי־ספר</h1>
+            <ProsePage eyebrow="About · אודות" title="אודות מערכת ניהול בתי־ספר">
 
                     <section>
-                        <h2 className="text-xl font-semibold text-blue-700 mb-2">ברוכים הבאים!</h2>
-                        <p className="text-gray-700 leading-relaxed">
+                        <h2 className="!mt-0">ברוכים הבאים!</h2>
+                        <p>
                             המערכת שלנו מאחדת את כל צרכי הניהול של בית־הספר בפלטפורמה אחת קלה לשימוש.
                             היא משרתת מנהלי מערכת, מנהלי בית־ספר, מורים ותלמידים ומאפשרת לכל אחד לבצע את משימותיו היום-יומיות ביעילות.
                         </p>
                     </section>
 
                     <section>
-                        <h2 className="text-xl font-semibold text-blue-700 mb-2">מטרת המערכת</h2>
-                        <p className="text-gray-700 leading-relaxed">
+                        <h2>מטרת המערכת</h2>
+                        <p>
                             לספק פתרון כולל המפשט תהליכי ניהול – החל מרישום בתי־ספר, הקצאת מורים וכיתות, יצירת מערכות שעות ותזמון מבחנים,
                             ועד למעקב אחר התקדמות תלמידים ותקשורת ישירה בין צוות ההוראה וההנהלה.
                         </p>
                     </section>
 
                     <section>
-                        <h2 className="text-xl font-semibold text-blue-700 mb-2">מה תמצאו במערכת?</h2>
-                        <ul className="list-disc list-inside space-y-1 text-gray-800">
+                        <h2>מה תמצאו במערכת?</h2>
+                        <ul className="sm:!grid-cols-2">
                             <li>לוחות מחוונים ייעודיים לכל תפקיד</li>
                             <li>ניהול משתמשים והרשאות לפי רמות</li>
                             <li>יצירה וניהול של מערכות שעות לכיתות, מורים ותלמידים</li>
@@ -38,12 +37,12 @@ export default function About() {
                     </section>
 
                     <section>
-                        <h2 className="text-xl font-semibold text-blue-700 mb-2">תמיכה ושאלות</h2>
-                        <p className="text-gray-700 leading-relaxed">
+                        <h2>תמיכה ושאלות</h2>
+                        <p>
                             יש לכם שאלות או צריכים עזרה? ניתן ליצור קשר בדף&nbsp;
                             <a
                                 href="/contact"
-                                className="text-green-600 hover:text-green-800 font-medium underline transition duration-200"
+                                className="link"
                             >
                                 צור קשר
                             </a>. צוות התמיכה שלנו ישמח לסייע.
@@ -51,8 +50,7 @@ export default function About() {
                     </section>
 
 
-                </div>
-            </div>
+            </ProsePage>
         );
 
 

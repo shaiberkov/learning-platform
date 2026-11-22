@@ -4,6 +4,8 @@ import MessageList from "../../components/messages/MessageList.jsx";
 import WeeklySchedule from "../../components/WeeklySchedule.jsx";
 import {getGreeting} from "../../Utils/Greeting.jsx";
 import EventForm from "../../components/EventForm.jsx";
+import { FaCalendarAlt, FaClipboardList } from "react-icons/fa";
+import DashboardHero, { QuickTile } from "../../components/ui/DashboardHero.jsx";
 
 function  TeacherDashboard(){
 
@@ -15,31 +17,34 @@ function  TeacherDashboard(){
 
       return (
 
-          <div className="min-h-screen mt-20 p-4 sm:p-6" dir="rtl">
-              <header className="max-w-6xl mx-auto mb-4 sm:mb-6">
-                  <h1 className="text-2xl sm:text-3xl font-bold text-slate-800">
-                      {getGreeting()}, {user?.username}
-                  </h1>
-              </header>
+          <div className="page" dir="rtl">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5">
+                  <DashboardHero
+                      className="lg:col-span-8"
+                      eyebrow="Teacher · חדר מורים"
+                      greeting={getGreeting()}
+                      name={user?.username}
+                      subtitle="השיעורים של היום, הודעות ואירועים — וכל מה שצריך כדי לבנות את המבחן הבא."
+                  />
 
-              <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-2 sm:gap-3">
-                  <div className="lg:w-1/2">
-                      <div className="rounded-2xl sm:p-5 h-full">
-                          <WeeklySchedule type="teacher" singleDayMode={true}/>
-                      </div>
+                  <div className="lg:col-span-4 grid grid-cols-2 lg:grid-cols-1 gap-4 sm:gap-5">
+                      <QuickTile index={1} to="/test-configurator" icon={<FaClipboardList />} label="יצירת מבחן" hint="לתלמידים שלך" tone="icon-badge--mint" />
+                      <QuickTile index={2} to="/teacher-weekly-schedule" icon={<FaCalendarAlt />} label="מערכת שעות" hint="כל השבוע" />
                   </div>
 
-                  <div className="lg:w-1/2 flex flex-col mt-22 gap-2 sm:gap-3">
-                      {user && (
-                          <div className="rounded-2xl sm:p-5">
-                              <MessageList userId={user.userId}/>
-                          </div>
-                      )}
+                  <div className="lg:col-span-5 lg:row-span-2 reveal" style={{ "--i": 3 }}>
+                      <WeeklySchedule type="teacher" singleDayMode={true}/>
+                  </div>
 
+                  <div className="lg:col-span-7 reveal" style={{ "--i": 4 }}>
                       {user && (
-                          <div className="rounded-2xl  p-4 sm:p-5">
-                              <EventForm/>
-                          </div>
+                          <MessageList userId={user.userId}/>
+                      )}
+                  </div>
+
+                  <div className="lg:col-span-7 reveal" style={{ "--i": 5 }}>
+                      {user && (
+                          <EventForm/>
                       )}
                   </div>
               </div>

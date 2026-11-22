@@ -8,6 +8,7 @@ import MessageList from "../../components/messages/MessageList.jsx";
 import {getGreeting} from "../../Utils/Greeting.jsx";
 import {FaClipboardList, FaPlusCircle, FaSchool} from "react-icons/fa";
 import EventForm from "../../components/EventForm.jsx";
+import DashboardHero from "../../components/ui/DashboardHero.jsx";
 import {BEARER_PREFIX} from "../../constants/shared.constant.js";
 import {
     AUTH_HEADER,
@@ -64,70 +65,71 @@ export default function SystemAdminDashboard() {
     };
 
     return (
-        <div className="min-h-screen mt-20  p-4 sm:p-8" dir="rtl">
-            <header className="max-w-6xl mx-auto mb-8">
-                <h1 className="text-3xl sm:text-4xl font-bold text-slate-800">
-                    {getGreeting()}, {user.username}
-                </h1>
-                <h2 className="text-xl sm:text-2xl font-semibold text-green-600 mt-2">
-                    לוח ניהול מערכת
-                </h2>
-            </header>
+        <div className="page" dir="rtl">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5">
+                <DashboardHero
+                    className="lg:col-span-8"
+                    eyebrow="System admin · לוח ניהול מערכת"
+                    greeting={getGreeting()}
+                    name={user.username}
+                    subtitle="לוח ניהול מערכת"
+                />
 
-            <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2 space-y-10">
-                    <section className="grid gap-6 sm:grid-cols-2">
-                        <div className="bg-white rounded-3xl shadow-md p-6 flex items-center gap-4">
-                            <FaSchool className="text-4xl text-green-500" />
-                            <div>
-                                <p className="text-sm text-gray-500">מספר בתי ספר רשומים</p>
-                                {schoolData.length>0&& (
-                                    <p className="text-3xl font-extrabold text-slate-800">{schoolData.length}</p>
-                                )}
-
-                            </div>
+                <div className="lg:col-span-4 grid grid-cols-2 lg:grid-cols-1 gap-4 sm:gap-5">
+                    <div className="glass tile p-6 flex flex-col justify-between gap-4 reveal" style={{ "--i": 1 }}>
+                        <span className="icon-badge icon-badge--mint"><FaSchool /></span>
+                        <div>
+                            <p className="faint text-xs">מספר בתי ספר רשומים</p>
+                            {schoolData.length>0&& (
+                                <p className="num text-5xl font-semibold text-ink mt-1">{schoolData.length}</p>
+                            )}
                         </div>
+                    </div>
 
-                        <div className="bg-gradient-to-r from-lime-400 to-green-500 rounded-3xl shadow-md p-6 flex flex-col justify-between text-white">
-                            <div className="flex items-center gap-3">
-                                <FaPlusCircle className="text-4xl" />
-                                <p className="text-lg font-semibold">רישום בית ספר חדש</p>
-                            </div>
-                            <button
-                                onClick={handleRegisterSchool}
-                                className="mt-6 bg-white/20 hover:bg-white/30 text-white font-bold py-2 rounded-xl transition"
-                            >
-                                ➕ הוסף בית ספר
-                            </button>
+                    <div className="glass tile p-6 flex flex-col justify-between gap-4 reveal overflow-hidden" style={{ "--i": 2 }}>
+                        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_20%_10%,var(--accent-soft),transparent_70%)]" />
+                        <div className="flex items-center gap-3">
+                            <span className="icon-badge"><FaPlusCircle /></span>
+                            <p className="title text-base">רישום בית ספר חדש</p>
                         </div>
-                    </section>
-
-                    <section>
-                        <div className="flex items-center gap-2 mb-4">
-                            <FaClipboardList className="text-xl text-slate-600" />
-                            <h3 className="text-xl font-bold text-slate-700">רשימת בתי ספר</h3>
-                        </div>
-
-                        {schoolData.length > 0 ? (
-                            <ul className="space-y-3">
-                                {schoolData.map((school, idx) => (
-                                    <li
-                                        key={idx}
-                                        className="bg-white flex justify-between items-center p-4 rounded-xl shadow-sm hover:shadow-lg transition"
-                                    >
-                                        <span className="font-semibold text-slate-800">{school.schoolName}</span>
-                                        <span className="text-sm text-gray-600">({school.schoolCode})</span>
-                                    </li>
-                                ))}
-                            </ul>
-                        ) : (
-                            <p className="text-center text-gray-500">{messageFromServer}</p>
-                        )}
-                    </section>
+                        <button
+                            onClick={handleRegisterSchool}
+                            className="btn btn-primary btn-sm btn-block"
+                        >
+                            הוסף בית ספר
+                        </button>
+                    </div>
                 </div>
 
+                <section className="lg:col-span-7 glass p-6 sm:p-7 reveal" style={{ "--i": 3 }}>
+                    <div className="panel-head">
+                        <div className="flex items-center gap-3">
+                            <span className="icon-badge"><FaClipboardList /></span>
+                            <h3 className="title text-xl">רשימת בתי ספר</h3>
+                        </div>
+                        <span className="chip num">{schoolData.length}</span>
+                    </div>
+
+                    {schoolData.length > 0 ? (
+                        <ul className="grid sm:grid-cols-2 gap-3 max-h-[26rem] scroll-area p-1">
+                            {schoolData.map((school, idx) => (
+                                <li
+                                    key={idx}
+                                    className="row-card flex justify-between items-center gap-3 reveal"
+                                    style={{ "--i": Math.min(idx, 8) }}
+                                >
+                                    <span className="font-semibold text-ink truncate">{school.schoolName}</span>
+                                    <span className="chip num">{school.schoolCode}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p className="faint text-center py-6">{messageFromServer}</p>
+                    )}
+                </section>
+
                 {user && (
-                    <div className="lg:col-span-1 flex flex-col gap-4">
+                    <div className="lg:col-span-5 flex flex-col gap-4 sm:gap-5 reveal" style={{ "--i": 4 }}>
                         <MessageList userId={user.userId} />
                         <EventForm />
                     </div>

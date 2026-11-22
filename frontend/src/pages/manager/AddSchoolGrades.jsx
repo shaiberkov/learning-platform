@@ -2,6 +2,7 @@ import React, {useContext, useEffect, useState} from 'react';
 import axios from 'axios';
 import Cookies from "universal-cookie";
 import {UserContext} from "../../context/UserContext.jsx";
+import FormShell from "../../components/ui/FormShell.jsx";
 import {FiList} from "react-icons/fi";
 import {BEARER_PREFIX} from "../../constants/shared.constant.js";
 import {
@@ -56,41 +57,37 @@ function AddSchoolGrades() {
     };
 
     return (
-        <div
-            className="w-full max-w-xs sm:max-w-sm   mx-auto p-4 sm:p-6 bg-white rounded-2xl shadow-xl mt-20 animate-fade-in text-right mb-8"
-            dir="rtl"
-        >
-            <h2 className="text-xl sm:text-2xl font-bold text-black-600 mb-6 text-center">
-                הוסף שכבות
-            </h2>
+        <FormShell eyebrow="Grades · שכבות" title="הוסף שכבות" icon={<FiList />}>
 
-            <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-2">
-                <FiList className="text-green-500 transition-colors duration-300 hover:text-blue-600 hover:scale-120"/>
-                רשום רשימת שכבות מופרדות בפסיקים:
-            </label>
-            <input
-                type="text"
-                value={grades}
-                onChange={(e) => setGrades(e.target.value)}
-                placeholder="למשל: א, ב, ג"
-                required
-                className="w-full px-3 py-2 mb-4 border-2 border-green-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 transition-all duration-300"
-            />
+            <div>
+                <label className="label">
+                    <FiList/>
+                    רשום רשימת שכבות מופרדות בפסיקים:
+                </label>
+                <input
+                    type="text"
+                    value={grades}
+                    onChange={(e) => setGrades(e.target.value)}
+                    placeholder="למשל: א, ב, ג"
+                    required
+                    className="field"
+                />
+            </div>
 
             <button
                 onClick={handleSubmit}
-                className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 rounded-lg shadow-md transition-all duration-300 hover:scale-[1.02] flex items-center justify-center gap-2"
+                className="btn btn-primary btn-block"
             >
-                <FiList className="text-white transition-transform duration-300 hover:scale-120"/>
+                <FiList/>
                 הוסף שכבות
             </button>
 
             {message && (
-                <div className="mt-4 text-sm text-red-600 text-center animate-pulse">
+                <div className="notice">
                     {message}
                 </div>
             )}
-        </div>
+        </FormShell>
     );
 }
 

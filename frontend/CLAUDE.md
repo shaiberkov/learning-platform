@@ -1,6 +1,6 @@
 # frontend/CLAUDE.md
 
-React 19 + Vite 6, plain JavaScript (`.jsx`, no TypeScript), Tailwind 4 with daisyUI, axios, react-router 7. Hebrew UI.
+React 19 + Vite 6, plain JavaScript (`.jsx`, no TypeScript), Tailwind 4 (daisyUI is installed but not loaded), axios, react-router 7. Hebrew UI.
 
 ## Commands (run from `frontend/`)
 
@@ -30,6 +30,9 @@ There are no frontend tests. Verify a change by running it against the backend a
 ## Rules
 
 - Requests: axios with `Authorization: Bearer <token>` (`AUTH_HEADER` + `BEARER_PREFIX` constants). Read `response.data.success`; show `response.data.errorCode` as the message (it is Hebrew text from the server).
-- Right-to-left is set per screen: each page's root element carries `dir="rtl"` (`index.html` is `lang="en"` with no `dir`). A new screen sets it on its root too.
-- Styling: Tailwind utility classes and daisyUI components, no new CSS files.
+- Right-to-left: `index.html` is `lang="he" dir="rtl"`, and each page's root element still carries `dir="rtl"`. A new screen sets it on its root too.
+- Styling: the design system lives in `src/App.css` ("Spatial Academy"). Colors are CSS tokens (`--ink`, `--accent`, `--mint`, `--amber`, `--danger`, `--surface`...) redefined per theme under `[data-theme="light"|"dark"]` on `<html>`, and exposed to Tailwind as `text-ink`, `bg-accent-soft`, `border-line` and so on. Never use raw Tailwind palette colors (`bg-white`, `text-gray-700`, `green-500`): they do not follow the theme.
+- Build screens from the component classes in `App.css`: `glass` (+ `tile` for hover lift), `eyebrow`, `display`, `title`, `field` / `field-wrap` / `label` / `field-error`, `btn btn-primary|btn-ghost|btn-danger|btn-mint`, `choice is-active`, `notice`, `chip`, `row-card`, `data-table`, `modal-backdrop` + `modal`, `reveal` (staggered entrance via `--i`). Numbers, timers and grades use `num` (JetBrains Mono).
+- Shared UI pieces in `src/components/ui/`: `FormShell` (management forms), `AuthShell` (auth screens), `DashboardHero` + `QuickTile` (bento dashboards), `ProsePage` (static pages), `Prism` (CSS-only 3D prism), `ProgressRing`, `OrbitLoader`, `ThemeDial` (theme toggle, stores `lp-theme` in localStorage; `index.html` applies it before first paint).
+- react-select instances use `classNamePrefix="lp-select"`, themed in `App.css`. The practice canvas stays white in both themes on purpose (it is drawn on with black ink).
 - No client cache: screens fetch on mount. The SSE context is the only place server pushes arrive.

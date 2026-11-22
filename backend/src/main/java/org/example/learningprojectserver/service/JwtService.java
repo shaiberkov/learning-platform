@@ -4,6 +4,7 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import org.example.learningprojectserver.enums.Role;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
@@ -16,7 +17,8 @@ public class JwtService {
 
     private final String SECRET = String.valueOf(Keys.secretKeyFor(SignatureAlgorithm.HS256)); // שים במשתנה סביבה
 
-    private final long EXPIRATION_TIME = 1000 * 60 * 60; // שעה
+    @Value("${auth.access-token.ttl-minutes:15}")
+    private long accessTokenTtlMinutes;
 
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(SECRET.getBytes());
@@ -38,7 +40,7 @@ public class JwtService {
                 .setClaims(claims)
                 .setSubject(userId)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .setExpiration(new Date(System.currentTimeMillis() + accessTokenTtlMinutes * 60_000))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }

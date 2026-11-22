@@ -29,7 +29,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final ActiveUserService activeUserService;
-    private final JwtService jwtService;
+    private final AuthTokenService authTokenService;
     private final SmsSender smsSender;
     private final StudentRepository studentRepository;
     private static final ConcurrentHashMap<String, Map<String,String>> otpLoginStorage = new ConcurrentHashMap<>();
@@ -254,10 +254,10 @@ public class UserService {
                     return loginResponse;
                 }
 
-                String token = jwtService.generateToken(userId,userEntity.getUsername(),String.valueOf(userEntity.getRole()));
+                otpLoginStorage.remove(userId);
                 loginResponse.setSuccess(true);
                 loginResponse.setErrorCode("הקוד נכון");
-                loginResponse.setToken(token);
+                loginResponse.setTokens(authTokenService.issue(userId, userEntity.getUsername(), String.valueOf(userEntity.getRole())));
                 userEntity.setOtp(null);
                 userEntity.setOtpTimestamp(null);
                 Session session = new Session();
@@ -329,6 +329,7 @@ public class UserService {
         user.setPasswordHash(hashPassword);
         userRepository.save(user);
         otpStorage.remove(userId);
+        authTokenService.revokeAllForUser(userId);
         sendEmail(user.getEmail(), subject, message);
         resetPasswordResponse.setSuccess(true);
         return resetPasswordResponse;

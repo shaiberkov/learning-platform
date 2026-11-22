@@ -25,7 +25,7 @@ Not Spring caches: plain `ConcurrentHashMap`s in singleton beans. Lost on restar
 
 | Where | Holds | Cleared |
 |---|---|---|
-| `UserService.otpLoginStorage` (static) | login OTP + its time, per user (valid 2 minutes) | overwritten by the next login; never removed |
+| `UserService.otpLoginStorage` (static) | login OTP + its time, per user (valid 2 minutes) | overwritten by the next login; removed after a successful verification |
 | `UserService.otpStorage` (static) | password-reset OTP per user | removed after a successful reset |
 | `SessionService.tokenCache` | JWT validation results | whole map every 2 hours (`clearTokenCache`) |
 | `NotificationService.emitters` | one `SseEmitter` per connected user | on completion, timeout, error, or a failed send |
@@ -33,6 +33,9 @@ Not Spring caches: plain `ConcurrentHashMap`s in singleton beans. Lost on restar
 | `ActiveUserService.activeUsers` | who is online | `disconnectUser` |
 | `StatisticsService.userStats` | per-student statistics | currently unused (its writes are commented out) |
 | `filter/MetricsFilter` | request counts and response times | never |
+| `security/RateLimiter.buckets` | Bucket4j token buckets per (rule, IP) and (rule, userId) for login, OTP, password reset and AI chat | idle buckets dropped every 10 minutes once their period has passed (`evictIdleBuckets`); a restart resets all limits |
+
+Refresh tokens are not cached: they live in the `refresh_tokens` table (hashed) and every refresh reads it.
 
 ## 3. Known gaps
 

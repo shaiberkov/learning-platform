@@ -39,6 +39,7 @@ Everyone registers as a `STUDENT` with no school. The system admin turns a user 
 - `MessageEntity` (sender, recipient, title, body), `Session`.
 - `ParentEntity` (extends `UserEntity`, many-to-many `children` → `StudentEntity`, table `parent_student`).
 - `SchoolYearEntity` (school, name, dates, active/closed) → `SemesterEntity`; `ArchivedStudentRecordEntity` is a by-value snapshot of each student taken when a year closes. `LessonEntity` has an optional `room`.
+- Schema changes production needs before deploying (no Flyway yet, production runs `ddl-auto=none`): `docs/MIGRATIONS.md`. That includes widening `user_entity.role` from a native ENUM so `PARENT` can be stored.
 
 ## Main flows
 

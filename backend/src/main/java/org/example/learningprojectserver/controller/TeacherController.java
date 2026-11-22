@@ -3,7 +3,6 @@ package org.example.learningprojectserver.controller;
 import lombok.RequiredArgsConstructor;
 import org.example.learningprojectserver.response.BasicResponse;
 import org.example.learningprojectserver.service.TeacherService;
-import org.example.learningprojectserver.service.TestResultService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +17,6 @@ import static org.example.learningprojectserver.constants.ControllerConstants.Te
 public class TeacherController {
 
 private final TeacherService teacherService;
-private final TestResultService testResultService;
 
 
     @GetMapping(SCHEDULE_FOR_TEACHER)
@@ -49,12 +47,16 @@ private final TestResultService testResultService;
                     timeLimitMinutes
             );
         }
+    /**
+     * Retired: it graded without the server timer. Teacher tests are submitted through
+     * the exam attempt flow (ExamController.SUBMIT_ATTEMPT), which enforces the deadline.
+     */
     @PostMapping(CHECK_TEACHER_TEST)
     public BasicResponse checkTeacherTest(
             @RequestParam String userId,
             @RequestParam Long testId,
             @RequestBody Map<Long, String> userAnswers) {
-        return testResultService.checkTeacherTest(userId, testId, userAnswers);
+        return new BasicResponse(false, "הגשת מבחן מתבצעת דרך מסך המבחן");
     }
 
 }

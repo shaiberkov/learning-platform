@@ -4,6 +4,7 @@ import java.util.List;
 
 import static org.example.learningprojectserver.constants.ControllerConstants.ActiveUser.CONNECTED_USERS_BASE_PATH;
 import static org.example.learningprojectserver.constants.ControllerConstants.ChatGpt.CHAT_BASE_PATH;
+import static org.example.learningprojectserver.constants.ControllerConstants.Exam.EXAM_BASE_PATH;
 import static org.example.learningprojectserver.constants.ControllerConstants.Lesson.LESSON_BASE_PATH;
 import static org.example.learningprojectserver.constants.ControllerConstants.Message.MESSAGE_BASE_PATH;
 import static org.example.learningprojectserver.constants.ControllerConstants.Notification.NOTIFICATION_BASE_PATH;
@@ -69,6 +70,7 @@ public final class SecurityConstants {
         public static final String LESSON_ALL                = LESSON_BASE_PATH       + CORS_MAPPING_PATH;
         public static final String SCHEDULE_ALL              = SCHEDULE_BASE_PATH     + CORS_MAPPING_PATH;
         public static final String UPCOMING_EVENTS_ALL       = UPCOMING_EVENTS_BASE_PATH + CORS_MAPPING_PATH;
+        public static final String EXAM_ALL                  = EXAM_BASE_PATH         + CORS_MAPPING_PATH;
 
         public static final String SYSTEM_ADMIN   = "SYSTEM_ADMIN";
         public static final String TEACHER        = "TEACHER";

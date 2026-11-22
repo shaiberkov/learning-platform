@@ -133,6 +133,20 @@ public final class ControllerConstants {
         public static final String TEST_BASE_PATH = BASE_API + "/test";
         public static final String GET_TEST       = "/get-test";
     }
+    public static final class Exam {
+        private Exam() {}
+
+        public static final String EXAM_BASE_PATH  = BASE_API + "/exam";
+        public static final String START_ATTEMPT   = "/start-attempt";
+        public static final String SAVE_ANSWERS    = "/save-answers";
+        public static final String SUBMIT_ATTEMPT  = "/submit-attempt";
+        public static final String INTEGRITY_EVENT = "/integrity-event";
+        public static final String CREATE_EXAM     = "/create-exam";
+        public static final String CLONE_EXAM      = "/clone-exam";
+        public static final String TEACHER_EXAMS   = "/teacher-exams";
+        public static final String EXAM_ATTEMPTS   = "/attempts";
+        public static final String ITEM_ANALYSIS   = "/item-analysis";
+    }
     public static final class UpcomingEvents {
         private UpcomingEvents() {}
 

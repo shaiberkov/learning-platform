@@ -79,6 +79,7 @@ public class SecurityConfig {
                         .requestMatchers(LESSON_ALL).permitAll()
                         .requestMatchers(SCHEDULE_ALL).permitAll()
                         .requestMatchers(UPCOMING_EVENTS_ALL).permitAll()
+                        .requestMatchers(EXAM_ALL).permitAll()//hasAnyRole("TEACHER","STUDENT")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(metricsFilter, UsernamePasswordAuthenticationFilter.class)

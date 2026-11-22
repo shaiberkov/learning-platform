@@ -1,5 +1,6 @@
 package org.example.learningprojectserver.controller;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import lombok.RequiredArgsConstructor;
 import org.example.learningprojectserver.dto.StudentTestStatusDTO;
 import org.example.learningprojectserver.response.BasicResponse;
@@ -23,11 +24,13 @@ private final TestResultService testResultService;
 
 
 
+    @PreAuthorize("@authz.isSelf(#studentId) and @authz.canAccessSchool(#schoolCode)")
     @GetMapping(GET_STUDENT_SCHEDULE)
     public BasicResponse getStudentSchedule(@RequestParam String schoolCode,@RequestParam String studentId){
         return studentService.getStudentSchedule(schoolCode,studentId);
     }
 
+    @PreAuthorize("@authz.isSelf(#userId)")
     @GetMapping(GENERATE_QUESTION)
     public BasicResponse generateQuestionForPractice(
             @RequestParam String userId,
@@ -37,6 +40,7 @@ private final TestResultService testResultService;
         return studentService.generateQuestionForPractice(userId, subject, topic, subTopic);
     }
 
+    @PreAuthorize("@authz.isSelf(#userId)")
     @PostMapping(SUBMIT_ANSWER)
     public BasicResponse submitAnswer(
             @RequestParam String userId,
@@ -45,6 +49,7 @@ private final TestResultService testResultService;
             @RequestParam String answer) {
         return studentService.submitAnswer(userId,id,subTopic,answer);
     }
+    @PreAuthorize("@authz.isSelf(#userId) and @features.enabledForCurrentUser('PRACTICE_TESTS')")
     @PostMapping(GENERATE_PRACTICE_TEST)
     public BasicResponse generatePracticeTest(
             @RequestParam String userId,
@@ -57,6 +62,7 @@ private final TestResultService testResultService;
         return studentService.generatePracticeTest(userId, subject, topic, difficulty, questionCount, timeLimitMinutes);
     }
 
+    @PreAuthorize("@authz.ownsPracticeTest(#userId, #testId)")
     @PostMapping(CHECK_PRACTICE_TEST)
     public BasicResponse checkPracticeTest(
             @RequestParam String userId,
@@ -68,6 +74,7 @@ private final TestResultService testResultService;
 
 
 
+    @PreAuthorize("@authz.isAssignedToTeacherTest(#userId, #testId)")
     @PostMapping(START_TEST)
     public BasicResponse startTest(
             @RequestParam String userId,
@@ -75,6 +82,7 @@ private final TestResultService testResultService;
         return testResultService.startTest(testId,userId);
     }
 
+    @PreAuthorize("@authz.isSelf(#studentId)")
     @GetMapping(GET_STUDENT_TESTS_STATUS)
     public List<StudentTestStatusDTO> getStudentTestsStatus(@RequestParam String studentId){
         return studentService.getStudentTestsStatus(studentId);

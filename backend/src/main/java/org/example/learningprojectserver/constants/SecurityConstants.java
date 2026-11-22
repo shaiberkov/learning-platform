@@ -3,6 +3,10 @@ package org.example.learningprojectserver.constants;
 import java.util.List;
 
 import static org.example.learningprojectserver.constants.ControllerConstants.ActiveUser.CONNECTED_USERS_BASE_PATH;
+import static org.example.learningprojectserver.constants.ControllerConstants.AuditLog.AUDIT_LOG_BASE_PATH;
+import static org.example.learningprojectserver.constants.ControllerConstants.Impersonation.IMPERSONATION_BASE_PATH;
+import static org.example.learningprojectserver.constants.ControllerConstants.Impersonation.START_IMPERSONATION;
+import static org.example.learningprojectserver.constants.ControllerConstants.Teacher.CHECK_TEACHER_TEST;
 import static org.example.learningprojectserver.constants.ControllerConstants.ChatGpt.CHAT_BASE_PATH;
 import static org.example.learningprojectserver.constants.ControllerConstants.Lesson.LESSON_BASE_PATH;
 import static org.example.learningprojectserver.constants.ControllerConstants.Message.MESSAGE_BASE_PATH;
@@ -26,6 +30,8 @@ public final class SecurityConstants {
         public static final String ROLE_PREFIX  = "ROLE_";
         public static final String PRINCIPAL_USER_ID_KEY = "userId";
         public static final String PRINCIPAL_USERNAME_KEY = "username";
+        public static final String PRINCIPAL_IMPERSONATOR_ID_KEY = "impersonatorId";
+        public static final String PRINCIPAL_IMPERSONATOR_USERNAME_KEY = "impersonatorUsername";
     }
     public static final class LoggingFilterConstants {
         private LoggingFilterConstants() {}
@@ -69,6 +75,11 @@ public final class SecurityConstants {
         public static final String LESSON_ALL                = LESSON_BASE_PATH       + CORS_MAPPING_PATH;
         public static final String SCHEDULE_ALL              = SCHEDULE_BASE_PATH     + CORS_MAPPING_PATH;
         public static final String UPCOMING_EVENTS_ALL       = UPCOMING_EVENTS_BASE_PATH + CORS_MAPPING_PATH;
+        public static final String AUDIT_LOG_ALL             = AUDIT_LOG_BASE_PATH    + CORS_MAPPING_PATH;
+        public static final String IMPERSONATION_START       = IMPERSONATION_BASE_PATH + START_IMPERSONATION;
+        public static final String IMPERSONATION_ALL         = IMPERSONATION_BASE_PATH + CORS_MAPPING_PATH;
+        // Students submit their teacher tests through the teacher controller.
+        public static final String TEACHER_TEST_SUBMIT       = TEACHER_BASE_PATH      + CHECK_TEACHER_TEST;
 
         public static final String SYSTEM_ADMIN   = "SYSTEM_ADMIN";
         public static final String TEACHER        = "TEACHER";

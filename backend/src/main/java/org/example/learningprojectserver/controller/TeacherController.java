@@ -1,5 +1,6 @@
 package org.example.learningprojectserver.controller;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import lombok.RequiredArgsConstructor;
 import org.example.learningprojectserver.response.BasicResponse;
 import org.example.learningprojectserver.service.TeacherService;
@@ -21,12 +22,14 @@ private final TeacherService teacherService;
 private final TestResultService testResultService;
 
 
+    @PreAuthorize("@authz.isSelf(#teacherId)")
     @GetMapping(SCHEDULE_FOR_TEACHER)
     public BasicResponse getScheduleForTeacher(@RequestParam String teacherId) {
         return teacherService.getTeacherSchedule(teacherId);
     }
 
 
+    @PreAuthorize("@authz.teachesStudents(#teacherId, #usersIds) and @features.enabledForCurrentUser('TEACHER_TESTS')")
     @PostMapping(GENERATE_TEST_FOR_STUDENTS)
     public BasicResponse generateTestForStudents(
             @RequestBody List<String> usersIds,
@@ -49,6 +52,7 @@ private final TestResultService testResultService;
                     timeLimitMinutes
             );
         }
+    @PreAuthorize("@authz.isAssignedToTeacherTest(#userId, #testId)")
     @PostMapping(CHECK_TEACHER_TEST)
     public BasicResponse checkTeacherTest(
             @RequestParam String userId,

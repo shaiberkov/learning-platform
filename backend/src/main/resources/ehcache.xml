@@ -47,4 +47,11 @@
 
 
 
+    <!-- Per-school feature flags (FeatureFlagService.flagsForSchool), key = schoolCode -->
+    <cache alias="schoolFeatureFlags">
+        <expiry>
+            <ttl unit="hours">24</ttl>
+        </expiry>
+        <heap>200</heap>
+    </cache>
 </config>

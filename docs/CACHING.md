@@ -18,6 +18,7 @@ Configured in `backend/src/main/resources/ehcache.xml` and enabled by `@EnableCa
 | `studentTestsStatus` | `StudentService.getStudentTestsStatus(userId)` | `userId` | `TestResultService.checkTeacherTest` (`@CacheEvict`); `TeacherService.generateTestForStudents`: each student | 1000 |
 | `schoolDTO` | `SchoolService.getSchoolDTO(SchoolManagerId)` | `SchoolManagerId` | nothing | 100 |
 | `allSchools` | `SystemAdminService.getAllSchoolsDTO()` | (no args) | `SystemAdminService`: `assignUserAsSchoolManager`, `addNewSchoolToSystem`, `assignSchoolManagerToSchool`, `removeSchoolManagerFromSchool` (`allEntries = true`) | 100 |
+| `schoolFeatureFlags` | `FeatureFlagService.flagsForSchool(schoolCode)` (a `Map<String, Boolean>` of effective flags, read through `security/FeatureFlags`) | `schoolCode` | `FeatureFlagService.setFlag` (`@CacheEvict`, same key); `school_feature_flag` has no other writer | 200 |
 
 ## 2. Hand-rolled in-memory maps
 
@@ -33,6 +34,8 @@ Not Spring caches: plain `ConcurrentHashMap`s in singleton beans. Lost on restar
 | `ActiveUserService.activeUsers` | who is online | `disconnectUser` |
 | `StatisticsService.userStats` | per-student statistics | currently unused (its writes are commented out) |
 | `filter/MetricsFilter` | request counts and response times | never |
+| `filter/ErrorCountingFilter` | request, 4xx, 401/403 and 5xx counters for the system health screen | never (restart) |
+| `utils/gptApi/AiUsageMetrics` | OpenAI request and failure counters for the system health screen | never (restart) |
 
 ## 3. Known gaps
 

@@ -26,7 +26,7 @@ Deployed on Render: frontend `schoolmanagmentsystem-z0m5.onrender.com`, backend 
 | `TEACHER` | see own timetable, generate a test for chosen students (graded automatically), see results, send messages |
 | `STUDENT` | practise questions by subject/topic, build a self-practice test, take teacher tests, see timetable, tests and statistics. A student not yet in a school sees a reduced menu. |
 
-Everyone registers as a `STUDENT` with no school. The system admin turns a user into a school manager (`assignUserAsSchoolManager`, which refuses anyone who is no longer a student); a manager turns users into teachers of the school or puts students in a class. Roles are not enforced by the API today (see the Security section of the root `CLAUDE.md`).
+Everyone registers as a `STUDENT` with no school. The system admin turns a user into a school manager (`assignUserAsSchoolManager`, which refuses anyone who is no longer a student); a manager turns users into teachers of the school or puts students in a class. Roles are enforced by the API: URL rules per route group in `config/SecurityConfig.java`, and ownership checks (`@PreAuthorize` with `security/AccessGuard`) so a teacher reaches only their own classes and students, a student only their own tests and results, and a school manager only their own school. A system admin passes every ownership check.
 
 ## Domain model (main entities)
 
@@ -36,6 +36,7 @@ Everyone registers as a `STUDENT` with no school. The system admin turns a user 
 - Questions: `QuestionEntity`, `PracticeQuestionEntity`, `TestQuestionEntity`, `StudentQuestionHistoryEntity`, `StudentProgressEntity`, `StudentStatisticsEntity`.
 - Tests: `PracticeTestEntity` + `PracticeTestResultEntity` (student's own), `TeacherTestEntity` + `TeacherTestResultEntity` (assigned by a teacher), `TestEntity` / `TestResultEntity`.
 - `MessageEntity` (sender, recipient, title, body), `Session`.
+- `AuditLogEntity` (`audit_log`: actor, impersonator, action, entity type and id, before, after, time, IP, school) and `SchoolFeatureFlagEntity` (`school_feature_flag`: school code, feature, on/off).
 
 ## Main flows
 
@@ -50,6 +51,10 @@ Everyone registers as a `STUDENT` with no school. The system admin turns a user 
 **Timetable.** The manager adds lessons to a teacher for a class; overlaps are rejected. Class, teacher and student timetables are cached and evicted when a lesson is added.
 
 **Dashboard feed.** `upcoming-events` returns next lessons, tests and events for the user's role, built by the strategy for that role.
+
+**Audit log.** Role changes (promote to manager or teacher, remove a teacher or manager, which delete and recreate the user row), teacher and student class changes, grade changes, added lessons, recorded teacher-test scores, impersonation and feature-flag changes call `AuditService.record`. `GET /audit-log/list` (filters: action, actor, entity type and id, dates, paging) serves the "יומן פעולות" screen: a system admin sees everything, a school manager only entries of their own school.
+
+**System admin tools.** Impersonation (`POST /impersonation/start?targetUserId=`, admin only; `POST /impersonation/stop` with the impersonation token) issues a 30-minute token that acts as the user and carries the admin's id; the frontend shows a banner while it is active and every audit entry records the impersonator. `GET /system-admin/health` reports uptime, database status and latency, request and error counters, AI call counters and whether `GPT_TOKEN` is set, memory and active users. Per-school feature flags (`AI_CHAT`, `PRACTICE_TESTS`, `TEACHER_TESTS`, `MESSAGES`, all on by default) are set at `/system-admin/feature-flags` and checked by `security/FeatureFlags`; a disabled feature answers 403 with a Hebrew message.
 
 ## API
 

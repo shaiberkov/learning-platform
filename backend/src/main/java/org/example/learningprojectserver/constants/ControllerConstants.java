@@ -3,6 +3,28 @@ package org.example.learningprojectserver.constants;
 import static org.example.learningprojectserver.constants.SharedConstants.SharedControllerConstants.BASE_API;
 
 public final class ControllerConstants {
+    public static final class AuditLog {
+        private AuditLog() {}
+
+        public static final String AUDIT_LOG_BASE_PATH = BASE_API + "/audit-log";
+        public static final String LIST_AUDIT_LOG      = "/list";
+        public static final String AUDIT_ACTIONS       = "/actions";
+    }
+    public static final class Impersonation {
+        private Impersonation() {}
+
+        public static final String IMPERSONATION_BASE_PATH = BASE_API + "/impersonation";
+        public static final String START_IMPERSONATION     = "/start";
+        public static final String STOP_IMPERSONATION      = "/stop";
+    }
+    public static final class AdminTools {
+        private AdminTools() {}
+
+        // Served under SystemAdmin.SYSTEM_ADMIN_BASE_PATH.
+        public static final String SYSTEM_HEALTH    = "/health";
+        public static final String FEATURE_FLAGS    = "/feature-flags";
+        public static final String SET_FEATURE_FLAG = "/feature-flags/set";
+    }
     public static final class ActiveUser {
         private ActiveUser() {}
 

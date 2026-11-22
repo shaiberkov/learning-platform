@@ -1,5 +1,6 @@
 package org.example.learningprojectserver.controller;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import lombok.RequiredArgsConstructor;
 import org.example.learningprojectserver.response.BasicResponse;
 import org.example.learningprojectserver.service.MessageService;
@@ -17,12 +18,14 @@ public class MessageController {
 private final MessageService messageService;
 
 
+    @PreAuthorize("@authz.isSelf(#userId)")
     @GetMapping(RECIPIENT_TYPES)
     public BasicResponse getRecipientTypes(@RequestParam String userId) {
     return messageService.getRecipientTypes(userId);
     }
 
 
+    @PreAuthorize("@authz.isSelf(#senderId) and @features.enabledForCurrentUser('MESSAGES')")
     @PostMapping(SEND_MESSAGE)
     public BasicResponse sendMessage(
             @RequestParam String senderId,
@@ -34,6 +37,7 @@ private final MessageService messageService;
         return messageService.sendMessage(senderId, recipientType, recipientValue, title, content);
     }
 
+    @PreAuthorize("@authz.isSelf(#userId)")
     @GetMapping(GET_ALL_RECEIVED_MESSAGES)
     public BasicResponse getAllRecivedMessages(@RequestParam String userId) {
         return messageService.getAllRecivedMessages(userId);

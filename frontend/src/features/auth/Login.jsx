@@ -5,9 +5,11 @@ import axios from "axios";
 import { serverErrorMessage } from "../../Utils/httpSetup.js";
 import AuthShell from "../../components/ui/AuthShell.jsx";
 import {LOGIN, QUESTION, USER_BASE_PATH} from "../../constants/pages.constants.js";
+import { useTranslation } from "react-i18next";
 
 function Login() {
     const navigate = useNavigate();
+    const { t } = useTranslation();
     const [formData, setFormData] = useState({
         userId: '',
         password: '',
@@ -55,49 +57,55 @@ function Login() {
 
     return (
         <AuthShell
-            eyebrow="Sign in · כניסה"
-            title={<>חוזרים <span className="gradient-text">לזרימה.</span></>}
-            subtitle="המרחב האישי שלך ללמידה, תרגול וניהול — שקט, ממוקד ומוכן בדיוק מאיפה שעצרת."
+            eyebrow={t("login.eyebrow")}
+            title={<>{t("login.titleA")} <span className="gradient-text">{t("login.titleB")}</span></>}
+            subtitle={t("login.subtitle")}
         >
             <form
                 onSubmit={handleSubmit}
                 className="glass glass--strong p-6 sm:p-9 w-full h-full flex flex-col justify-center space-y-5"
             >
                 <div className="space-y-1 mb-2">
-                    <span className="eyebrow">01 — זיהוי</span>
+                    <span className="eyebrow">{t("login.step")}</span>
                     <h2 className="title text-3xl">
-                        התחברות
+                        {t("login.heading")}
                     </h2>
                 </div>
 
                 <div className="field-wrap">
-                    <FaUser/>
+                    <FaUser aria-hidden="true"/>
+                    <label htmlFor="login-userId" className="sr-only">{t("login.userId")}</label>
                     <input
+                        id="login-userId"
                         type="text"
                         name="userId"
+                        autoComplete="username"
                         value={formData.userId}
                         onChange={handleChange}
-                        placeholder="תעודת זהות"
+                        placeholder={t("login.userId")}
                         required
                         className="field"
                     />
                 </div>
 
                 <div className="field-wrap">
-                    <FaLock/>
+                    <FaLock aria-hidden="true"/>
+                    <label htmlFor="login-password" className="sr-only">{t("login.password")}</label>
                     <input
+                        id="login-password"
                         type="password"
                         name="password"
+                        autoComplete="current-password"
                         value={formData.password}
                         onChange={handleChange}
-                        placeholder="סיסמא"
+                        placeholder={t("login.password")}
                         required
                         className="field"
                     />
                 </div>
 
                 {error && (
-                    <p className="notice notice--danger">{error}</p>
+                    <p className="notice notice--danger" role="alert">{error}</p>
                 )}
                 <button
                     type="submit"
@@ -105,7 +113,7 @@ function Login() {
 
                     className="btn btn-primary btn-block"
                 >
-                    <span className="relative z-10">התחבר</span>
+                    <span className="relative z-10">{t("login.submit")}</span>
                 </button>
 
                 <div className="pt-4 mt-2 border-t border-dashed border-line space-y-2 text-sm">
@@ -114,18 +122,18 @@ function Login() {
                             href="/register"
                             className="link"
                         >
-                            הרשם כאן
+                            {t("login.registerLink")}
                         </a>{" "}
-                        אם עדיין אין לך חשבון
+                        {t("login.registerText")}
                     </p>
 
                     <p className="faint text-center">
-                        שכחת סיסמה?{" "}
+                        {t("login.forgot")}{" "}
                         <a
                             href="/reset-password"
                             className="link"
                         >
-                            לחץ כאן לשחזור
+                            {t("login.resetLink")}
                         </a>
                     </p>
                 </div>

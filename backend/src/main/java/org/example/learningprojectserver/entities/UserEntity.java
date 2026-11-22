@@ -18,7 +18,8 @@ import java.util.List;
 @NoArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "user_entity", indexes = {
-        @Index(name = "idx_user_userId", columnList = "userId")
+        @Index(name = "idx_user_userId", columnList = "userId"),
+        @Index(name = "idx_user_username", columnList = "username")
 })
 public abstract class UserEntity {
 

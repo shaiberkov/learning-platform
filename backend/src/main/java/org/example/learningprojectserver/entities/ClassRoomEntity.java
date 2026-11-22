@@ -13,6 +13,9 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "class_room_entity", indexes = {
+        @Index(name = "idx_class_room_name", columnList = "name")
+})
 public class
 ClassRoomEntity {
     @Id

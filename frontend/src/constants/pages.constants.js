@@ -25,11 +25,38 @@ export const PagesConstants = {
         RECIPIENT_TYPES: '/recipient-types',
         SEND_MESSAGE: '/send-message',
         GET_ALL_RECEIVED_MESSAGES: '/get-all-recived-messages',
+        RECEIVED_MESSAGES_PAGE: '/received-messages-page',
+        SENT_MESSAGES: '/sent-messages',
+        READ_RECEIPTS: '/read-receipts',
+        MESSAGE_MARK_READ: '/mark-read',
+        REPLY: '/reply',
+        THREAD: '/thread',
+        ATTACHMENT: '/attachment',
     },
 
     Notification: {
         NOTIFICATION_BASE_PATH: `${API_BASE_URL}${BASE_API}/notifications`,
         CONNECT: '/connect',
+        NOTIFICATION_LIST: '/list',
+        UNREAD_COUNT: '/unread-count',
+        NOTIFICATION_MARK_READ: '/mark-read',
+        MARK_ALL_READ: '/mark-all-read',
+        PREFERENCES: '/preferences',
+        PUSH_PUBLIC_KEY: '/push/public-key',
+        PUSH_SUBSCRIBE: '/push/subscribe',
+        PUSH_UNSUBSCRIBE: '/push/unsubscribe',
+    },
+
+    Calendar: {
+        CALENDAR_BASE_PATH: `${API_BASE_URL}${BASE_API}/calendar`,
+        CALENDAR_TOKEN: '/token',
+        REGENERATE_CALENDAR_TOKEN: '/regenerate-token',
+    },
+
+    Search: {
+        SEARCH_BASE_PATH: `${API_BASE_URL}${BASE_API}/search`,
+        GLOBAL_SEARCH: '/global',
+        STUDENTS_PAGE: '/students-page',
     },
 
     Question: {
@@ -313,13 +340,42 @@ export const {
     RECIPIENT_TYPES,
     SEND_MESSAGE,
     GET_ALL_RECEIVED_MESSAGES,
+    RECEIVED_MESSAGES_PAGE,
+    SENT_MESSAGES,
+    READ_RECEIPTS,
+    MESSAGE_MARK_READ,
+    REPLY,
+    THREAD,
+    ATTACHMENT,
 } = PagesConstants.Message;
 
 /* Notification */
 export const {
     NOTIFICATION_BASE_PATH,
     CONNECT,
+    NOTIFICATION_LIST,
+    UNREAD_COUNT,
+    NOTIFICATION_MARK_READ,
+    MARK_ALL_READ,
+    PREFERENCES,
+    PUSH_PUBLIC_KEY,
+    PUSH_SUBSCRIBE,
+    PUSH_UNSUBSCRIBE,
 } = PagesConstants.Notification;
+
+/* Calendar */
+export const {
+    CALENDAR_BASE_PATH,
+    CALENDAR_TOKEN,
+    REGENERATE_CALENDAR_TOKEN,
+} = PagesConstants.Calendar;
+
+/* Search */
+export const {
+    SEARCH_BASE_PATH,
+    GLOBAL_SEARCH,
+    STUDENTS_PAGE,
+} = PagesConstants.Search;
 
 /* Question */
 export const {

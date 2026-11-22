@@ -10,6 +10,8 @@ import {
     VALIDATE_TOKEN
 } from "../../constants/pages.constants.js";
 import {BEARER_PREFIX} from "../../constants/shared.constant.js";
+import {Link} from "react-router-dom";
+import EmptyState from "../ui/EmptyState.jsx";
 
 function MessageList({ userId }) {
     const [messagesList, setMessagesList] = useState([]);
@@ -60,7 +62,10 @@ function MessageList({ userId }) {
                             <h2 className="title text-xl mt-0.5">הודעות</h2>
                         </div>
                     </div>
-                    <span className="chip num">{combinedMessages.length}</span>
+                    <span className="flex items-center gap-2">
+                        <Link to="/messages" className="link text-sm">לכל ההודעות</Link>
+                        <span className="chip num">{combinedMessages.length}</span>
+                    </span>
                 </div>
 
                 {combinedMessages.length > 0 ? (
@@ -76,18 +81,24 @@ function MessageList({ userId }) {
                                         <span className="chip">{message.senderName}</span>
                                         <span className="num faint text-[0.7rem]" dir="ltr">{new Date(message.sentAt).toLocaleString()}</span>
                                     </div>
-                                    <p className="title text-base">{message.title}</p>
+                                    <p className="title text-base flex items-center gap-2">
+                                        {message.id && !message.readAt && <span className="w-2 h-2 rounded-full bg-accent" aria-hidden="true" />}
+                                        {message.title}
+                                        {message.id && !message.readAt && <span className="sr-only">(לא נקראה)</span>}
+                                    </p>
                                     <p className="muted text-sm mt-1 leading-relaxed break-words">{message.content}</p>
                                 </li>
                             ))}
                         </ul>
                     </div>
                 ) : (
-                    <div className="flex-1 flex flex-col items-center justify-center gap-3 p-4 text-center">
-                        <span className="w-14 h-14 rounded-2xl border border-dashed border-line-strong grid place-items-center text-ink-3 rotate-45">
-                            <span className="-rotate-45 num">0</span>
-                        </span>
-                        <p className="faint">אין הודעות להציג.</p>
+                    <div className="flex-1 flex flex-col items-center justify-center">
+                        <EmptyState
+                            title="אין הודעות עדיין"
+                            body="הודעות מהמורים ומהנהלת בית הספר יופיעו כאן, וגם יגיעו אליך כהתראה בזמן אמת."
+                            actionLabel="הגדרות התראות"
+                            actionTo="/settings"
+                        />
                     </div>
                 )}
             </div>

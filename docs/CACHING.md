@@ -2,7 +2,7 @@
 
 Every place the backend keeps data in memory instead of reading MySQL, what invalidates it, and the gaps known today. Keep this file current: a change that reads or writes cached data updates it in the same commit.
 
-The frontend has no client-side cache. Each screen fetches when it mounts; the only live channel is the SSE stream in `frontend/src/context/NotificationContext.jsx`.
+The frontend keeps no data between visits. Screens built with TanStack Query (`frontend/src/lib/queryClient.js`: notification center, messages, settings, Ctrl+K search) hold their results in memory for the tab with `staleTime: 0`, so they still fetch on every mount and only show the previous result while the new one loads. The live channel is the SSE stream in `frontend/src/context/NotificationContext.jsx`. The service worker (`frontend/src/sw.js`) precaches the built app files and Google Fonts only, never API responses. Offline practice keeps questions saved in advance and queued answers in IndexedDB (`frontend/src/offline/practiceStore.js`) until they are synced.
 
 ## 1. Ehcache (Spring Cache over JCache)
 
@@ -11,7 +11,7 @@ Configured in `backend/src/main/resources/ehcache.xml` and enabled by `@EnableCa
 | Cache | Filled by (`@Cacheable`) | Key | Evicted by | Size |
 |---|---|---|---|---|
 | `upcomingEvents` | `UpcomingEventService.getUpcomingEvents(role, userId)` | `role + '_' + userId` (e.g. `STUDENT_123`) | `TeacherService.generateTestForStudents`: the teacher's key (`@CacheEvict`) and each student's key (`cacheManager`); `SchoolYearService.closeYearAndPromote`: every moved student's `STUDENT_` key (`SchoolCacheEvictor`) | 1000 |
-| `receivedMessages` | `MessageService.getAllRecivedMessages(userId)` | `userId` | `MessageService.sendMessage`: each recipient's key; `AttendanceService.mark`: the school manager's key when it sends an unusual-absence alert | 1000 |
+| `receivedMessages` | `MessageService.getAllRecivedMessages(userId)` | `userId` | `MessageService`, after commit: `sendMessage` (immediate send) and `deliverDueScheduledMessages` each recipient's key; `reply` the recipient's and the replier's key; `markAsRead` the reader's key; `AttendanceService.mark`: the school manager's key when it sends an unusual-absence alert. Scheduled (pending) copies are not in the cached list until delivered. | 1000 |
 | `teacherSchedule` | `TeacherService.getTeacherSchedule(teacherId)` | `teacherId` | `TeacherService.addLessonToTeacher` (`@CacheEvict`); `TimetableService.saveLesson` / `deleteLesson`: old and new teacher (`SchoolCacheEvictor`) | 500 |
 | `classRoomSchedule` | `ClassRoomService.getScheduleForClassRoom(schoolCode, classRoomName)` | `schoolCode + '_' + classRoomName` | `TeacherService.addLessonToTeacher`: the lesson's class; `TimetableService.saveLesson` / `deleteLesson`: old and new class | 100 |
 | `studentSchedule` | `StudentService.getStudentSchedule(schoolCode, studentId)` | `studentId` | `TeacherService.addLessonToTeacher`: each student in the class; `TimetableService.saveLesson` / `deleteLesson`: each student of the old and new class; `SchoolYearService.closeYearAndPromote`: every moved student | 1000 |
@@ -38,7 +38,7 @@ Not Spring caches: plain `ConcurrentHashMap`s in singleton beans. Lost on restar
 | `UserService.otpLoginStorage` (static) | login OTP + its time, per user (valid 2 minutes) | overwritten by the next login; removed after a successful verification |
 | `UserService.otpStorage` (static) | password-reset OTP per user | removed after a successful reset |
 | `SessionService.tokenCache` | JWT validation results | whole map every 2 hours (`clearTokenCache`) |
-| `NotificationService.emitters` | one `SseEmitter` per connected user | on completion, timeout, error, or a failed send |
+| `NotificationService.emitters` | one `SseEmitter` per connected user | on completion, timeout, error, a failed send, or a failed heartbeat (every 25s); a callback removes only its own emitter, not a newer one of the same user |
 | `ChatGptService.userConversations` (static) | history of the legacy `/Chat` endpoints per user (the practice screen now uses the AI tutor, whose history is in MySQL: `ai_conversation_message`) | reset to empty by the `clear-conversation` endpoint |
 | `ActiveUserService.activeUsers` | who is online | `disconnectUser` |
 | `LiveQuizService.sessions` | running live in-class quizzes: class roster, current question with its answer, students' answers, scoreboard (by 6-digit code) | `end`, a new `start` by the same teacher, or 3 hours without activity (checked on the next access) |
@@ -49,6 +49,8 @@ Not Spring caches: plain `ConcurrentHashMap`s in singleton beans. Lost on restar
 | `utils/gptApi/AiUsageMetrics` | OpenAI request and failure counters for the system health screen | never (restart) |
 
 Refresh tokens are not cached: they live in the `refresh_tokens` table (hashed) and every refresh reads it.
+
+Not cached on purpose (read from MySQL on every request): the notification center (`NotificationCenterService`: list, unread count, preferences), paged inbox and sent-message read receipts, message threads and attachments, the `.ics` calendar feed (`CalendarService`) and global search (`SearchService`).
 
 ## 3. Known gaps
 

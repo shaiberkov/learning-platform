@@ -1,107 +1,149 @@
-import {BrowserRouter, Routes, Route, useLocation, Link} from 'react-router-dom';
-import Register from "../features/auth/Register.jsx";
-import Login from "../features/auth/Login.jsx";
-import TwoFactorAuthForm from "../features/auth/TwoFactorAuthForm.jsx";
-import {UserContext, UserProvider} from "../context/UserContext.jsx";
-import ProtectedRoute from "../components/ProtectedRoute.jsx";
+import {Routes, Route, useLocation} from 'react-router-dom';
+import {UserContext} from "../context/UserContext.jsx";
 import SideBar from "../components/SideBar.jsx";
 import PublicOnlyRoutesLayout from "../components/PublicOnlyRoutesLayout.jsx";
-import ResetPassword from "../features/auth/ResetPassword.jsx";
-import SchoolRegistration from "../pages/admin/SchoolRegistration.jsx";
-import RemoveSchoolManager from "../pages/admin/RemoveSchoolManager.jsx";
-import React, {useContext} from "react";
-import SystemAdminDashboard from "../pages/admin/SystemAdminDashboard.jsx";
-import AssignTeacher from "../pages/manager/AssignTeacher.jsx";
-import SchoolManagerDashboard from "../pages/manager/SchoolManagerDashboard.jsx";
-import AddSchoolGrades from "../pages/manager/AddSchoolGrades.jsx";
-import RemoveSchoolGrades from "../pages/manager/RemoveSchoolGrades.jsx";
-import RemoveTeacherFromSchool from "../pages/manager/RemoveTeacherFromSchool.jsx";
-import AddClassesToGrade from "../pages/manager/AddClassesToGrade.jsx";
-import AddAdditionalClassToGrade from "../pages/manager/AddAdditionalClassToGrade.jsx";
-import AddTeachingSubjectToTeacher from "../pages/manager/AddTeachingSubjectToTeacher.jsx";
-import RemoveTeachingSubjectFromTeacher from "../pages/manager/RemoveTeachingSubjectFromTeacher.jsx";
-import SendMessage from "../components/messages/SendMessage.jsx";
-import CreateLesson from "../pages/manager/CreateLesson.jsx";
-import AsignTeacherToClassRoom from "../pages/manager/AsignTeacherToClassRooms.jsx";
-import AsignTeacherToClassRooms from "../pages/manager/AsignTeacherToClassRooms.jsx";
-import TeacherWeeklySchedule from "../pages/teacher/TeacherWeeklySchedule.jsx";
-import AssignStudentToClass from "../pages/manager/AssignStudentToClass.jsx";
-import StudentWeeklySchedule from "../pages/student/StudentWeeklySchedule.jsx";
-import ClassScheduleViewerForManager from "../pages/manager/ClassScheduleViewerForManager.jsx";
-import QuestionPracticeSelector from "../components/QuestionPracticeSelector.jsx";
-import QuestionPractice from "../pages/student/QuestionPractice.jsx";
-import TestConfigurator from "../components/TestConfigurator.jsx";
-import TestSession from "../components/TestSession.jsx";
-import TestsTable from "../pages/student/TestsTable.jsx";
-import TeacherDashboard from "../pages/teacher/TeacherDashboard.jsx";
-import StudentDashboard from "../pages/student/StudentDashboard.jsx";
-import TermsOfService from "../pages/footer/TermsOfService.jsx";
-import PrivacyPolicy from "../pages/footer/PrivacyPolicy.jsx";
-import Faq from "../pages/footer/Faq.jsx";
-import About from "../pages/footer/About.jsx";
+import React, {lazy, Suspense, useContext, useEffect, useRef} from "react";
+import {useTranslation} from "react-i18next";
 import Footer from "../components/Footer.jsx";
-import AuditLog from "../pages/admin/AuditLog.jsx";
-import SystemHealth from "../pages/admin/SystemHealth.jsx";
-import FeatureFlags from "../pages/admin/FeatureFlags.jsx";
-import Impersonate from "../pages/admin/Impersonate.jsx";
 import ImpersonationBanner from "../components/ImpersonationBanner.jsx";
-import ExamSession from "../pages/student/ExamSession.jsx";
-import ExamBuilder from "../pages/teacher/ExamBuilder.jsx";
-import TeacherExams from "../pages/teacher/TeacherExams.jsx";
-import ExamMonitor from "../pages/teacher/ExamMonitor.jsx";
-import ItemAnalysis from "../pages/teacher/ItemAnalysis.jsx";
-import MistakesNotebook from "../pages/student/MistakesNotebook.jsx";
-import SkillMap from "../pages/student/SkillMap.jsx";
-import ClassSkillMap from "../pages/teacher/ClassSkillMap.jsx";
-import HintEditor from "../pages/teacher/HintEditor.jsx";
 import AccommodationsSync from "../components/AccommodationsSync.jsx";
-import Achievements from "../pages/student/Achievements.jsx";
-import StudyPlan from "../pages/student/StudyPlan.jsx";
-import Lessons from "../pages/student/Lessons.jsx";
-import LessonView from "../pages/student/LessonView.jsx";
-import Homework from "../pages/student/Homework.jsx";
-import AccessibilitySettings from "../pages/student/AccessibilitySettings.jsx";
-import LessonAuthoring from "../pages/teacher/LessonAuthoring.jsx";
-import HomeworkBoard from "../pages/teacher/HomeworkBoard.jsx";
-import StudentAccommodations from "../pages/teacher/StudentAccommodations.jsx";
-import ClassChallenges from "../pages/teacher/ClassChallenges.jsx";
-import AiQuestionStudio from "../pages/teacher/AiQuestionStudio.jsx";
-import AiGrading from "../pages/teacher/AiGrading.jsx";
-import AiInsights from "../pages/teacher/AiInsights.jsx";
-import AiTutorPage from "../pages/student/AiTutorPage.jsx";
-import OpenQuestions from "../pages/student/OpenQuestions.jsx";
-import AiSchoolOverview from "../pages/manager/AiSchoolOverview.jsx";
-import QuestionBank from "../pages/teacher/QuestionBank.jsx";
-import Gradebook from "../pages/teacher/Gradebook.jsx";
-import LiveQuizHost from "../pages/teacher/LiveQuizHost.jsx";
-import Attendance from "../pages/teacher/Attendance.jsx";
-import LiveQuizPlay from "../pages/student/LiveQuizPlay.jsx";
-import AttendanceReport from "../pages/manager/AttendanceReport.jsx";
 import LiveQuizBanner from "../components/LiveQuizBanner.jsx";
-import BulkImport from "../pages/manager/BulkImport.jsx";
-import SchoolAnalytics from "../pages/manager/SchoolAnalytics.jsx";
-import TimetableBuilder from "../pages/manager/TimetableBuilder.jsx";
-import SchoolYears from "../pages/manager/SchoolYears.jsx";
-import ParentLinks from "../pages/manager/ParentLinks.jsx";
-import MessageParents from "../pages/teacher/MessageParents.jsx";
-import ParentDashboard from "../pages/parent/ParentDashboard.jsx";
+import {PageSkeleton} from "../components/ui/Skeleton.jsx";
+
+// Code splitting: every page is its own chunk, so a role downloads only the screens it opens.
+// Auth screens stay in their own small chunks too; the shell (navbar, footer) is eager.
+const Register = lazy(() => import("../features/auth/Register.jsx"));
+const Login = lazy(() => import("../features/auth/Login.jsx"));
+const TwoFactorAuthForm = lazy(() => import("../features/auth/TwoFactorAuthForm.jsx"));
+const ResetPassword = lazy(() => import("../features/auth/ResetPassword.jsx"));
+
+// System admin
+const SystemAdminDashboard = lazy(() => import("../pages/admin/SystemAdminDashboard.jsx"));
+const SchoolRegistration = lazy(() => import("../pages/admin/SchoolRegistration.jsx"));
+const RemoveSchoolManager = lazy(() => import("../pages/admin/RemoveSchoolManager.jsx"));
+
+// School manager
+const SchoolManagerDashboard = lazy(() => import("../pages/manager/SchoolManagerDashboard.jsx"));
+const AssignTeacher = lazy(() => import("../pages/manager/AssignTeacher.jsx"));
+const AddSchoolGrades = lazy(() => import("../pages/manager/AddSchoolGrades.jsx"));
+const RemoveSchoolGrades = lazy(() => import("../pages/manager/RemoveSchoolGrades.jsx"));
+const RemoveTeacherFromSchool = lazy(() => import("../pages/manager/RemoveTeacherFromSchool.jsx"));
+const AddClassesToGrade = lazy(() => import("../pages/manager/AddClassesToGrade.jsx"));
+const AddAdditionalClassToGrade = lazy(() => import("../pages/manager/AddAdditionalClassToGrade.jsx"));
+const AddTeachingSubjectToTeacher = lazy(() => import("../pages/manager/AddTeachingSubjectToTeacher.jsx"));
+const RemoveTeachingSubjectFromTeacher = lazy(() => import("../pages/manager/RemoveTeachingSubjectFromTeacher.jsx"));
+const CreateLesson = lazy(() => import("../pages/manager/CreateLesson.jsx"));
+const AsignTeacherToClassRooms = lazy(() => import("../pages/manager/AsignTeacherToClassRooms.jsx"));
+const AssignStudentToClass = lazy(() => import("../pages/manager/AssignStudentToClass.jsx"));
+const ClassScheduleViewerForManager = lazy(() => import("../pages/manager/ClassScheduleViewerForManager.jsx"));
+
+// Teacher
+const TeacherDashboard = lazy(() => import("../pages/teacher/TeacherDashboard.jsx"));
+const TeacherWeeklySchedule = lazy(() => import("../pages/teacher/TeacherWeeklySchedule.jsx"));
+
+// Student
+const StudentDashboard = lazy(() => import("../pages/student/StudentDashboard.jsx"));
+const StudentWeeklySchedule = lazy(() => import("../pages/student/StudentWeeklySchedule.jsx"));
+const QuestionPracticeSelector = lazy(() => import("../components/QuestionPracticeSelector.jsx"));
+const QuestionPractice = lazy(() => import("../pages/student/QuestionPractice.jsx"));
+const TestsTable = lazy(() => import("../pages/student/TestsTable.jsx"));
+const TestSession = lazy(() => import("../components/TestSession.jsx"));
+
+// Shared between roles
+const SendMessage = lazy(() => import("../components/messages/SendMessage.jsx"));
+const TestConfigurator = lazy(() => import("../components/TestConfigurator.jsx"));
+const MessagesPage = lazy(() => import("../pages/common/MessagesPage.jsx"));
+const SettingsPage = lazy(() => import("../pages/common/SettingsPage.jsx"));
+
+// Added by the improvement branches (exams, adaptive, engagement, AI, teacher tools, school admin, parents)
+const AuditLog = lazy(() => import("../pages/admin/AuditLog.jsx"));
+const SystemHealth = lazy(() => import("../pages/admin/SystemHealth.jsx"));
+const FeatureFlags = lazy(() => import("../pages/admin/FeatureFlags.jsx"));
+const Impersonate = lazy(() => import("../pages/admin/Impersonate.jsx"));
+const ExamSession = lazy(() => import("../pages/student/ExamSession.jsx"));
+const ExamBuilder = lazy(() => import("../pages/teacher/ExamBuilder.jsx"));
+const TeacherExams = lazy(() => import("../pages/teacher/TeacherExams.jsx"));
+const ExamMonitor = lazy(() => import("../pages/teacher/ExamMonitor.jsx"));
+const ItemAnalysis = lazy(() => import("../pages/teacher/ItemAnalysis.jsx"));
+const MistakesNotebook = lazy(() => import("../pages/student/MistakesNotebook.jsx"));
+const SkillMap = lazy(() => import("../pages/student/SkillMap.jsx"));
+const ClassSkillMap = lazy(() => import("../pages/teacher/ClassSkillMap.jsx"));
+const HintEditor = lazy(() => import("../pages/teacher/HintEditor.jsx"));
+const Achievements = lazy(() => import("../pages/student/Achievements.jsx"));
+const StudyPlan = lazy(() => import("../pages/student/StudyPlan.jsx"));
+const Lessons = lazy(() => import("../pages/student/Lessons.jsx"));
+const LessonView = lazy(() => import("../pages/student/LessonView.jsx"));
+const Homework = lazy(() => import("../pages/student/Homework.jsx"));
+const AccessibilitySettings = lazy(() => import("../pages/student/AccessibilitySettings.jsx"));
+const LessonAuthoring = lazy(() => import("../pages/teacher/LessonAuthoring.jsx"));
+const HomeworkBoard = lazy(() => import("../pages/teacher/HomeworkBoard.jsx"));
+const StudentAccommodations = lazy(() => import("../pages/teacher/StudentAccommodations.jsx"));
+const ClassChallenges = lazy(() => import("../pages/teacher/ClassChallenges.jsx"));
+const AiQuestionStudio = lazy(() => import("../pages/teacher/AiQuestionStudio.jsx"));
+const AiGrading = lazy(() => import("../pages/teacher/AiGrading.jsx"));
+const AiInsights = lazy(() => import("../pages/teacher/AiInsights.jsx"));
+const AiTutorPage = lazy(() => import("../pages/student/AiTutorPage.jsx"));
+const OpenQuestions = lazy(() => import("../pages/student/OpenQuestions.jsx"));
+const AiSchoolOverview = lazy(() => import("../pages/manager/AiSchoolOverview.jsx"));
+const QuestionBank = lazy(() => import("../pages/teacher/QuestionBank.jsx"));
+const Gradebook = lazy(() => import("../pages/teacher/Gradebook.jsx"));
+const LiveQuizHost = lazy(() => import("../pages/teacher/LiveQuizHost.jsx"));
+const Attendance = lazy(() => import("../pages/teacher/Attendance.jsx"));
+const LiveQuizPlay = lazy(() => import("../pages/student/LiveQuizPlay.jsx"));
+const AttendanceReport = lazy(() => import("../pages/manager/AttendanceReport.jsx"));
+const BulkImport = lazy(() => import("../pages/manager/BulkImport.jsx"));
+const SchoolAnalytics = lazy(() => import("../pages/manager/SchoolAnalytics.jsx"));
+const TimetableBuilder = lazy(() => import("../pages/manager/TimetableBuilder.jsx"));
+const SchoolYears = lazy(() => import("../pages/manager/SchoolYears.jsx"));
+const ParentLinks = lazy(() => import("../pages/manager/ParentLinks.jsx"));
+const MessageParents = lazy(() => import("../pages/teacher/MessageParents.jsx"));
+const ParentDashboard = lazy(() => import("../pages/parent/ParentDashboard.jsx"));
+
+// Public static pages
+const TermsOfService = lazy(() => import("../pages/footer/TermsOfService.jsx"));
+const PrivacyPolicy = lazy(() => import("../pages/footer/PrivacyPolicy.jsx"));
+const Faq = lazy(() => import("../pages/footer/Faq.jsx"));
+const About = lazy(() => import("../pages/footer/About.jsx"));
+const AccessibilityStatement = lazy(() => import("../pages/footer/AccessibilityStatement.jsx"));
+
 export default function AppRoutes() {
 
     const {user}=useContext(UserContext)
     const location = useLocation();
+    const { t } = useTranslation();
+    const mainRef = useRef(null);
+    const firstRender = useRef(true);
 
+    // On route change, move focus to the main region so screen-reader and keyboard users
+    // start at the new page instead of the link they clicked.
+    useEffect(() => {
+        if (firstRender.current) {
+            firstRender.current = false;
+            return;
+        }
+        mainRef.current?.focus({ preventScroll: true });
+    }, [location.pathname]);
+
+    const commonRoutes = (
+        <>
+            <Route path="/messages" element={<MessagesPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
+        </>
+    );
 
     return (
         <div className="flex flex-col min-h-screen text-ink">
 
+                <a href="#main-content" className="skip-link">{t("a11y.skipToContent")}</a>
 
                 <SideBar />
                 <AccommodationsSync />
 
 
-            <main className="flex-1 px-4 sm:px-6 lg:px-10 pt-28 sm:pt-32">
+            <main id="main-content" ref={mainRef} tabIndex={-1} className="flex-1 px-4 sm:px-6 lg:px-10 pt-28 sm:pt-32 outline-none">
                 {user?.role === 'STUDENT' && user?.schoolCode && <LiveQuizBanner />}
                 <div key={location.pathname} className="page-enter">
+                <Suspense fallback={<PageSkeleton />}>
                 <Routes>
                     <Route element={<PublicOnlyRoutesLayout />}>
                         <Route path="/login" element={<Login />} />
@@ -120,6 +162,7 @@ export default function AppRoutes() {
                             <Route path="/system-health" element={<SystemHealth />} />
                             <Route path="/feature-flags" element={<FeatureFlags />} />
                             <Route path="/impersonate" element={<Impersonate />} />
+                            {commonRoutes}
                         </>
                     )}
 
@@ -148,6 +191,7 @@ export default function AppRoutes() {
                             <Route path="/school-years" element={<SchoolYears />} />
                             <Route path="/parent-links" element={<ParentLinks />} />
                             <Route path="/message-parents" element={<MessageParents />} />
+                            {commonRoutes}
                         </>
                     )}
 
@@ -174,6 +218,8 @@ export default function AppRoutes() {
                             <Route path="/live-quiz-host" element={<LiveQuizHost />} />
                             <Route path="/attendance" element={<Attendance />} />
                             <Route path="/message-parents" element={<MessageParents />} />
+                            <Route path="/send-message" element={<SendMessage />} />
+                            {commonRoutes}
                         </>
                     )}
 
@@ -198,18 +244,21 @@ export default function AppRoutes() {
                             <Route path="/homework" element={<Homework />} />
                             <Route path="/study-plan" element={<StudyPlan />} />
                             <Route path="/achievements" element={<Achievements />} />
-                            <Route path="/accessibility" element={<AccessibilitySettings />} />
+                            <Route path="/accessibility-settings" element={<AccessibilitySettings />} />
+                            {commonRoutes}
                         </>
                     )}
                     {user?.role === 'PARENT' && (
                         <>
                             <Route path="/parent-dashboard" element={<ParentDashboard />} />
+                            {commonRoutes}
                         </>
                     )}
 
                     {user?.role === 'STUDENT'&&!user?.schoolCode && (
                         <>
                             <Route path="/student-dashboard" element={<StudentDashboard />} />
+                            {commonRoutes}
                         </>
                     )}
 
@@ -217,7 +266,9 @@ export default function AppRoutes() {
                     <Route path="/faq" element={<Faq />} />
                     <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                     <Route path="/terms-of-service" element={<TermsOfService />} />
+                    <Route path="/accessibility" element={<AccessibilityStatement />} />
                 </Routes>
+                </Suspense>
                 </div>
             </main>
 

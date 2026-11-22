@@ -15,15 +15,45 @@ const PUBLIC_PATHS = [
     '/about',
     '/faq',
     '/privacy-policy',
-    '/terms-of-service'
+    '/terms-of-service',
+    '/accessibility'
 ];
 
 export const UserContext = createContext();
 
+// The last validated user, kept so the app (offline practice) still works when the
+// session check cannot reach the server. The session itself is in httpOnly cookies;
+// this holds only the display data the session check returned. Cleared on logout.
+const OFFLINE_USER_KEY = 'lp-offline-user';
+
+function rememberUser(user) {
+    try {
+        localStorage.setItem(OFFLINE_USER_KEY, JSON.stringify({ user }));
+    } catch {
+        /* storage unavailable: offline mode then needs a connection to start */
+    }
+}
+
+function rememberedUser() {
+    try {
+        const saved = JSON.parse(localStorage.getItem(OFFLINE_USER_KEY) || 'null');
+        return saved?.user ?? null;
+    } catch {
+        return null;
+    }
+}
+
+export function forgetUser() {
+    try {
+        localStorage.removeItem(OFFLINE_USER_KEY);
+    } catch {
+        /* nothing to clear */
+    }
+}
+
 export const UserProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const location = useLocation();
-    // const userIdRef = useRef(null);
 
     const navigate=useNavigate()
 
@@ -46,19 +76,29 @@ export const UserProvider = ({ children }) => {
                 }
             } catch (error) {
                 console.error('❌ שגיאה בבדיקת התחברות:', error.response?.status ?? error.message);
+                // No answer from the server (offline / server asleep): keep the last validated
+                // user instead of logging out.
+                const offlineUser = !error.response && axios.isAxiosError(error) ? rememberedUser() : null;
+                if (offlineUser) {
+                    setUser(offlineUser);
+                    return;
+                }
             }
 
             if (session) {
-                setUser({
+                const validated = {
                     userId: session.userId,
                     role: session.role,
                     username: session.username,
                     schoolCode: session.schoolCode,
                     impersonatorId: session.impersonatorId,
                     impersonatorUsername: session.impersonatorUsername
-                });
+                };
+                setUser(validated);
+                rememberUser(validated);
                 return;
             }
+            forgetUser();
             setUser(null);
             if (!isPublicPage) {
                 navigate('/login');
@@ -74,4 +114,3 @@ export const UserProvider = ({ children }) => {
         </UserContext.Provider>
     );
 };
-

@@ -53,12 +53,27 @@ public final class ControllerConstants {
         public static final String RECIPIENT_TYPES = "/recipient-types";
         public static final String SEND_MESSAGE = "/send-message";
         public static final String GET_ALL_RECEIVED_MESSAGES = "/get-all-recived-messages";
+        public static final String RECEIVED_MESSAGES_PAGE = "/received-messages-page";
+        public static final String SENT_MESSAGES = "/sent-messages";
+        public static final String READ_RECEIPTS = "/read-receipts";
+        public static final String MARK_READ = "/mark-read";
+        public static final String REPLY = "/reply";
+        public static final String THREAD = "/thread";
+        public static final String ATTACHMENT = "/attachment";
     }
     public static final class Notification {
         private Notification() {}
 
         public static final String NOTIFICATION_BASE_PATH = BASE_API + "/notifications";
         public static final String CONNECT = "/connect";
+        public static final String LIST = "/list";
+        public static final String UNREAD_COUNT = "/unread-count";
+        public static final String MARK_READ = "/mark-read";
+        public static final String MARK_ALL_READ = "/mark-all-read";
+        public static final String PREFERENCES = "/preferences";
+        public static final String PUSH_PUBLIC_KEY = "/push/public-key";
+        public static final String PUSH_SUBSCRIBE = "/push/subscribe";
+        public static final String PUSH_UNSUBSCRIBE = "/push/unsubscribe";
     }
     public static final class Question {
         private Question() {}
@@ -366,5 +381,21 @@ public final class ControllerConstants {
         public static final String PARENT_BASE_PATH = BASE_API + "/parent";
         public static final String GET_CHILDREN     = "/children";
         public static final String CHILD_OVERVIEW   = "/child-overview";
+    }
+    public static final class Calendar {
+        private Calendar() {}
+
+        public static final String CALENDAR_BASE_PATH = BASE_API + "/calendar";
+        public static final String TOKEN = "/token";
+        public static final String REGENERATE_TOKEN = "/regenerate-token";
+        public static final String FEED_PREFIX = "/feed/";
+        public static final String FEED = FEED_PREFIX + "{token}.ics";
+    }
+    public static final class Search {
+        private Search() {}
+
+        public static final String SEARCH_BASE_PATH = BASE_API + "/search";
+        public static final String GLOBAL = "/global";
+        public static final String STUDENTS_PAGE = "/students-page";
     }
 }

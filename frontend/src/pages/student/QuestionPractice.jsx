@@ -13,12 +13,23 @@ import {
 import {BEARER_PREFIX} from "../../constants/shared.constant.js";
 import HintPanel from "../../features/adaptive/HintPanel.jsx";
 import {skillColor} from "../../features/adaptive/adaptiveApi.js";
+import {useTranslation} from "react-i18next";
+import useOnlineStatus from "../../offline/useOnlineStatus.js";
+import {countQuestions, exerciseKey, queueAnswer, saveQuestions, takeQuestion} from "../../offline/practiceStore.js";
+
+const OFFLINE_BATCH = 10;
 
 function QuestionPractice(){
 
 
     const { subjectName, topicName, exerciseName } = useParams();
     const { user } = useContext(UserContext);
+    const { t } = useTranslation();
+    const online = useOnlineStatus();
+    const [cachedCount, setCachedCount] = useState(0);
+    const [offlineNotice, setOfflineNotice] = useState("");
+    const [savingOffline, setSavingOffline] = useState(false);
+    const offlineKey = exerciseKey(user?.userId, subjectName, topicName, exerciseName);
     const [exercise, setExercise] = useState({});
     const [answer, setAnswer] = useState("");
     const [responseMessage, setResponseMessage] = useState(null);
@@ -84,39 +95,103 @@ function QuestionPractice(){
     };
 
 
-    const fetchData = async () => {
-        console.log(user.name,"ביקשתי שאלה")
-
-        const response = await axios.get(
+    const requestQuestion = () => axios.get(
             `${STUDENT_BASE_PATH}${GENERATE_QUESTION}${QUESTION}${USER_ID}${user.userId}${AND}${SUBJECT}${subjectName}${AND}${TOPIC}${topicName}${AND}${SUB_TOPIC}${exerciseName}`,
             {
                 headers: {
                     [AUTH_HEADER]: `${BEARER_PREFIX}${token}`
                 }
             });
-        if (response.data) {
-            setExercise(response.data.data);
+
+    // Offline: the next question saved in advance for this exercise (IndexedDB).
+    const nextOfflineQuestion = async () => {
+        try {
+            const saved = await takeQuestion(offlineKey);
+            setCachedCount(await countQuestions(offlineKey));
+            if (saved) {
+                setExercise(saved);
+                setOfflineNotice("");
+            } else {
+                setExercise({});
+                setOfflineNotice(t("offline.noCached"));
+            }
+        } catch {
+            setOfflineNotice(t("offline.noCached"));
+        }
+    };
+
+    const fetchData = async () => {
+        if (!navigator.onLine) {
+            await nextOfflineQuestion();
+            return;
+        }
+        try {
+            const response = await requestQuestion();
+            if (response.data) {
+                setExercise(response.data.data);
+                setOfflineNotice("");
+            }
+        } catch (error) {
+            if (!error.response) {
+                await nextOfflineQuestion();
+            } else {
+                console.error("שגיאה בטעינת שאלה:", error);
+            }
         }
     };
 
     useEffect(() => {
         if(user?.userId){
             fetchData();
+            countQuestions(offlineKey).then(setCachedCount);
         }
     }, [subjectName, topicName,user.userId]);
 
-    const submitAnswer = async () => {
+    // Downloads a batch of questions now so practice can continue without a connection.
+    const saveForOffline = async () => {
+        setSavingOffline(true);
         try {
-            const { id, subTopic} = exercise;
-            const params = new URLSearchParams({
-                userId: user.userId,
-                id: id,
-                subTopic: subTopic,
-                answer: answer
-            });
+            const results = await Promise.allSettled(Array.from({ length: OFFLINE_BATCH }, () => requestQuestion()));
+            const questions = results
+                .filter((r) => r.status === "fulfilled" && r.value.data?.data?.id)
+                .map((r) => r.value.data.data);
+            await saveQuestions(offlineKey, questions);
+            setCachedCount(await countQuestions(offlineKey));
+            setOfflineNotice(t("offline.saved", { count: questions.length }));
+        } catch (error) {
+            console.error("שמירת שאלות לתרגול לא מקוון נכשלה:", error);
+        } finally {
+            setSavingOffline(false);
+        }
+    };
+
+    const queueOffline = async (params) => {
+        await queueAnswer(params);
+        setResponseMessage(t("offline.queued"));
+        setIsCorrect(null);
+        setLastResult(null);
+        setAnswer("");
+        await nextOfflineQuestion();
+    };
+
+    const submitAnswer = async () => {
+        const { id, subTopic} = exercise;
+        const answerParams = {
+            userId: user.userId,
+            id: id,
+            subTopic: subTopic,
+            answer: answer
+        };
+        if (!navigator.onLine) {
+            await queueOffline(answerParams);
+            return;
+        }
+        try {
+            const params = new URLSearchParams(answerParams);
 
             const response = await axios.post(
                 `${STUDENT_BASE_PATH}${SUBMIT_ANSWER}${QUESTION}${params.toString()}`,
+                null,
                 {
                     headers: {
                         [AUTH_HEADER]: `${BEARER_PREFIX}${token}`
@@ -131,6 +206,10 @@ function QuestionPractice(){
             setAnswer("");
             return response.data.data;
         } catch (error) {
+            if (!error.response) {
+                await queueOffline(answerParams); // the connection dropped mid-request
+                return;
+            }
             console.error("שגיאה בשליחת התשובה:", error);
         }
     };
@@ -167,17 +246,21 @@ function QuestionPractice(){
                                 </h4>
                             </div>
 
+                            <label htmlFor="practice-answer" className="sr-only">תשובה</label>
                             <input
+                                id="practice-answer"
                                 type="text"
                                 placeholder="תשובה"
                                 value={answer}
                                 onChange={(e) => setAnswer(e.target.value)}
+                                onKeyDown={(e) => { if (e.key === "Enter" && answer && exercise.id) submitAnswer(); }}
                                 className="field num !text-lg !min-h-[3.5rem]"
+                                dir="ltr"
                             />
 
                             <button
                                 onClick={submitAnswer}
-                                disabled={!answer}
+                                disabled={!answer || !exercise.id}
                                 className="btn btn-primary btn-block"
                             >
                                 שלח תשובה
@@ -187,8 +270,9 @@ function QuestionPractice(){
 
                     {responseMessage && (
                         <p
+                            role="status"
                             className={`notice ${
-                                isCorrect ? "notice--mint" : "notice--danger"
+                                isCorrect === null ? "" : isCorrect ? "notice--mint" : "notice--danger"
                             }`}
                         >
                             {responseMessage}
@@ -211,6 +295,20 @@ function QuestionPractice(){
                     {exercise?.id && user?.userId && (
                         <HintPanel key={exercise.id} userId={user.userId} questionId={exercise.id} />
                     )}
+
+                    {offlineNotice && <p className="notice" role="status">{offlineNotice}</p>}
+
+                    <div className="pt-4 border-t border-dashed border-line flex flex-wrap items-center justify-between gap-2">
+                        <span className="faint text-xs">{t("offline.cachedLeft", { count: cachedCount })}</span>
+                        <button
+                            type="button"
+                            className="btn btn-ghost btn-sm"
+                            onClick={saveForOffline}
+                            disabled={!online || savingOffline}
+                        >
+                            {savingOffline ? t("common.loading") : t("offline.saveForOffline")}
+                        </button>
+                    </div>
                 </div>
 
                 <div className="lg:col-span-7 glass p-4 sm:p-6 flex flex-col gap-4 reveal" style={{ "--i": 1 }}>

@@ -9,11 +9,16 @@ import static org.example.learningprojectserver.constants.ControllerConstants.Im
 import static org.example.learningprojectserver.constants.ControllerConstants.Teacher.CHECK_TEACHER_TEST;
 import static org.example.learningprojectserver.constants.ControllerConstants.Ai.AI_BASE_PATH;
 import static org.example.learningprojectserver.constants.ControllerConstants.AiStaff.AI_STAFF_BASE_PATH;
+import static org.example.learningprojectserver.constants.ControllerConstants.Calendar.CALENDAR_BASE_PATH;
+import static org.example.learningprojectserver.constants.ControllerConstants.Calendar.FEED_PREFIX;
+import static org.example.learningprojectserver.constants.ControllerConstants.Search.SEARCH_BASE_PATH;
 import static org.example.learningprojectserver.constants.ControllerConstants.ChatGpt.CHAT_BASE_PATH;
 import static org.example.learningprojectserver.constants.ControllerConstants.Exam.EXAM_BASE_PATH;
 import static org.example.learningprojectserver.constants.ControllerConstants.Lesson.LESSON_BASE_PATH;
 import static org.example.learningprojectserver.constants.ControllerConstants.Message.MESSAGE_BASE_PATH;
+import static org.example.learningprojectserver.constants.ControllerConstants.Notification.CONNECT;
 import static org.example.learningprojectserver.constants.ControllerConstants.Notification.NOTIFICATION_BASE_PATH;
+import static org.example.learningprojectserver.constants.ControllerConstants.Notification.PUSH_PUBLIC_KEY;
 import static org.example.learningprojectserver.constants.ControllerConstants.Parent.PARENT_BASE_PATH;
 import static org.example.learningprojectserver.constants.ControllerConstants.Question.QUESTION_BASE_PATH;
 import static org.example.learningprojectserver.constants.ControllerConstants.Schedule.SCHEDULE_BASE_PATH;
@@ -85,6 +90,9 @@ public final class SecurityConstants {
         public static final String TEST_ALL                  = TEST_BASE_PATH         + CORS_MAPPING_PATH;
         public static final String MESSAGE_ALL               = MESSAGE_BASE_PATH      + CORS_MAPPING_PATH;
         public static final String NOTIFICATION_ALL          = NOTIFICATION_BASE_PATH + CORS_MAPPING_PATH;
+        // EventSource cannot send an Authorization header (and cross-site it sends no cookies), so the stream stays open.
+        public static final String NOTIFICATION_CONNECT      = NOTIFICATION_BASE_PATH + CONNECT;
+        public static final String NOTIFICATION_PUSH_KEY     = NOTIFICATION_BASE_PATH + PUSH_PUBLIC_KEY;
         public static final String LESSON_ALL                = LESSON_BASE_PATH       + CORS_MAPPING_PATH;
         public static final String SCHEDULE_ALL              = SCHEDULE_BASE_PATH     + CORS_MAPPING_PATH;
         public static final String UPCOMING_EVENTS_ALL       = UPCOMING_EVENTS_BASE_PATH + CORS_MAPPING_PATH;
@@ -106,6 +114,10 @@ public final class SecurityConstants {
         public static final String LIVE_QUIZ_ALL             = LIVE_QUIZ_BASE_PATH    + CORS_MAPPING_PATH;
         public static final String ATTENDANCE_ALL            = ATTENDANCE_BASE_PATH   + CORS_MAPPING_PATH;
         public static final String PARENT_ALL                = PARENT_BASE_PATH       + CORS_MAPPING_PATH;
+        public static final String CALENDAR_ALL              = CALENDAR_BASE_PATH     + CORS_MAPPING_PATH;
+        // Calendar apps open the .ics feed with only the secret token in the URL.
+        public static final String CALENDAR_FEED             = CALENDAR_BASE_PATH     + FEED_PREFIX + "**";
+        public static final String SEARCH_ALL                = SEARCH_BASE_PATH       + CORS_MAPPING_PATH;
 
         public static final String SYSTEM_ADMIN   = "SYSTEM_ADMIN";
         public static final String TEACHER        = "TEACHER";

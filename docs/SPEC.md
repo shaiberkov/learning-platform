@@ -25,6 +25,7 @@ Deployed on Render: frontend `schoolmanagmentsystem-z0m5.onrender.com`, backend 
 | `SCHOOLMANAGER` | add/remove grades and classes, assign/remove teachers and their teaching subjects, assign students to classes, build lessons (timetable), view class timetables, send messages |
 | `TEACHER` | see own timetable, generate a test for chosen students (graded automatically), see results, send messages |
 | `STUDENT` | practise questions by subject/topic, build a self-practice test, take teacher tests, see timetable, tests and statistics. A student not yet in a school sees a reduced menu. |
+| `PARENT` | see each linked child's teacher-test grades, averages by subject, practice summary and skill levels; receive messages from teachers and the manager. Linked to children by the manager (or created by the bulk import). |
 
 Everyone registers as a `STUDENT` with no school. The system admin turns a user into a school manager (`assignUserAsSchoolManager`, which refuses anyone who is no longer a student); a manager turns users into teachers of the school or puts students in a class. Roles are not enforced by the API today (see the Security section of the root `CLAUDE.md`).
 
@@ -36,6 +37,8 @@ Everyone registers as a `STUDENT` with no school. The system admin turns a user 
 - Questions: `QuestionEntity`, `PracticeQuestionEntity`, `TestQuestionEntity`, `StudentQuestionHistoryEntity`, `StudentProgressEntity`, `StudentStatisticsEntity`.
 - Tests: `PracticeTestEntity` + `PracticeTestResultEntity` (student's own), `TeacherTestEntity` + `TeacherTestResultEntity` (assigned by a teacher), `TestEntity` / `TestResultEntity`.
 - `MessageEntity` (sender, recipient, title, body), `Session`.
+- `ParentEntity` (extends `UserEntity`, many-to-many `children` → `StudentEntity`, table `parent_student`).
+- `SchoolYearEntity` (school, name, dates, active/closed) → `SemesterEntity`; `ArchivedStudentRecordEntity` is a by-value snapshot of each student taken when a year closes. `LessonEntity` has an optional `room`.
 
 ## Main flows
 
@@ -48,6 +51,15 @@ Everyone registers as a `STUDENT` with no school. The system admin turns a user 
 **Messages.** The sender chooses a recipient type (a class, a grade, all students, all teachers, teachers of a grade, all managers); a strategy in `strategy/message/` resolves the users. Each recipient gets a saved message and a `SYSTEM_MESSAGE` over SSE (and, in production, an SMS).
 
 **Timetable.** The manager adds lessons to a teacher for a class; overlaps are rejected. Class, teacher and student timetables are cached and evicted when a lesson is added.
+
+**School administration (manager).** Under `/school-manager/...` (`SchoolAdministrationController`):
+- *Bulk import*: the CSV text is posted to `bulk-import/preview`, which returns every row with its errors (bad id/email/phone, duplicates in the file or the database, unknown class, unknown child) and warnings; `bulk-import/commit` re-validates the same file, creates the valid students, teachers and parents with a generated initial password, and returns those passwords once.
+- *Dashboard*: `analytics` averages graded teacher tests by grade, subject, teacher, month (from the test's start time) and parallel class. The page exports to PDF through the browser's print dialog.
+- *Timetable builder*: `timetable/lessons` lists the school's lessons; `timetable/check` reports teacher, class and room clashes; `timetable/save` creates or moves a lesson and refuses clashes; `timetable/delete` removes one.
+- *School years*: years with semesters; `school-years/close` archives every student, then promotes each grade to the next level (by Hebrew letter value, `ז` → `ח`, parallel class kept) or graduates the top grade, in one transaction; `school-years/archive` reads the snapshot.
+- *Parents*: `parents/link` turns a registered user with no school into a `PARENT` (or reuses one) and links them to a student of the school.
+
+**Parents.** `/parent/children` and `/parent/child-overview` serve the parent dashboard; every read checks the parent-child link, since roles are not enforced. Teachers and managers message parents with the recipient types `הורי-כיתה` (a class) and `כל-ההורים`. Attendance is not recorded by the system yet, so the parent view says so.
 
 **Dashboard feed.** `upcoming-events` returns next lessons, tests and events for the user's role, built by the strategy for that role.
 

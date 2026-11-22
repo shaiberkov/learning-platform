@@ -15,7 +15,7 @@ Configured in `backend/src/main/resources/ehcache.xml` and enabled by `@EnableCa
 | `teacherSchedule` | `TeacherService.getTeacherSchedule(teacherId)` | `teacherId` | `TeacherService.addLessonToTeacher` (`@CacheEvict`) | 500 |
 | `classRoomSchedule` | `ClassRoomService.getScheduleForClassRoom(schoolCode, classRoomName)` | `schoolCode + '_' + classRoomName` | `TeacherService.addLessonToTeacher`: the lesson's class | 100 |
 | `studentSchedule` | `StudentService.getStudentSchedule(schoolCode, studentId)` | `studentId` | `TeacherService.addLessonToTeacher`: each student in the class | **missing from `ehcache.xml`** |
-| `studentTestsStatus` | `StudentService.getStudentTestsStatus(userId)` | `userId` | `TestResultService.checkTeacherTest` (`@CacheEvict`); `TeacherService.generateTestForStudents`: each student | 1000 |
+| `studentTestsStatus` | `StudentService.getStudentTestsStatus(userId)` (lists only published teacher tests) | `userId` | `TestResultService.checkTeacherTest` (`@CacheEvict`); `TeacherService.generateTestForStudents`: each student; `ExamAttemptService` when it grades an attempt (submit, late submit, auto-submit): the student; `ExamAuthoringService` when an exam is published (on create, clone, or by `ExamSchedulerJob`): each student (`cacheManager`) | 1000 |
 | `schoolDTO` | `SchoolService.getSchoolDTO(SchoolManagerId)` | `SchoolManagerId` | nothing | 100 |
 | `allSchools` | `SystemAdminService.getAllSchoolsDTO()` | (no args) | `SystemAdminService`: `assignUserAsSchoolManager`, `addNewSchoolToSystem`, `assignSchoolManagerToSchool`, `removeSchoolManagerFromSchool` (`allEntries = true`) | 100 |
 

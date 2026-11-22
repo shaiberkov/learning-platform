@@ -9,8 +9,12 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TeacherTestResultRepository extends JpaRepository<TeacherTestResultEntity,Long> {
 
-    @Query("SELECT COUNT(r) > 0 FROM TeacherTestResultEntity r WHERE r.test.id = :testId AND r.student.userId = :userId")
-    boolean existsForTestAndStudent(@Param("testId") Long testId, @Param("userId") String userId);
+    @Query("SELECT COUNT(r) FROM TeacherTestResultEntity r WHERE r.test.id = :testId AND r.student.userId = :userId")
+    long countForTestAndStudent(@Param("testId") Long testId, @Param("userId") String userId);
+
+    default boolean existsForTestAndStudent(Long testId, String userId) {
+        return countForTestAndStudent(testId, userId) > 0;
+    }
 
 
 }

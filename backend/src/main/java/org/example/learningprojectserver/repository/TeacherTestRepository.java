@@ -16,8 +16,12 @@ public interface TeacherTestRepository extends JpaRepository<TeacherTestEntity, 
     @Query("SELECT t FROM TeacherTestEntity t WHERE t.id = :testId")
     TeacherTestEntity findTeacherTestByTestId(@Param("testId") Long testId);
 
-    @Query("SELECT COUNT(s) > 0 FROM TeacherTestEntity t JOIN t.students s WHERE t.id = :testId AND s.userId = :userId")
-    boolean isStudentAssigned(@Param("testId") Long testId, @Param("userId") String userId);
+    @Query("SELECT COUNT(s) FROM TeacherTestEntity t JOIN t.students s WHERE t.id = :testId AND s.userId = :userId")
+    long countAssignedStudent(@Param("testId") Long testId, @Param("userId") String userId);
+
+    default boolean isStudentAssigned(Long testId, String userId) {
+        return countAssignedStudent(testId, userId) > 0;
+    }
 
     @Query("SELECT t FROM TeacherTestEntity t WHERE t.teacher.userId = :teacherId ORDER BY t.id DESC")
     List<TeacherTestEntity> findByTeacherUserId(@Param("teacherId") String teacherId);

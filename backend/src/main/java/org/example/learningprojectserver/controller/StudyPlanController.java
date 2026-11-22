@@ -1,5 +1,7 @@
 package org.example.learningprojectserver.controller;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 import lombok.RequiredArgsConstructor;
 import org.example.learningprojectserver.response.BasicResponse;
 import org.example.learningprojectserver.service.StudyPlanService;
@@ -14,11 +16,13 @@ public class StudyPlanController {
 
     private final StudyPlanService studyPlanService;
 
+    @PreAuthorize("@authz.isSelf(#studentId)")
     @GetMapping(GET_PLAN)
     public BasicResponse getPlan(@RequestParam String studentId) {
         return studyPlanService.getPlan(studentId);
     }
 
+    @PreAuthorize("@authz.isSelf(#studentId)")
     @PostMapping(COMPLETE_TASK)
     public BasicResponse completeTask(@RequestParam String studentId, @RequestParam Long taskId) {
         return studyPlanService.completeTask(studentId, taskId);

@@ -1,5 +1,7 @@
 package org.example.learningprojectserver.controller;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 import lombok.RequiredArgsConstructor;
 import org.example.learningprojectserver.dto.AdaptiveDTOs.HintTemplateRequest;
 import org.example.learningprojectserver.response.BasicResponse;
@@ -22,11 +24,13 @@ public class AdaptiveTeacherController {
     private final MasteryService masteryService;
     private final HintService hintService;
 
+    @PreAuthorize("@authz.isSelf(#teacherId)")
     @GetMapping(TEACHER_CLASSES)
     public BasicResponse getTeacherClasses(@RequestParam String teacherId) {
         return masteryService.getTeacherClasses(teacherId);
     }
 
+    @PreAuthorize("@authz.isSelf(#teacherId)")
     @GetMapping(CLASS_SKILL_MAP)
     public BasicResponse getClassSkillMap(@RequestParam String teacherId, @RequestParam Long classRoomId) {
         return masteryService.getClassSkillMap(teacherId, classRoomId);
@@ -42,6 +46,7 @@ public class AdaptiveTeacherController {
         return hintService.getTemplate(subject, subTopic);
     }
 
+    @PreAuthorize("@authz.isSelf(#teacherId)")
     @PostMapping(HINT_TEMPLATE)
     public BasicResponse saveHintTemplate(@RequestParam String teacherId, @RequestBody HintTemplateRequest request) {
         return hintService.saveTemplate(teacherId, request);

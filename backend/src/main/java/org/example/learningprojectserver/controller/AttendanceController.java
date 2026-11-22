@@ -1,5 +1,7 @@
 package org.example.learningprojectserver.controller;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 import lombok.RequiredArgsConstructor;
 import org.example.learningprojectserver.dto.AttendanceMarkRequest;
 import org.example.learningprojectserver.response.BasicResponse;
@@ -18,17 +20,20 @@ public class AttendanceController {
     private final AttendanceService attendanceService;
 
     /** date: yyyy-MM-dd, default today. */
+    @PreAuthorize("@authz.isSelf(#teacherId)")
     @GetMapping(GET_ATTENDANCE_LESSONS)
     public BasicResponse getLessonsForDay(@RequestParam String teacherId, @RequestParam(required = false) String date) {
         return attendanceService.getLessonsForDay(teacherId, date);
     }
 
+    @PreAuthorize("@authz.isSelf(#teacherId)")
     @GetMapping(GET_ATTENDANCE_SHEET)
     public BasicResponse getSheet(@RequestParam String teacherId, @RequestParam Long lessonId,
                                   @RequestParam(required = false) String date) {
         return attendanceService.getSheet(teacherId, lessonId, date);
     }
 
+    @PreAuthorize("@authz.isSelf(#teacherId)")
     @PostMapping(MARK_ATTENDANCE)
     public BasicResponse mark(@RequestParam String teacherId, @RequestParam Long lessonId,
                               @RequestParam(required = false) String date,
@@ -37,6 +42,7 @@ public class AttendanceController {
     }
 
     /** userId: a teacher (own lessons) or a school manager (whole school). from/to: yyyy-MM-dd. */
+    @PreAuthorize("@authz.isSelf(#userId)")
     @GetMapping(GET_ATTENDANCE_REPORT)
     public BasicResponse getReport(@RequestParam String userId,
                                    @RequestParam(required = false) String from,

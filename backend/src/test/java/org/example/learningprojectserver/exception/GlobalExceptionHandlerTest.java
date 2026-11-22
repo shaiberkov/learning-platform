@@ -45,7 +45,8 @@ class GlobalExceptionHandlerTest {
 
         mockMvc = MockMvcBuilders
                 .standaloneSetup(
-                        new userController(userService),
+                        new userController(userService, mock(org.example.learningprojectserver.service.AuthTokenService.class),
+                                mock(org.example.learningprojectserver.security.AuthCookies.class)),
                         new SchoolManagerController(mock(ClassRoomService.class), mock(SchoolGradeService.class),
                                 mock(SchoolManagerService.class), mock(SchoolService.class), teacherService))
                 .setControllerAdvice(new GlobalExceptionHandler())

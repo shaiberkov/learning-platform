@@ -59,6 +59,7 @@ private final MessageService messageService;
         return messageService.getAllRecivedMessages(userId);
     }
 
+    @PreAuthorize("@authz.isSelf(#userId)")
     @GetMapping(RECEIVED_MESSAGES_PAGE)
     public BasicResponse getReceivedMessagesPage(@RequestParam String userId,
                                                  @RequestParam(required = false) Integer page,
@@ -66,6 +67,7 @@ private final MessageService messageService;
         return messageService.getReceivedMessagesPage(userId, page, size);
     }
 
+    @PreAuthorize("@authz.isSelf(#userId)")
     @GetMapping(SENT_MESSAGES)
     public BasicResponse getSentMessages(@RequestParam String userId,
                                          @RequestParam(required = false) Integer page,
@@ -73,16 +75,19 @@ private final MessageService messageService;
         return messageService.getSentMessageSummaries(userId, page, size);
     }
 
+    @PreAuthorize("@authz.isSelf(#userId)")
     @GetMapping(READ_RECEIPTS)
     public BasicResponse getReadReceipts(@RequestParam String userId, @RequestParam String batchId) {
         return messageService.getReadReceipts(userId, batchId);
     }
 
+    @PreAuthorize("@authz.isSelf(#userId)")
     @PostMapping(MARK_READ)
     public BasicResponse markRead(@RequestParam String userId, @RequestParam Long messageId) {
         return messageService.markAsRead(userId, messageId);
     }
 
+    @PreAuthorize("@authz.isSelf(#userId)")
     @PostMapping(REPLY)
     public BasicResponse reply(@RequestParam String userId,
                                @RequestParam Long messageId,
@@ -91,11 +96,13 @@ private final MessageService messageService;
         return messageService.reply(userId, messageId, content, file);
     }
 
+    @PreAuthorize("@authz.isSelf(#userId)")
     @GetMapping(THREAD)
     public BasicResponse getThread(@RequestParam String userId, @RequestParam String threadId) {
         return messageService.getThread(userId, threadId);
     }
 
+    @PreAuthorize("@authz.isSelf(#userId)")
     @GetMapping(ATTACHMENT)
     public ResponseEntity<byte[]> getAttachment(@RequestParam String userId, @RequestParam Long attachmentId) {
         AttachmentDownload file = messageService.getAttachment(userId, attachmentId);

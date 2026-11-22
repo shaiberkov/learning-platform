@@ -1,5 +1,7 @@
 package org.example.learningprojectserver.controller;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 import lombok.RequiredArgsConstructor;
 import org.example.learningprojectserver.response.BasicResponse;
 import org.example.learningprojectserver.service.ExamFeedbackService;
@@ -23,16 +25,19 @@ public class AdaptiveStudentController {
     private final HintService hintService;
     private final ExamFeedbackService examFeedbackService;
 
+    @PreAuthorize("@authz.isSelf(#userId)")
     @GetMapping(REVIEW_DUE)
     public BasicResponse getDueReviewItems(@RequestParam String userId) {
         return reviewService.getDueItems(userId);
     }
 
+    @PreAuthorize("@authz.isSelf(#userId)")
     @GetMapping(REVIEW_SUMMARY)
     public BasicResponse getReviewSummary(@RequestParam String userId) {
         return reviewService.getSummary(userId);
     }
 
+    @PreAuthorize("@authz.isSelf(#userId)")
     @PostMapping(REVIEW_ANSWER)
     public BasicResponse answerReviewItem(@RequestParam String userId,
                                           @RequestParam Long itemId,
@@ -40,11 +45,13 @@ public class AdaptiveStudentController {
         return reviewService.answer(userId, itemId, answer);
     }
 
+    @PreAuthorize("@authz.isSelf(#userId)")
     @GetMapping(SKILL_MAP)
     public BasicResponse getSkillMap(@RequestParam String userId) {
         return masteryService.getSkillMap(userId);
     }
 
+    @PreAuthorize("@authz.isSelf(#userId)")
     @GetMapping(PRACTICE_HINT)
     public BasicResponse getPracticeHint(@RequestParam String userId,
                                          @RequestParam Long questionId,
@@ -52,6 +59,7 @@ public class AdaptiveStudentController {
         return hintService.getHintStep(userId, questionId, step);
     }
 
+    @PreAuthorize("@authz.isSelf(#userId)")
     @PostMapping(EXAM_QUESTION_TIMES)
     public BasicResponse recordExamQuestionTimes(@RequestParam String userId,
                                                  @RequestParam Long testId,
@@ -59,6 +67,7 @@ public class AdaptiveStudentController {
         return examFeedbackService.recordQuestionTimes(userId, testId, secondsByQuestion);
     }
 
+    @PreAuthorize("@authz.isSelf(#userId)")
     @GetMapping(EXAM_FEEDBACK)
     public BasicResponse getExamFeedback(@RequestParam String userId, @RequestParam Long testId) {
         return examFeedbackService.getFeedback(userId, testId);

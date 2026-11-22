@@ -1,5 +1,7 @@
 package org.example.learningprojectserver.controller;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 import lombok.RequiredArgsConstructor;
 import org.example.learningprojectserver.response.BasicResponse;
 import org.example.learningprojectserver.service.SearchService;
@@ -17,11 +19,13 @@ public class SearchController {
 
     private final SearchService searchService;
 
+    @PreAuthorize("@authz.isSelf(#userId)")
     @GetMapping(GLOBAL)
     public BasicResponse search(@RequestParam String userId, @RequestParam String q) {
         return searchService.search(userId, q);
     }
 
+    @PreAuthorize("@authz.isSelf(#userId)")
     @GetMapping(STUDENTS_PAGE)
     public BasicResponse studentsPage(@RequestParam String userId,
                                       @RequestParam(required = false) String q,

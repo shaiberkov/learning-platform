@@ -1,5 +1,7 @@
 package org.example.learningprojectserver.controller;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 import lombok.RequiredArgsConstructor;
 import org.example.learningprojectserver.response.BasicResponse;
 import org.example.learningprojectserver.service.CalendarService;
@@ -23,11 +25,13 @@ public class CalendarController {
 
     private final CalendarService calendarService;
 
+    @PreAuthorize("@authz.isSelf(#userId)")
     @GetMapping(TOKEN)
     public BasicResponse getFeed(@RequestParam String userId) {
         return calendarService.getOrCreateFeed(userId);
     }
 
+    @PreAuthorize("@authz.isSelf(#userId)")
     @PostMapping(REGENERATE_TOKEN)
     public BasicResponse regenerate(@RequestParam String userId) {
         return calendarService.regenerate(userId);

@@ -55,7 +55,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         SystemAdminController.class, TestController.class, userController.class,
         AuditLogController.class, ImpersonationController.class
 })
-@Import({SecurityConfig.class, JwtService.class, AccessGuard.class, FeatureFlags.class, AccessDeniedAdvice.class})
+@Import({SecurityConfig.class, JwtService.class, AccessGuard.class, FeatureFlags.class, AccessDeniedAdvice.class,
+        AuthCookies.class, RateLimiter.class, RateLimitProperties.class})
 class AuthorizationTest {
 
     private static final String AUTH = "Authorization";
@@ -77,6 +78,7 @@ class AuthorizationTest {
     @MockitoBean private UserService userService;
     @MockitoBean private AuditService auditService;
     @MockitoBean private ImpersonationService impersonationService;
+    @MockitoBean private org.example.learningprojectserver.service.AuthTokenService authTokenService;
 
     private String studentA;
     private String teacherT;
@@ -144,7 +146,7 @@ class AuthorizationTest {
         mockMvc.perform(post("/Learning-App/impersonation/start").param("targetUserId", "111")
                         .header(AUTH, managerM))
                 .andExpect(status().isForbidden());
-        verify(impersonationService, never()).start(anyString());
+        verify(impersonationService, never()).start(anyString(), org.mockito.ArgumentMatchers.any());
     }
 
     // --- student: own exams and results only ---

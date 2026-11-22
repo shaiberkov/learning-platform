@@ -127,10 +127,10 @@ public class SecurityConfig {
                         .requestMatchers(LESSON_CONTENT_ALL).hasAnyRole(STUDENT, TEACHER, SYSTEM_ADMIN)
                         .requestMatchers(HOMEWORK_ALL).hasAnyRole(STUDENT, TEACHER, SYSTEM_ADMIN)
                         .requestMatchers(ACCOMMODATION_ALL).hasAnyRole(STUDENT, TEACHER, SYSTEM_ADMIN)
-                        // AI routes are the first ones that really need the token: the userId comes from it
-                        // (quota, exam lock, ownership). Staff routes also check the role.
+                        // AI routes take the userId from the token (quota, exam lock, ownership); parents have no AI screens.
+                        // Staff routes also check the role.
                         .requestMatchers(AI_STAFF_ALL).hasAnyRole(TEACHER, SCHOOL_MANAGER, SYSTEM_ADMIN)
-                        .requestMatchers(AI_ALL).authenticated()
+                        .requestMatchers(AI_ALL).hasAnyRole(STUDENT, TEACHER, SCHOOL_MANAGER, SYSTEM_ADMIN)
                         .requestMatchers(QUESTION_BANK_ALL).hasAnyRole(TEACHER, SYSTEM_ADMIN)
                         .requestMatchers(GRADEBOOK_ALL).hasAnyRole(TEACHER, SYSTEM_ADMIN)
                         .requestMatchers(LIVE_QUIZ_ALL).hasAnyRole(TEACHER, STUDENT, SYSTEM_ADMIN)

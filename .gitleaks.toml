@@ -1,0 +1,34 @@
+# gitleaks configuration (https://github.com/gitleaks/gitleaks)
+# Used by .github/workflows/gitleaks.yml and scripts/git-hooks/pre-commit.
+title = "learning-platform gitleaks config"
+
+# Start from gitleaks' built-in rules and add project-specific ones on top.
+[extend]
+useDefault = true
+
+# OpenAI keys. The built-in rule only matches the legacy "T3BlbkFJ" format;
+# project/service-account keys look like sk-proj-... / sk-svcacct-... / sk-admin-...
+[[rules]]
+id = "openai-api-key-modern"
+description = "OpenAI API key (sk-, sk-proj-, sk-svcacct-, sk-admin-)"
+regex = '''\bsk-(?:proj-|svcacct-|admin-)?[A-Za-z0-9_-]{20,}\b'''
+keywords = ["sk-"]
+
+# Literal values assigned to the env names this project reads secrets from.
+# ${...} placeholders and empty values are fine; a literal value is not.
+[[rules]]
+id = "project-env-secret-literal"
+description = "Literal value for GPT_TOKEN / SMS_TOKEN / DB_PASSWORD / JWT_SECRET"
+regex = '''(?i)\b(?:GPT_TOKEN|SMS_TOKEN|DB_PASSWORD|JWT_SECRET)\s*[=:]\s*["']?([^\s"'$]{8,})'''
+secretGroup = 1
+keywords = ["gpt_token", "sms_token", "db_password", "jwt_secret"]
+
+[allowlist]
+description = "Generated or vendored files that cannot hold our secrets"
+paths = [
+  '''(^|/)package-lock\.json$''',
+  '''(^|/)node_modules/''',
+  '''(^|/)graphify-out/''',
+  '''(^|/)\.mvn/wrapper/''',
+  '''(^|/)\.env\.example$''',
+]

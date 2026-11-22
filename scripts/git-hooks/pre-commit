@@ -1,0 +1,19 @@
+#!/bin/sh
+# Blocks a commit that adds a secret. Install once per clone:
+#   sh scripts/install-git-hooks.sh
+# Needs the gitleaks CLI on PATH (https://github.com/gitleaks/gitleaks#installing).
+# Skip in an emergency with: git commit --no-verify  (CI still scans every push).
+
+if ! command -v gitleaks >/dev/null 2>&1; then
+  echo "pre-commit: gitleaks is not installed, secret scan skipped (CI will still scan)." >&2
+  echo "            install it: https://github.com/gitleaks/gitleaks#installing" >&2
+  exit 0
+fi
+
+repo_root=$(git rev-parse --show-toplevel)
+if ! gitleaks git --staged --config "$repo_root/.gitleaks.toml" --redact --no-banner --exit-code 1 "$repo_root"; then
+  echo "" >&2
+  echo "pre-commit: gitleaks found a possible secret in the staged changes. Commit blocked." >&2
+  echo "            Move the value to backend/.env and read it from the environment." >&2
+  exit 1
+fi

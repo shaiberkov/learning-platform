@@ -151,6 +151,8 @@ public final class ControllerConstants {
         public static final String FORGOT_PASSWORD           = "/forgot-password";
         public static final String RESET_PASSWORD            = "/reset-password";
         public static final String GET_USER_PHONE            = "/user/phone";
+        public static final String REFRESH_TOKEN             = "/refresh-token";
+        public static final String LOGOUT                    = "/logout";
     }
 
 

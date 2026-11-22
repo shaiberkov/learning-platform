@@ -3,6 +3,10 @@ package org.example.learningprojectserver.config;
 import org.example.learningprojectserver.filter.JwtAuthenticationFilter;
 import org.example.learningprojectserver.filter.LoggingFilter;
 import org.example.learningprojectserver.filter.MetricsFilter;
+import org.example.learningprojectserver.filter.CookieCsrfGuardFilter;
+import org.example.learningprojectserver.filter.RateLimitFilter;
+import org.example.learningprojectserver.security.RateLimitProperties;
+import org.example.learningprojectserver.security.RateLimiter;
 import org.example.learningprojectserver.service.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.EnableCaching;
@@ -52,7 +56,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http,JwtAuthenticationFilter jwtAuthenticationFilter,
                                                    LoggingFilter loggingFilter,
-                                                   MetricsFilter metricsFilter) throws Exception {
+                                                   MetricsFilter metricsFilter,
+                                                   RateLimiter rateLimiter,
+                                                   RateLimitProperties rateLimitProperties) throws Exception {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
@@ -83,7 +89,10 @@ public class SecurityConfig {
                 )
                 .addFilterBefore(metricsFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(loggingFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                // Not beans on purpose: a Filter bean would also be registered with the servlet container.
+                .addFilterBefore(new CookieCsrfGuardFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(new RateLimitFilter(rateLimiter, rateLimitProperties), UsernamePasswordAuthenticationFilter.class);
 
 
         return http.build();

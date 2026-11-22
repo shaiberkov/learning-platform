@@ -42,7 +42,7 @@ public class AiUserResolver {
             case STUDENT -> studentRepository.findSchoolCodeByUserId(userId);
             case TEACHER -> teacherRepository.findSchoolCodeByUserId(userId);
             case SCHOOLMANAGER -> schoolManagerRepository.findSchoolCodeByUserId(userId);
-            case SYSTEM_ADMIN -> null;
+            case SYSTEM_ADMIN, PARENT -> null;
         };
         return new AiUser(userId, user.getRole(), schoolCode);
     }

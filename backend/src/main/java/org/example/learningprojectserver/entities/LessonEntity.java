@@ -34,6 +34,9 @@ public class LessonEntity {
 
     private String subject;
 
+    // Room or space where the lesson takes place; optional, used for room-conflict checks
+    private String room;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "schedule_id")
     private ScheduleEntity schedule;

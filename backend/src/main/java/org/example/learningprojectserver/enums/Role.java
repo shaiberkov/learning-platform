@@ -4,6 +4,7 @@ public enum Role {
     STUDENT,
     TEACHER,
     SCHOOLMANAGER,
-    SYSTEM_ADMIN
+    SYSTEM_ADMIN,
+    PARENT
 }
 

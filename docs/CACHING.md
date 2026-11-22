@@ -10,13 +10,13 @@ Configured in `backend/src/main/resources/ehcache.xml` and enabled by `@EnableCa
 
 | Cache | Filled by (`@Cacheable`) | Key | Evicted by | Size |
 |---|---|---|---|---|
-| `upcomingEvents` | `UpcomingEventService.getUpcomingEvents(role, userId)` | `role + '_' + userId` (e.g. `STUDENT_123`) | `TeacherService.generateTestForStudents`: the teacher's key (`@CacheEvict`) and each student's key (`cacheManager`) | 1000 |
+| `upcomingEvents` | `UpcomingEventService.getUpcomingEvents(role, userId)` | `role + '_' + userId` (e.g. `STUDENT_123`) | `TeacherService.generateTestForStudents`: the teacher's key (`@CacheEvict`) and each student's key (`cacheManager`); `SchoolYearService.closeYearAndPromote`: every moved student's `STUDENT_` key (`SchoolCacheEvictor`) | 1000 |
 | `receivedMessages` | `MessageService.getAllRecivedMessages(userId)` | `userId` | `MessageService.sendMessage`: each recipient's key; `AttendanceService.mark`: the school manager's key when it sends an unusual-absence alert | 1000 |
-| `teacherSchedule` | `TeacherService.getTeacherSchedule(teacherId)` | `teacherId` | `TeacherService.addLessonToTeacher` (`@CacheEvict`) | 500 |
-| `classRoomSchedule` | `ClassRoomService.getScheduleForClassRoom(schoolCode, classRoomName)` | `schoolCode + '_' + classRoomName` | `TeacherService.addLessonToTeacher`: the lesson's class | 100 |
-| `studentSchedule` | `StudentService.getStudentSchedule(schoolCode, studentId)` | `studentId` | `TeacherService.addLessonToTeacher`: each student in the class | **missing from `ehcache.xml`** |
-| `studentTestsStatus` | `StudentService.getStudentTestsStatus(userId)` (lists only published teacher tests) | `userId` | `TestResultService.checkTeacherTest` (`@CacheEvict`); `TeacherService.generateTestForStudents`: each student; `ExamAttemptService` when it grades an attempt (submit, late submit, auto-submit): the student; `ExamAuthoringService` when an exam is published (on create, clone, or by `ExamSchedulerJob`): each student (`cacheManager`) | 1000 |
-| `schoolDTO` | `SchoolService.getSchoolDTO(SchoolManagerId)` | `SchoolManagerId` | nothing | 100 |
+| `teacherSchedule` | `TeacherService.getTeacherSchedule(teacherId)` | `teacherId` | `TeacherService.addLessonToTeacher` (`@CacheEvict`); `TimetableService.saveLesson` / `deleteLesson`: old and new teacher (`SchoolCacheEvictor`) | 500 |
+| `classRoomSchedule` | `ClassRoomService.getScheduleForClassRoom(schoolCode, classRoomName)` | `schoolCode + '_' + classRoomName` | `TeacherService.addLessonToTeacher`: the lesson's class; `TimetableService.saveLesson` / `deleteLesson`: old and new class | 100 |
+| `studentSchedule` | `StudentService.getStudentSchedule(schoolCode, studentId)` | `studentId` | `TeacherService.addLessonToTeacher`: each student in the class; `TimetableService.saveLesson` / `deleteLesson`: each student of the old and new class; `SchoolYearService.closeYearAndPromote`: every moved student | 1000 |
+| `studentTestsStatus` | `StudentService.getStudentTestsStatus(userId)` (lists only published teacher tests) | `userId` | `TestResultService.checkTeacherTest` (`@CacheEvict`); `TeacherService.generateTestForStudents`: each student; `ExamAttemptService` when it grades an attempt (submit, late submit, auto-submit): the student; `ExamAuthoringService` when an exam is published (on create, clone, or by `ExamSchedulerJob`): each student (`cacheManager`); `SchoolYearService.closeYearAndPromote`: every moved student | 1000 |
+| `schoolDTO` | `SchoolService.getSchoolDTO(SchoolManagerId)` | `SchoolManagerId` | `BulkImportService.commit` and `SchoolYearService.closeYearAndPromote`: the school's manager (`SchoolCacheEvictor`) | 100 |
 | `aiPromptCache` | `AiGateway.complete(..., cacheable = true)` by hand (`cacheManager.getCache`), for question generation, rubric grading and insight summaries; never for the tutor chat | SHA-256 of provider + model + messages + settings | nothing: an identical prompt is meant to return the same answer for 24 hours. "Generate again" in the question studio skips the cache (`fresh=true`) | 500 |
 | `allSchools` | `SystemAdminService.getAllSchoolsDTO()` | (no args) | `SystemAdminService`: `assignUserAsSchoolManager`, `addNewSchoolToSystem`, `assignSchoolManagerToSchool`, `removeSchoolManagerFromSchool` (`allEntries = true`) | 100 |
 | `schoolFeatureFlags` | `FeatureFlagService.flagsForSchool(schoolCode)` (a `Map<String, Boolean>` of effective flags, read through `security/FeatureFlags`) | `schoolCode` | `FeatureFlagService.setFlag` (`@CacheEvict`, same key); `school_feature_flag` has no other writer | 200 |
@@ -26,6 +26,8 @@ Not cached: the adaptive-learning reads (mistakes notebook, skill maps, hints, e
 ### Not cached on purpose
 
 Engagement (XP, streaks, badges, class challenges), study plans, lesson pages and their progress, homework and submissions, and accommodations are read from MySQL on every request. They change with almost every student action, and a stale extra-time value or homework status would be wrong in a way users notice. Their writes touch none of the caches above (homework and study plans are not part of `upcomingEvents`). If one of them gets a cache, add it to table 1 with its evictions.
+
+Not cached on purpose: the school dashboard (`SchoolAnalyticsService`), the timetable builder's lesson list, school years and their archive, and the parent screens (`ParentService`) read MySQL on every request. Messages to parents go through `MessageService.sendMessage`, which already evicts `receivedMessages` per recipient.
 
 ## 2. Hand-rolled in-memory maps
 
@@ -52,8 +54,8 @@ Refresh tokens are not cached: they live in the `refresh_tokens` table (hashed) 
 
 Recorded, not fixed. Fix one only when the task is about it.
 
-1. **`studentSchedule` has no alias in `ehcache.xml`.** JCache does not create caches on demand, so `@Cacheable("studentSchedule")` and `cacheManager.getCache("studentSchedule")` (which returns `null`) can fail at runtime. Adding the alias is the fix.
-2. **`schoolDTO` is never evicted.** Adding grades, classes, teachers or a manager to a school leaves the manager's view stale for up to 24 hours.
+1. ~~`studentSchedule` has no alias in `ehcache.xml`.~~ Fixed: the alias exists (heap 1000). `SchoolCacheEvictor` also skips a cache that is missing instead of throwing.
+2. **`schoolDTO` is evicted only by the bulk import and the year close.** Adding grades, classes, teachers or a manager through the older single-item endpoints still leaves the manager's view stale for up to 24 hours.
 3. **Writes outside the evicting methods.** Anything that changes lessons, tests or messages without going through the methods in the "Evicted by" column leaves the matching cache stale. Removing a lesson, a teacher or a student from a class evicts nothing.
 4. **Single instance only.** Everything above is per process (a live quiz too: a restart ends every running quiz). A second instance on Render would serve different data from each and break SSE delivery.
 

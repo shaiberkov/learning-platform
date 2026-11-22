@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.learningprojectserver.enums.Role;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,8 +59,11 @@ public abstract class UserEntity {
     private List<MessageEntity> receivedMessages = new ArrayList<>();
 
 
+    // VARCHAR, not MySQL's native ENUM, so adding a role never needs the column type changed again.
+    // Existing databases still hold an ENUM column: see docs/MIGRATIONS.md and DevSchemaPatcher.
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
+    @Column(nullable = false, length = 32)
     private Role role;
 
 }

@@ -14,6 +14,7 @@ import static org.example.learningprojectserver.constants.ControllerConstants.Ex
 import static org.example.learningprojectserver.constants.ControllerConstants.Lesson.LESSON_BASE_PATH;
 import static org.example.learningprojectserver.constants.ControllerConstants.Message.MESSAGE_BASE_PATH;
 import static org.example.learningprojectserver.constants.ControllerConstants.Notification.NOTIFICATION_BASE_PATH;
+import static org.example.learningprojectserver.constants.ControllerConstants.Parent.PARENT_BASE_PATH;
 import static org.example.learningprojectserver.constants.ControllerConstants.Question.QUESTION_BASE_PATH;
 import static org.example.learningprojectserver.constants.ControllerConstants.Schedule.SCHEDULE_BASE_PATH;
 import static org.example.learningprojectserver.constants.ControllerConstants.SchoolManager.SCHOOL_MANAGER_BASE_PATH;
@@ -104,11 +105,13 @@ public final class SecurityConstants {
         public static final String GRADEBOOK_ALL             = GRADEBOOK_BASE_PATH    + CORS_MAPPING_PATH;
         public static final String LIVE_QUIZ_ALL             = LIVE_QUIZ_BASE_PATH    + CORS_MAPPING_PATH;
         public static final String ATTENDANCE_ALL            = ATTENDANCE_BASE_PATH   + CORS_MAPPING_PATH;
+        public static final String PARENT_ALL                = PARENT_BASE_PATH       + CORS_MAPPING_PATH;
 
         public static final String SYSTEM_ADMIN   = "SYSTEM_ADMIN";
         public static final String TEACHER        = "TEACHER";
         public static final String SCHOOL_MANAGER = "SCHOOLMANAGER";
         public static final String STUDENT        = "STUDENT";
+        public static final String PARENT         = "PARENT";
         public static final List<String> ALLOWED_ORIGINS =
                 List.of("http://localhost:5173","https://schoolmanagmentsystem-z0m5.onrender.com/");
 

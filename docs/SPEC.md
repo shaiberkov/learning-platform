@@ -25,6 +25,7 @@ Deployed on Render: frontend `schoolmanagmentsystem-z0m5.onrender.com`, backend 
 | `SCHOOLMANAGER` | add/remove grades and classes, assign/remove teachers and their teaching subjects, assign students to classes, build lessons (timetable), view class timetables, send messages, read the school's absence report (and receive unusual-absence alerts) |
 | `TEACHER` | see own timetable, generate a test for chosen students (graded automatically), see results, send messages, write lesson pages, give homework and follow the submission board, open class challenges, set students' extra exam time, keep a question bank, keep a gradebook per class, run a live quiz in class, mark attendance and read absence reports |
 | `STUDENT` | practise questions by subject/topic, build a self-practice test, take teacher tests, answer a live class quiz, see timetable, tests and statistics, read lessons (learn, practice, review), submit homework, follow a daily study plan before exams, see their own XP, streak and badges, and turn on read-aloud or the dyslexia font. A student not yet in a school sees a reduced menu. |
+| `PARENT` | see each linked child's teacher-test grades, averages by subject, practice summary and skill levels; receive messages from teachers and the manager. Linked to children by the manager (or created by the bulk import). |
 
 Everyone registers as a `STUDENT` with no school. The system admin turns a user into a school manager (`assignUserAsSchoolManager`, which refuses anyone who is no longer a student); a manager turns users into teachers of the school or puts students in a class. Roles are enforced by the API: URL rules per route group in `config/SecurityConfig.java`, and ownership checks (`@PreAuthorize` with `security/AccessGuard`) so a teacher reaches only their own classes and students, a student only their own tests and results, and a school manager only their own school. A system admin passes every ownership check.
 
@@ -45,7 +46,9 @@ Everyone registers as a `STUDENT` with no school. The system admin turns a user 
 - `StudentAccommodationEntity`: extra exam time percent, read-aloud and dyslexia-font preferences.
 - AI: `AiUsageEntity` (one row per AI call: user, school, feature, tokens, estimated cost), `AiConversationMessageEntity` (tutor chat, kept `ai.retention.days`), `AiQuestionDraftEntity` → `BankQuestionEntity` (a `QuestionEntity` subclass: the teacher's question bank), `AiRubricEntity` + `AiOpenAnswerEntity` (open questions graded by rubric), `TestAnswerRecordEntity` (each answer of a checked teacher test) and `TeacherInsightEntity` (weekly insight).
 - Teacher tools: `BankQuestionEntity` (question bank: text, answer, optional options, subject/topic/level/grade tags, owner, school, shared flag, usage counters), `GradebookAssignmentEntity` + `GradebookGradeEntity` + `GradebookWeightEntity` (a class gradebook per teacher), `AttendanceRecordEntity` (one student, one timetable lesson, one date). Production creates their tables by hand: `docs/sql/teacher-tools.sql`.
-
+- `ParentEntity` (extends `UserEntity`, many-to-many `children` → `StudentEntity`, table `parent_student`).
+- `SchoolYearEntity` (school, name, dates, active/closed) → `SemesterEntity`; `ArchivedStudentRecordEntity` is a by-value snapshot of each student taken when a year closes. `LessonEntity` has an optional `room`.
+- Schema changes are Flyway migrations in `backend/src/main/resources/db/migration` (production runs `ddl-auto=none`); `docs/MIGRATIONS.md` explains them. That includes widening `user_entity.role` from a native ENUM so `PARENT` can be stored.
 
 These entities reference students and teachers by `userId` string columns, not foreign keys. Their tables (`student_engagement`, `student_daily_activity`, `student_badge`, `class_challenge`, `study_plan_task`, `lesson_content`, `lesson_content_example`, `lesson_progress`, `homework`, `homework_student`, `homework_submission`, `student_accommodation`) are created by `ddl-auto=update` in dev; production (`ddl-auto=none`) needs them created by hand or by a migration.
 
@@ -95,6 +98,15 @@ These entities reference students and teachers by `userId` string columns, not f
 **Live quiz.** The teacher opens a quiz for a class (`/live-quiz/start`, 6-digit code), sends questions from the bank or typed on the spot, and closes each one to reveal the answer. Students answer from `/live-quiz` on their phones, one answer per question. State moves over the existing SSE stream (`LIVE_QUIZ_STATE` to students, `LIVE_QUIZ_RESULTS` to the teacher), and both screens also poll. Sessions are in memory only.
 
 **Attendance.** The teacher picks a date, sees that day's lessons from the timetable, and marks each student present, absent, late or excused. When a save newly makes a student's absences in the last 30 days reach 3 (then 6, 9...), or makes half or more of a class (4+ students) absent from a lesson, the school manager gets a message (saved, plus `SYSTEM_MESSAGE` over SSE). Reports per student over a date range: a teacher sees the lessons they marked, a manager the whole school. Dates follow Israel time.
+
+**School administration (manager).** Under `/school-manager/...` (`SchoolAdministrationController`):
+- *Bulk import*: the CSV text is posted to `bulk-import/preview`, which returns every row with its errors (bad id/email/phone, duplicates in the file or the database, unknown class, unknown child) and warnings; `bulk-import/commit` re-validates the same file, creates the valid students, teachers and parents with a generated initial password, and returns those passwords once.
+- *Dashboard*: `analytics` averages graded teacher tests by grade, subject, teacher, month (from the test's start time) and parallel class. The page exports to PDF through the browser's print dialog.
+- *Timetable builder*: `timetable/lessons` lists the school's lessons; `timetable/check` reports teacher, class and room clashes; `timetable/save` creates or moves a lesson and refuses clashes; `timetable/delete` removes one.
+- *School years*: years with semesters; `school-years/close` archives every student, then promotes each grade to the next level (by Hebrew letter value, `ז` → `ח`, parallel class kept) or graduates the top grade, in one transaction; `school-years/archive` reads the snapshot.
+- *Parents*: `parents/link` turns a registered user with no school into a `PARENT` (or reuses one) and links them to a student of the school.
+
+**Parents.** `/parent/children` and `/parent/child-overview` serve the parent dashboard; every read checks the parent-child link, since roles are not enforced. Teachers and managers message parents with the recipient types `הורי-כיתה` (a class) and `כל-ההורים`. Attendance is not recorded by the system yet, so the parent view says so.
 
 **Dashboard feed.** `upcoming-events` returns next lessons, tests and events for the user's role, built by the strategy for that role.
 

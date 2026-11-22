@@ -32,6 +32,12 @@
         </expiry>
         <heap>100</heap>
     </cache>
+    <cache alias="studentSchedule">
+        <expiry>
+            <ttl unit="hours">24</ttl>
+        </expiry>
+        <heap>1000</heap>
+    </cache>
     <cache alias="allSchools">
         <expiry>
             <ttl unit="hours">24</ttl>

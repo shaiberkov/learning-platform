@@ -133,6 +133,7 @@ public class SecurityConfig {
                         .requestMatchers(GRADEBOOK_ALL).hasAnyRole(TEACHER, SYSTEM_ADMIN)
                         .requestMatchers(LIVE_QUIZ_ALL).hasAnyRole(TEACHER, STUDENT, SYSTEM_ADMIN)
                         .requestMatchers(ATTENDANCE_ALL).hasAnyRole(TEACHER, SCHOOL_MANAGER, SYSTEM_ADMIN)
+                        .requestMatchers(PARENT_ALL).hasAnyRole(PARENT, SYSTEM_ADMIN)
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(metricsFilter, UsernamePasswordAuthenticationFilter.class)

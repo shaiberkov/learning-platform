@@ -1,7 +1,7 @@
 
 
 
-import React, {useContext, useEffect, useRef, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {Link, NavLink, Route, useNavigate} from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 import logo from '../assets/logo.png';
@@ -95,6 +95,18 @@ function SideBar() {
                     label: "הודעות",
                     children: [
                         { to: "send-message", label: "שליחת הודעה" },
+                        { to: "message-parents", label: "הודעה להורים" },
+                    ],
+                },
+
+                {
+                    label: "ניהול בית הספר",
+                    children: [
+                        { to: "school-analytics", label: "לוח ציונים ונתונים" },
+                        { to: "timetable-builder", label: "בניית מערכת שעות" },
+                        { to: "school-years", label: "שנות לימודים" },
+                        { to: "bulk-import", label: "ייבוא משתמשים מקובץ" },
+                        { to: "parent-links", label: "קישור הורים לתלמידים" },
                     ],
                 },
                 { to: "audit-log", label: "יומן פעולות" },
@@ -144,6 +156,10 @@ function SideBar() {
                 { to: "gradebook", label: "יומן ציונים" },
                 { to: "live-quiz-host", label: "חידון בכיתה" },
                 { to: "attendance", label: "נוכחות" },
+                { to: "message-parents", label: "הודעה להורים" },
+            ],
+            PARENT: [
+                { to: "parent-dashboard", label: "מסך בית" },
             ],
             STUDENT: [
                 { to: "student-dashboard", label: "מסך בית" },
@@ -170,6 +186,7 @@ function SideBar() {
         SCHOOLMANAGER: "מנהל בית ספר",
         TEACHER: "מורה",
         STUDENT: "תלמיד",
+        PARENT: "הורה",
     }[user?.role];
 
     const navItemClass = ({ isActive }) =>

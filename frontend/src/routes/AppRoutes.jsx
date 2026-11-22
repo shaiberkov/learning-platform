@@ -78,6 +78,13 @@ import Attendance from "../pages/teacher/Attendance.jsx";
 import LiveQuizPlay from "../pages/student/LiveQuizPlay.jsx";
 import AttendanceReport from "../pages/manager/AttendanceReport.jsx";
 import LiveQuizBanner from "../components/LiveQuizBanner.jsx";
+import BulkImport from "../pages/manager/BulkImport.jsx";
+import SchoolAnalytics from "../pages/manager/SchoolAnalytics.jsx";
+import TimetableBuilder from "../pages/manager/TimetableBuilder.jsx";
+import SchoolYears from "../pages/manager/SchoolYears.jsx";
+import ParentLinks from "../pages/manager/ParentLinks.jsx";
+import MessageParents from "../pages/teacher/MessageParents.jsx";
+import ParentDashboard from "../pages/parent/ParentDashboard.jsx";
 export default function AppRoutes() {
 
     const {user}=useContext(UserContext)
@@ -135,6 +142,12 @@ export default function AppRoutes() {
                             <Route path="/audit-log" element={<AuditLog />} />
                             <Route path="/ai-school" element={<AiSchoolOverview />} />
                             <Route path="/attendance-report" element={<AttendanceReport />} />
+                            <Route path="/bulk-import" element={<BulkImport />} />
+                            <Route path="/school-analytics" element={<SchoolAnalytics />} />
+                            <Route path="/timetable-builder" element={<TimetableBuilder />} />
+                            <Route path="/school-years" element={<SchoolYears />} />
+                            <Route path="/parent-links" element={<ParentLinks />} />
+                            <Route path="/message-parents" element={<MessageParents />} />
                         </>
                     )}
 
@@ -160,6 +173,7 @@ export default function AppRoutes() {
                             <Route path="/gradebook" element={<Gradebook />} />
                             <Route path="/live-quiz-host" element={<LiveQuizHost />} />
                             <Route path="/attendance" element={<Attendance />} />
+                            <Route path="/message-parents" element={<MessageParents />} />
                         </>
                     )}
 
@@ -187,6 +201,12 @@ export default function AppRoutes() {
                             <Route path="/accessibility" element={<AccessibilitySettings />} />
                         </>
                     )}
+                    {user?.role === 'PARENT' && (
+                        <>
+                            <Route path="/parent-dashboard" element={<ParentDashboard />} />
+                        </>
+                    )}
+
                     {user?.role === 'STUDENT'&&!user?.schoolCode && (
                         <>
                             <Route path="/student-dashboard" element={<StudentDashboard />} />

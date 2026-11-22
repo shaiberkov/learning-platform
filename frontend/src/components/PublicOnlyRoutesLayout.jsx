@@ -16,6 +16,8 @@ export default function PublicOnlyRoutesLayout() {
                 return <Navigate to="/teacher-dashboard" />;
             case 'STUDENT':
                 return <Navigate to="/student-dashboard" />;
+            case 'PARENT':
+                return <Navigate to="/parent-dashboard" />;
             default:
                 return <Navigate to="/unauthorized" />;
         }

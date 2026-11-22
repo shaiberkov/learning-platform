@@ -5,7 +5,8 @@ import MessageList from "../../components/messages/MessageList.jsx";
 import WeeklySchedule from "../../components/WeeklySchedule.jsx";
 import { getGreeting } from "../../Utils/Greeting.jsx";
 import EventForm from "../../components/EventForm.jsx";
-import { FaCalendarAlt, FaChartBar, FaClipboardList, FaPuzzlePiece } from "react-icons/fa";
+import { FaCalendarAlt, FaChartBar, FaClipboardList, FaProjectDiagram, FaPuzzlePiece } from "react-icons/fa";
+import ReviewDueTile from "../../features/adaptive/ReviewDueTile.jsx";
 import Prism from "../../components/ui/Prism.jsx";
 import DashboardHero, { QuickTile } from "../../components/ui/DashboardHero.jsx";
 
@@ -59,6 +60,8 @@ function StudentDashboard() {
                         <QuickTile index={5} to="/test-configurator" icon={<FaClipboardList />} label="תרגול מבחנים" hint="בקצב שלך" tone="icon-badge--mint" />
                         <QuickTile index={6} to="/teacher-tests" icon={<FaChartBar />} label="מבחנים" hint="ציונים ומועדים" tone="icon-badge--amber" />
                         <QuickTile index={7} to="/student-weekly-schedule" icon={<FaCalendarAlt />} label="מערכת שעות" hint="כל השבוע" />
+                        <ReviewDueTile index={8} userId={user?.userId} />
+                        <QuickTile index={9} to="/skill-map" icon={<FaProjectDiagram />} label="מפת מיומנויות" hint="שליטה לפי נושא" tone="icon-badge--mint" />
                     </div>
                 </div>
             </div>

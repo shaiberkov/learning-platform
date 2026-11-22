@@ -20,6 +20,8 @@ public class QuestionEntity {
     private String subTopic;
     private String questionText;
     private String answer;
+    /** Generator difficulty level (1-5) the question was created with; null for old rows. */
+    private Integer difficultyLevel;
 
 
     public QuestionEntity() {
@@ -79,6 +81,14 @@ public class QuestionEntity {
 
     public void setAnswer(String answer) {
         this.answer = answer;
+    }
+
+    public Integer getDifficultyLevel() {
+        return difficultyLevel;
+    }
+
+    public void setDifficultyLevel(Integer difficultyLevel) {
+        this.difficultyLevel = difficultyLevel;
     }
 }
 

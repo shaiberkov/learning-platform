@@ -123,6 +123,8 @@ function SideBar() {
                 { to: "test-configurator", label: "יצירת מבחן לתלמידים" },
                 { to: "exam-builder", label: "בניית מבחן מתקדם" },
                 { to: "teacher-exams", label: "המבחנים שלי" },
+                { to: "class-skill-map", label: "מפת מיומנויות כיתתית" },
+                { to: "hint-editor", label: "עריכת רמזים" },
             ],
             STUDENT: [
                 { to: "student-dashboard", label: "מסך בית" },
@@ -130,6 +132,8 @@ function SideBar() {
                 { to: "question-practice-selector", label: "תרגול שאלות" },
                 { to: "test-configurator", label: "תרגול מבחנים" },
                 { to: "teacher-tests", label: "מבחנים" },
+                { to: "mistakes-notebook", label: "מחברת טעויות" },
+                { to: "skill-map", label: "מפת מיומנויות" },
             ],
         }[user.role] || [];
     };

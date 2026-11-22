@@ -11,6 +11,8 @@ import {
     STUDENT_BASE_PATH, SUB_TOPIC, SUBJECT, SUBMIT_ANSWER, TEACHER_ID, TOPIC, USER_ID, WITH_MEMORY
 } from "../../constants/pages.constants.js";
 import {BEARER_PREFIX} from "../../constants/shared.constant.js";
+import HintPanel from "../../features/adaptive/HintPanel.jsx";
+import {skillColor} from "../../features/adaptive/adaptiveApi.js";
 
 function QuestionPractice(){
 
@@ -27,6 +29,8 @@ function QuestionPractice(){
     const [messages, setMessages] = useState([]);
     const [userMessage, setUserMessage] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const [lastResult, setLastResult] = useState(null);
+    const [sessionPoints, setSessionPoints] = useState(0);
     const cookies = new Cookies();
     const token=cookies.get('token')
     const canvasRef = useRef(null);
@@ -125,6 +129,8 @@ function QuestionPractice(){
             );
             setResponseMessage(response.data.data.message);
             setIsCorrect(response.data.data.correct);
+            setLastResult(response.data.data);
+            setSessionPoints((p) => p + (response.data.data.pointsEarned || 0));
             fetchData();
             setAnswer("");
             return response.data.data;
@@ -184,6 +190,12 @@ function QuestionPractice(){
                         <h2 className="display text-3xl sm:text-4xl">
                             תרגיל: {exerciseName}
                         </h2>
+                        <div className="flex flex-wrap gap-2 pt-1">
+                            {exercise?.difficultyLevel && (
+                                <span className="chip">רמת קושי <span className="num">{exercise.difficultyLevel}</span>/5</span>
+                            )}
+                            <span className="chip">ניקוד בתרגול <span className="num">{sessionPoints}</span></span>
+                        </div>
                     </div>
 
                     {exercise && (
@@ -220,7 +232,24 @@ function QuestionPractice(){
                             }`}
                         >
                             {responseMessage}
+                            {lastResult && (
+                                <>
+                                    {" · "}+<span className="num">{lastResult.pointsEarned}</span> נקודות
+                                    {lastResult.addedToReview && " · השאלה נוספה למחברת הטעויות"}
+                                </>
+                            )}
                         </p>
+                    )}
+
+                    {lastResult?.mastery && (
+                        <div className={`row-card !py-2.5 flex items-center justify-between gap-2 border text-sm ${skillColor(lastResult.mastery.color).cls}`}>
+                            <span>דירוג שליטה בנושא: <span className="num font-semibold">{lastResult.mastery.rating}</span></span>
+                            <span>השאלה הבאה ברמה <span className="num font-semibold">{lastResult.mastery.nextLevel}</span></span>
+                        </div>
+                    )}
+
+                    {exercise?.id && user?.userId && (
+                        <HintPanel key={exercise.id} userId={user.userId} questionId={exercise.id} />
                     )}
                 </div>
 

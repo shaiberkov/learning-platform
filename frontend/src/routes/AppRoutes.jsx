@@ -50,6 +50,10 @@ import ExamBuilder from "../pages/teacher/ExamBuilder.jsx";
 import TeacherExams from "../pages/teacher/TeacherExams.jsx";
 import ExamMonitor from "../pages/teacher/ExamMonitor.jsx";
 import ItemAnalysis from "../pages/teacher/ItemAnalysis.jsx";
+import MistakesNotebook from "../pages/student/MistakesNotebook.jsx";
+import SkillMap from "../pages/student/SkillMap.jsx";
+import ClassSkillMap from "../pages/teacher/ClassSkillMap.jsx";
+import HintEditor from "../pages/teacher/HintEditor.jsx";
 export default function AppRoutes() {
 
     const {user}=useContext(UserContext)
@@ -115,6 +119,8 @@ export default function AppRoutes() {
                             <Route path="/teacher-exams" element={<TeacherExams />} />
                             <Route path="/teacher-exams/:testId/monitor" element={<ExamMonitor />} />
                             <Route path="/teacher-exams/:testId/analysis" element={<ItemAnalysis />} />
+                            <Route path="/class-skill-map" element={<ClassSkillMap />} />
+                            <Route path="/hint-editor" element={<HintEditor />} />
                         </>
                     )}
 
@@ -125,6 +131,8 @@ export default function AppRoutes() {
                             <Route path="/question-practice-selector" element={<QuestionPracticeSelector />} />
                             <Route path="/test-configurator" element={<TestConfigurator type="student" />} />
                             <Route path="/teacher-tests" element={<TestsTable />} />
+                            <Route path="/mistakes-notebook" element={<MistakesNotebook />} />
+                            <Route path="/skill-map" element={<SkillMap />} />
                             <Route path="/exercises/:subjectName/:topicName/:exerciseName" element={<QuestionPractice />} />
                             <Route path="/test/:selectedSubject/:selectedTopic/:selectedDifficulty/:selectedQuestionCount/:selectedTimeMinutes" element={<TestSession type="practiceTest" />} />
                             <Route path="/test/:TeacherTestId/:timeLimitMinutes" element={<TestSession type="teacherTest" />} />

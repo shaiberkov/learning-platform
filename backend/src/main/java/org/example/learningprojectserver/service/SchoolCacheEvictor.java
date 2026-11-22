@@ -28,6 +28,12 @@ public class SchoolCacheEvictor {
         evict("studentSchedule", studentId);
     }
 
+    /** A student's dashboard feed and tests status, both of which follow the student's class. */
+    public void studentDashboard(String studentId) {
+        evict("upcomingEvents", "STUDENT_" + studentId);
+        evict("studentTestsStatus", studentId);
+    }
+
     public void schoolDTO(String schoolManagerId) {
         if (schoolManagerId != null) {
             evict("schoolDTO", schoolManagerId);

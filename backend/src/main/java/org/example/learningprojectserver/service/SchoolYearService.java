@@ -182,9 +182,13 @@ public class SchoolYearService {
                     } else if (toGradeName.equals(grade.getGradeName())) {
                         moves.add(new Move(student, classRoom, classRoom, STAYED, grade.getGradeName()));
                     } else {
-                        SchoolGradeEntity toGrade = gradesByName.get(toGradeName);
-                        moves.add(new Move(student, classRoom,
-                                targetClass(classRoom.getName(), grade.getGradeName(), toGrade), PROMOTED, toGradeName));
+                        ClassRoomEntity to = targetClass(classRoom.getName(), grade.getGradeName(), gradesByName.get(toGradeName));
+                        if (to == null) {
+                            // Nothing has been written yet, so refusing here leaves the year untouched.
+                            return new BasicResponse(false, "בשכבה " + toGradeName
+                                    + " אין כיתות. יש ליצור בה כיתה לפני סגירת השנה");
+                        }
+                        moves.add(new Move(student, classRoom, to, PROMOTED, toGradeName));
                     }
                 }
             }
@@ -218,13 +222,12 @@ public class SchoolYearService {
                 }
                 default -> {
                     detach(student, move.from());
-                    if (move.to() != null) {
-                        attach(student, move.to());
-                    }
+                    attach(student, move.to());
                     promoted++;
                 }
             }
             cacheEvictor.studentSchedule(student.getUserId());
+            cacheEvictor.studentDashboard(student.getUserId());
         }
 
         year.setClosed(true);

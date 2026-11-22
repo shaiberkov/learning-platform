@@ -62,6 +62,13 @@ public class ParentService {
             parent = (ParentEntity) user;
         } else if (user.getRole() == Role.STUDENT && user instanceof StudentEntity s
                 && s.getSchoolName() == null && s.getClassRoom() == null) {
+            // Converting deletes and recreates the user, so refuse when rows outside the student's own
+            // cascade (teachers, assigned teacher tests, a parent link) still point at it.
+            if (!s.getTeachers().isEmpty() || !s.getTeacherTests().isEmpty() || !s.getTeacherTestsResult().isEmpty()
+                    || parentRepository.isLinkedAsChild(s.getUserId())) {
+                return new BasicResponse(false, "למשתמש " + user.getUsername()
+                        + " יש היסטוריה כתלמיד (מורים, מבחנים או הורה מקושר) ולכן לא ניתן להפוך אותו להורה");
+            }
             parent = userToParentMapper.apply(user);
             userRepository.delete(user);
             userRepository.flush();

@@ -10,12 +10,12 @@ Configured in `backend/src/main/resources/ehcache.xml` and enabled by `@EnableCa
 
 | Cache | Filled by (`@Cacheable`) | Key | Evicted by | Size |
 |---|---|---|---|---|
-| `upcomingEvents` | `UpcomingEventService.getUpcomingEvents(role, userId)` | `role + '_' + userId` (e.g. `STUDENT_123`) | `TeacherService.generateTestForStudents`: the teacher's key (`@CacheEvict`) and each student's key (`cacheManager`) | 1000 |
+| `upcomingEvents` | `UpcomingEventService.getUpcomingEvents(role, userId)` | `role + '_' + userId` (e.g. `STUDENT_123`) | `TeacherService.generateTestForStudents`: the teacher's key (`@CacheEvict`) and each student's key (`cacheManager`); `SchoolYearService.closeYearAndPromote`: every moved student's `STUDENT_` key (`SchoolCacheEvictor`) | 1000 |
 | `receivedMessages` | `MessageService.getAllRecivedMessages(userId)` | `userId` | `MessageService.sendMessage`: each recipient's key | 1000 |
 | `teacherSchedule` | `TeacherService.getTeacherSchedule(teacherId)` | `teacherId` | `TeacherService.addLessonToTeacher` (`@CacheEvict`); `TimetableService.saveLesson` / `deleteLesson`: old and new teacher (`SchoolCacheEvictor`) | 500 |
 | `classRoomSchedule` | `ClassRoomService.getScheduleForClassRoom(schoolCode, classRoomName)` | `schoolCode + '_' + classRoomName` | `TeacherService.addLessonToTeacher`: the lesson's class; `TimetableService.saveLesson` / `deleteLesson`: old and new class | 100 |
 | `studentSchedule` | `StudentService.getStudentSchedule(schoolCode, studentId)` | `studentId` | `TeacherService.addLessonToTeacher`: each student in the class; `TimetableService.saveLesson` / `deleteLesson`: each student of the old and new class; `SchoolYearService.closeYearAndPromote`: every moved student | 1000 |
-| `studentTestsStatus` | `StudentService.getStudentTestsStatus(userId)` | `userId` | `TestResultService.checkTeacherTest` (`@CacheEvict`); `TeacherService.generateTestForStudents`: each student | 1000 |
+| `studentTestsStatus` | `StudentService.getStudentTestsStatus(userId)` | `userId` | `TestResultService.checkTeacherTest` (`@CacheEvict`); `TeacherService.generateTestForStudents`: each student; `SchoolYearService.closeYearAndPromote`: every moved student | 1000 |
 | `schoolDTO` | `SchoolService.getSchoolDTO(SchoolManagerId)` | `SchoolManagerId` | `BulkImportService.commit` and `SchoolYearService.closeYearAndPromote`: the school's manager (`SchoolCacheEvictor`) | 100 |
 | `allSchools` | `SystemAdminService.getAllSchoolsDTO()` | (no args) | `SystemAdminService`: `assignUserAsSchoolManager`, `addNewSchoolToSystem`, `assignSchoolManagerToSchool`, `removeSchoolManagerFromSchool` (`allEntries = true`) | 100 |
 

@@ -36,6 +36,9 @@ public interface ParentRepository extends JpaRepository<ParentEntity, Long> {
 """)
     boolean isParentOf(@Param("parentId") String parentId, @Param("childId") String childId);
 
+    @Query("SELECT COUNT(p) > 0 FROM ParentEntity p JOIN p.children c WHERE c.userId = :childId")
+    boolean isLinkedAsChild(@Param("childId") String childId);
+
     /** Parents of the students in a class of the sender's school (sender is a teacher or the school manager). */
     @Query("""
     SELECT DISTINCT p FROM ParentEntity p JOIN p.children c

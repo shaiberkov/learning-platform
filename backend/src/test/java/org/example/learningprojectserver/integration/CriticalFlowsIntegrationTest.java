@@ -78,7 +78,8 @@ class CriticalFlowsIntegrationTest extends AbstractMySqlIntegrationTest {
     void loginWithCorrectPasswordSucceeds() throws Exception {
         mockMvc.perform(post(USER_BASE_PATH + LOGIN).param("userId", STUDENT_ID).param("password", PASSWORD))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.success").value(true));
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data").value(PHONE));
     }
 
     @Test

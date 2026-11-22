@@ -11,7 +11,7 @@ Spring Boot 3.4 on Java 17, Maven (`./mvnw`), MySQL through Spring Data JPA. Pac
 | Build the jar | `./mvnw clean package -DskipTests` |
 | Docker | `docker build -t learning-server .` then `docker run -p 8080:8080 --env-file .env learning-server` |
 
-The `dev` profile (`application-dev.properties`) talks to `localhost:3306/learning` with `ddl-auto=update`. The `production` profile reads `DB_URL` / `DB_USERNAME` / `DB_PASSWORD` and uses `ddl-auto=none`, so a new column or table in production needs its SQL run by hand. `application.properties` sets `spring.profiles.active=production`, which the run command's `-Dspring-boot.run.profiles=dev` overrides. It must stay `production` in commits, because Render builds from the repo.
+The `dev` profile (`application-dev.properties`) talks to `localhost:3306/learning` with `ddl-auto=update`. The `production` profile reads `DB_URL` / `DB_USERNAME` / `DB_PASSWORD` and uses `ddl-auto=validate`: the schema is owned by Flyway (`src/main/resources/db/migration`), so a new column or table needs a `V<n>__*.sql` migration (see `docs/BACKUP.md`). `application.properties` sets `spring.profiles.active=production`, which the run command's `-Dspring-boot.run.profiles=dev` overrides. It must stay `production` in commits, because Render builds from the repo.
 
 ## Layout and layers
 
@@ -36,4 +36,6 @@ The `dev` profile (`application-dev.properties`) talks to `localhost:3306/learni
 - External calls (SMS in `utils/SmsSender`, email in `utils/ApiEmailProcessor`, OpenAI in `utils/gptApi/` and `ChatGptService`) are slow and can fail: keep them `@Async` or outside the transaction, and never let their failure roll back the user's write.
 - Secrets only through `Environment.getProperty(...)` (`GPT_TOKEN`, `SMS_TOKEN`) or `${...}` in the properties files. Never a literal key in code.
 - Caching: read `docs/CACHING.md` before changing anything that reads or writes cached data. Every cache name in code needs an alias in `src/main/resources/ehcache.xml`.
-- Tests live in `src/test/java/...`. Service tests use Mockito (`@ExtendWith(MockitoExtension.class)`, `@Mock` repositories, `@InjectMocks` service) and need no database. `LearningProjectServerApplicationTests` loads the full context and needs MySQL.
+- Tests live in `src/test/java/...`. Service tests use Mockito (`@ExtendWith(MockitoExtension.class)`, `@Mock` repositories, `@InjectMocks` service) and need no database. Tests that need the whole app on MySQL extend `integration/AbstractMySqlIntegrationTest` (Testcontainers, profile `it`, skipped without Docker); they must not call endpoints that send SMS or e-mail. CI (`.github/workflows/ci.yml`) runs them all.
+- Errors: request parameters and bodies carry Bean Validation constraints with Hebrew messages (`@NotBlank(message = "...")`, `@Valid` on `@RequestBody`). Failures, framework errors and unexpected exceptions become RFC 7807 `ProblemDetail` responses in `exception/GlobalExceptionHandler` (Hebrew `detail`, `errors` per field, plus `success=false` / `errorCode` for the old shape). Business outcomes still return `BasicResponse` with HTTP 200.
+- Monitoring: Actuator `/actuator/health` is public, `info` and `metrics` need a `SYSTEM_ADMIN` JWT. Sentry is on only when `SENTRY_DSN` is set; the `json-logs` profile switches console logs to JSON.

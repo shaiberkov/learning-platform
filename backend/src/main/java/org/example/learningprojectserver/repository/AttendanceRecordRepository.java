@@ -17,13 +17,13 @@ import java.util.List;
 @Repository
 public interface AttendanceRecordRepository extends JpaRepository<AttendanceRecordEntity, Long> {
 
-    @Query("SELECT a FROM AttendanceRecordEntity a WHERE a.lesson.id = :lessonId AND a.lessonDate = :date")
+    @Query("SELECT a FROM AttendanceRecordEntity a WHERE a.lessonId = :lessonId AND a.lessonDate = :date")
     List<AttendanceRecordEntity> findByLessonAndDate(@Param("lessonId") Long lessonId, @Param("date") LocalDate date);
 
     @Query("""
-        SELECT a.lesson.id, COUNT(a) FROM AttendanceRecordEntity a
-        WHERE a.lesson.id IN :lessonIds AND a.lessonDate = :date
-        GROUP BY a.lesson.id
+        SELECT a.lessonId, COUNT(a) FROM AttendanceRecordEntity a
+        WHERE a.lessonId IN :lessonIds AND a.lessonDate = :date
+        GROUP BY a.lessonId
     """)
     List<Object[]> countMarkedByLesson(@Param("lessonIds") Collection<Long> lessonIds, @Param("date") LocalDate date);
 

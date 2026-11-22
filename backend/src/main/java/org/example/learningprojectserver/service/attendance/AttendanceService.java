@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
@@ -39,6 +40,7 @@ public class AttendanceService {
     static final String ALERT_TITLE = "התראת היעדרות חריגה";
     private static final DateTimeFormatter DISPLAY_DATE = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private static final int MAX_REPORT_DAYS = 366;
+    private static final ZoneId SCHOOL_ZONE = ZoneId.of("Asia/Jerusalem");
 
     private final AttendanceRecordRepository attendanceRepository;
     private final LessonRepository lessonRepository;
@@ -49,7 +51,7 @@ public class AttendanceService {
 
     @Transactional(readOnly = true)
     public BasicResponse<List<AttendanceLessonDTO>> getLessonsForDay(String teacherId, String dateText) {
-        LocalDate date = parseDate(dateText, LocalDate.now());
+        LocalDate date = parseDate(dateText, today());
         if (date == null) return new BasicResponse<>(false, "התאריך אינו תקין");
 
         List<AttendanceLessonDTO> lessons = attendanceRepository.findTeacherLessonsOnDay(teacherId, date.getDayOfWeek());
@@ -69,7 +71,7 @@ public class AttendanceService {
 
     @Transactional(readOnly = true)
     public BasicResponse<AttendanceSheetDTO> getSheet(String teacherId, Long lessonId, String dateText) {
-        LocalDate date = parseDate(dateText, LocalDate.now());
+        LocalDate date = parseDate(dateText, today());
         if (date == null) return new BasicResponse<>(false, "התאריך אינו תקין");
         LessonEntity lesson = lessonRepository.findById(lessonId).orElse(null);
         String error = checkLesson(lesson, teacherId, date);
@@ -83,9 +85,9 @@ public class AttendanceService {
     @Transactional
     public BasicResponse<AttendanceSheetDTO> mark(String teacherId, Long lessonId, String dateText,
                                                   List<AttendanceMarkRequest> marks) {
-        LocalDate date = parseDate(dateText, LocalDate.now());
+        LocalDate date = parseDate(dateText, today());
         if (date == null) return new BasicResponse<>(false, "התאריך אינו תקין");
-        if (date.isAfter(LocalDate.now())) return new BasicResponse<>(false, "לא ניתן לסמן נוכחות לתאריך עתידי");
+        if (date.isAfter(today())) return new BasicResponse<>(false, "לא ניתן לסמן נוכחות לתאריך עתידי");
         LessonEntity lesson = lessonRepository.findById(lessonId).orElse(null);
         String error = checkLesson(lesson, teacherId, date);
         if (error != null) return new BasicResponse<>(false, error);
@@ -116,7 +118,7 @@ public class AttendanceService {
             AttendanceRecordEntity record = existing.get(e.getKey());
             if (record == null) {
                 record = new AttendanceRecordEntity();
-                record.setLesson(lesson);
+                record.setLessonId(lesson.getId());
                 record.setLessonDate(date);
                 record.setStudentUserId(e.getKey());
                 existing.put(e.getKey(), record);
@@ -172,8 +174,8 @@ public class AttendanceService {
         }
         if (schoolCode == null) return new BasicResponse<>(false, "המשתמש אינו משויך לבית ספר");
 
-        LocalDate to = parseDate(toText, LocalDate.now());
-        LocalDate from = parseDate(fromText, (to == null ? LocalDate.now() : to).minusDays(AbsenceAlertPolicy.WINDOW_DAYS - 1));
+        LocalDate to = parseDate(toText, today());
+        LocalDate from = parseDate(fromText, (to == null ? today() : to).minusDays(AbsenceAlertPolicy.WINDOW_DAYS - 1));
         if (from == null || to == null) return new BasicResponse<>(false, "התאריך אינו תקין");
         if (from.isAfter(to)) return new BasicResponse<>(false, "תאריך ההתחלה מאוחר מתאריך הסיום");
         if (ChronoUnit.DAYS.between(from, to) > MAX_REPORT_DAYS) {
@@ -290,6 +292,11 @@ public class AttendanceService {
             return "השיעור אינו מתקיים ביום זה בשבוע";
         }
         return null;
+    }
+
+    /** School days follow Israel time, not the server's zone (Render runs in UTC). */
+    static LocalDate today() {
+        return LocalDate.now(SCHOOL_ZONE);
     }
 
     static LocalDate parseDate(String text, LocalDate fallback) {

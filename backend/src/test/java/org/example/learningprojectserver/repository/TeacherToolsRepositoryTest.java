@@ -167,7 +167,7 @@ class TeacherToolsRepositoryTest {
         assertTrue(attendanceRepository.findTeacherLessonsOnDay("t1", DayOfWeek.MONDAY).isEmpty());
 
         AttendanceRecordEntity record = new AttendanceRecordEntity();
-        record.setLesson(lesson);
+        record.setLessonId(lesson.getId());
         record.setLessonDate(sunday);
         record.setStudentUserId("s1");
         record.setStudentName("s1-name");

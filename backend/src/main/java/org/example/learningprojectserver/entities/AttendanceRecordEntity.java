@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 
 /**
  * One student's attendance in one lesson (a timetable slot) on one date. Class, school and names are
- * copied in so reports stay readable if the student later changes class.
+ * copied in so reports stay readable if the student changes class or the lesson is removed.
  */
 @Entity
 @Getter
@@ -29,9 +29,12 @@ public class AttendanceRecordEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "lesson_id", nullable = false)
-    private LessonEntity lesson;
+    /**
+     * The timetable lesson (LessonEntity id). A plain column, not a foreign key: deleting a class or its
+     * timetable must not be blocked by, or erase, its attendance history.
+     */
+    @Column(name = "lesson_id", nullable = false)
+    private Long lessonId;
 
     @Column(name = "lesson_date", nullable = false)
     private LocalDate lessonDate;

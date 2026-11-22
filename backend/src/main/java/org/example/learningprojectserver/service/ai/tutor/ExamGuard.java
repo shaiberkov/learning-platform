@@ -34,7 +34,7 @@ public class ExamGuard {
     }
 
     public boolean isExamQuestion(Long questionId) {
-        return questionId != null && teacherTestRepository.isTeacherTestQuestion(questionId);
+        return questionId != null && teacherTestRepository.countTeacherTestsWithQuestion(questionId) > 0;
     }
 
     static boolean hasActiveExam(List<StudentTestStatusDTO> tests, LocalDateTime now) {

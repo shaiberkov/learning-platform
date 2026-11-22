@@ -10,12 +10,14 @@ React 19 + Vite 6, plain JavaScript (`.jsx`, no TypeScript), Tailwind 4 (daisyUI
 | Dev server | `npm run dev` (`http://localhost:5173`, the only dev origin the backend's CORS allows) |
 | Lint | `npm run lint` |
 | Production build | `npm run build` → `dist/` |
+| Unit tests | `npm test` (Vitest + Testing Library, `src/**/*.test.{js,jsx}`) |
+| E2E | `E2E_BASE_URL=http://localhost:5173 npm run e2e` (Playwright, `e2e/`; skipped without a stack, see `e2e/README.md`) |
 
-There are no frontend tests. Verify a change by running it against the backend and checking the screen in the browser.
+Unit tests cover helpers and small components; still verify a screen change against the backend in the browser.
 
 ## Which API it talks to
 
-`src/constants/base.constants.js` sets `API_BASE_URL`: the deployed server (`https://learning-project-server.onrender.com`) in commits, `http://localhost:8080` when working locally. Switch it locally, never commit the local value. Every endpoint is a constant in `src/constants/pages.constants.js` built as `${API_BASE_URL}${BASE_API}/...`; components import those constants instead of writing URLs. A new or renamed backend endpoint changes `backend/.../constants/ControllerConstants.java` and this file together.
+`src/constants/base.constants.js` sets `API_BASE_URL` from `VITE_API_URL`: `npm run dev` reads `http://localhost:8080` from `.env.development`; a build without the variable uses the deployed server (`https://learning-project-server.onrender.com`). Override per machine in `.env.local` (see `.env.example`); never edit the file to switch. Every endpoint is a constant in `src/constants/pages.constants.js` built as `${API_BASE_URL}${BASE_API}/...`; components import those constants instead of writing URLs. A new or renamed backend endpoint changes `backend/.../constants/ControllerConstants.java` and this file together.
 
 ## Layout
 
@@ -30,6 +32,7 @@ There are no frontend tests. Verify a change by running it against the backend a
 ## Rules
 
 - Requests: plain axios. `src/Utils/httpSetup.js` (imported by `main.jsx`) sets `withCredentials`, the `X-Requested-With` header the server requires on cookie-authenticated writes, and a 401 → refresh → retry interceptor. Do not read or store tokens in JS; old screens still build `Bearer undefined` headers, which the interceptor drops. Errors with a body (for example 429 rate limits) carry a Hebrew `errorCode`: show it with `serverErrorMessage(error)`. Read `response.data.success`; show `response.data.errorCode` as the message (it is Hebrew text from the server).
+- Failed requests (HTTP 4xx/5xx with an RFC 7807 body, network errors) are handled once: the interceptor in `src/api/setupHttp.js` (installed in `main.jsx`) shows the Hebrew message through `components/ui/ErrorToaster.jsx` and sets `error.userMessage` / `error.fieldErrors` for the component's own `catch`. Do not add generic `alert(...)`s; use `getErrorMessage` / `getFieldErrors` from `src/api/httpErrors.js` when a screen needs the text, and `{ silentError: true }` in the axios config for requests that must not toast.
 - Right-to-left: `index.html` is `lang="he" dir="rtl"`, and each page's root element still carries `dir="rtl"`. A new screen sets it on its root too.
 - Styling: the design system lives in `src/App.css` ("Spatial Academy"). Colors are CSS tokens (`--ink`, `--accent`, `--mint`, `--amber`, `--danger`, `--surface`...) redefined per theme under `[data-theme="light"|"dark"]` on `<html>`, and exposed to Tailwind as `text-ink`, `bg-accent-soft`, `border-line` and so on. Never use raw Tailwind palette colors (`bg-white`, `text-gray-700`, `green-500`): they do not follow the theme.
 - Build screens from the component classes in `App.css`: `glass` (+ `tile` for hover lift), `eyebrow`, `display`, `title`, `field` / `field-wrap` / `label` / `field-error`, `btn btn-primary|btn-ghost|btn-danger|btn-mint`, `choice is-active`, `notice`, `chip`, `row-card`, `data-table`, `modal-backdrop` + `modal`, `reveal` (staggered entrance via `--i`). Numbers, timers and grades use `num` (JetBrains Mono).

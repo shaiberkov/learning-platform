@@ -9,6 +9,7 @@ import {NotificationProvider} from "./context/NotificationContext.jsx";
 import Footer from "./components/Footer.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
 import AmbientBackdrop from "./components/ui/AmbientBackdrop.jsx";
+import ErrorToaster from "./components/ui/ErrorToaster.jsx";
 
 function App() {
 
@@ -16,6 +17,7 @@ function App() {
         return (
             <>
                 <AmbientBackdrop />
+                <ErrorToaster />
 
                 <BrowserRouter>
                     <UserProvider>

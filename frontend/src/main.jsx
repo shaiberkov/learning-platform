@@ -3,9 +3,11 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import './Utils/httpSetup.js'
 import App from './App.jsx'
-import { installAuthInterceptor } from './Utils/authInterceptor.js'
+import { installHttpErrorInterceptor } from './api/setupHttp.js'
+import { initSentry } from './monitoring/sentry.js'
 
-installAuthInterceptor()
+installHttpErrorInterceptor()
+initSentry()
 
 createRoot(document.getElementById('root')).render(
   <>

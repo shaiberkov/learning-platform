@@ -1,6 +1,7 @@
 package org.example.learningprojectserver.controller;
 
 import org.springframework.security.access.prepost.PreAuthorize;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.learningprojectserver.dto.LessonDTO;
 import org.example.learningprojectserver.dto.UserDto;
@@ -126,7 +127,7 @@ public BasicResponse getAllLessonsForClassRoom(@RequestParam String schoolCode ,
 
     @PreAuthorize("@authz.canManageUser(#teacherId)")
     @PostMapping(ADD_LESSON_TO_TEACHER)
-    public BasicResponse addLessonToTeacher(@RequestBody LessonDTO dto, @RequestParam String teacherId) {
+    public BasicResponse addLessonToTeacher(@Valid @RequestBody LessonDTO dto, @RequestParam String teacherId) {
         return teacherService.addLessonToTeacher(dto, teacherId);
 
     }

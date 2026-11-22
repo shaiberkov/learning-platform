@@ -3,6 +3,8 @@ package org.example.learningprojectserver.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.example.learningprojectserver.dto.UserDto;
 import org.example.learningprojectserver.response.BasicResponse;
@@ -28,12 +30,12 @@ private final AuthCookies authCookies;
 
 
     @PostMapping(ADD_USER)
-    public RegisterResponse registerUser(@RequestParam String username,
-                                         @RequestParam String userId,
-                                         @RequestParam String password,
-                                         @RequestParam String confirmPassword,
-                                         @RequestParam String email,
-                                         @RequestParam String phone) {
+    public RegisterResponse registerUser(@NotBlank(message = "יש להזין שם משתמש") @Size(max = 100, message = "שם המשתמש ארוך מדי") @RequestParam String username,
+                                         @NotBlank(message = "יש להזין תעודת זהות") @Size(max = 20, message = "תעודת הזהות ארוכה מדי") @RequestParam String userId,
+                                         @NotBlank(message = "יש להזין סיסמה") @Size(max = 100, message = "הסיסמה ארוכה מדי") @RequestParam String password,
+                                         @NotBlank(message = "יש להזין אימות סיסמה") @RequestParam String confirmPassword,
+                                         @NotBlank(message = "יש להזין כתובת אימייל") @Size(max = 255, message = "כתובת האימייל ארוכה מדי") @RequestParam String email,
+                                         @NotBlank(message = "יש להזין מספר טלפון") @Size(max = 20, message = "מספר הטלפון ארוך מדי") @RequestParam String phone) {
 
         return userService.createUser(
                 username,
@@ -45,15 +47,15 @@ private final AuthCookies authCookies;
         );
     }
     @PostMapping(LOGIN)
-    public BasicResponse loginUser(@RequestParam String userId, @RequestParam String password) {
+    public BasicResponse loginUser(@NotBlank(message = "יש להזין תעודת זהות") @Size(max = 20, message = "תעודת הזהות ארוכה מדי") @RequestParam String userId, @NotBlank(message = "יש להזין סיסמה") @RequestParam String password) {
         return userService.loginUser(userId, password);
     }
     @PostMapping(SEND_OTP)
-    public BasicResponse sendOtp(@RequestParam String userId, @RequestParam String phoneNumber) {
+    public BasicResponse sendOtp(@NotBlank(message = "יש להזין תעודת זהות") @Size(max = 20, message = "תעודת הזהות ארוכה מדי") @RequestParam String userId, @NotBlank(message = "יש להזין מספר טלפון") @RequestParam String phoneNumber) {
         return userService.sendOtp(userId, phoneNumber);
     }
     @PostMapping(VERIFY_OTP)
-    public LoginResponse verifyOtp(@RequestParam String userId, @RequestParam String otp,
+    public LoginResponse verifyOtp(@NotBlank(message = "יש להזין תעודת זהות") @Size(max = 20, message = "תעודת הזהות ארוכה מדי") @RequestParam String userId, @NotBlank(message = "יש להזין את קוד האימות") @RequestParam String otp,
                                    HttpServletResponse response) {
         LoginResponse loginResponse = userService.verifyOtp(userId, otp);
         if (loginResponse.isSuccess()) {
@@ -85,14 +87,14 @@ private final AuthCookies authCookies;
     }
 
     @PostMapping(FORGOT_PASSWORD)
-    public ResetPasswordResponse forgotPassword(@RequestParam String userId) {
+    public ResetPasswordResponse forgotPassword(@NotBlank(message = "יש להזין תעודת זהות") @Size(max = 20, message = "תעודת הזהות ארוכה מדי") @RequestParam String userId) {
         return userService.sendPasswordResetOtp(userId);
     }
 
     @PostMapping(RESET_PASSWORD)
-    public ResetPasswordResponse resetPassword(@RequestParam String userId,
-                                       @RequestParam String otp,
-                                       @RequestParam String newPassword) {
+    public ResetPasswordResponse resetPassword(@NotBlank(message = "יש להזין תעודת זהות") @Size(max = 20, message = "תעודת הזהות ארוכה מדי") @RequestParam String userId,
+                                       @NotBlank(message = "יש להזין את קוד האימות") @RequestParam String otp,
+                                       @NotBlank(message = "יש להזין סיסמה חדשה") @Size(max = 100, message = "הסיסמה ארוכה מדי") @RequestParam String newPassword) {
         return userService.resetPassword(userId, otp, newPassword);
     }
 

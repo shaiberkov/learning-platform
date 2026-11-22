@@ -1,6 +1,9 @@
 package org.example.learningprojectserver.controller;
 
 import org.springframework.security.access.prepost.PreAuthorize;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import org.example.learningprojectserver.response.BasicResponse;
 import org.example.learningprojectserver.service.TeacherService;
@@ -32,14 +35,14 @@ private final TestResultService testResultService;
     @PreAuthorize("@authz.teachesStudents(#teacherId, #usersIds) and @features.enabledForCurrentUser('TEACHER_TESTS')")
     @PostMapping(GENERATE_TEST_FOR_STUDENTS)
     public BasicResponse generateTestForStudents(
-            @RequestBody List<String> usersIds,
+            @NotEmpty(message = "יש לבחור לפחות תלמיד אחד") @RequestBody List<String> usersIds,
             @RequestParam String teacherId,
             @RequestParam String testStartTime,
             @RequestParam String subject,
             @RequestParam String topic,
             @RequestParam String difficulty,
-            @RequestParam int questionCount,
-            @RequestParam int timeLimitMinutes) {
+            @Min(value = 1, message = "מספר השאלות חייב להיות לפחות 1") @Max(value = 100, message = "מספר השאלות לא יכול לעלות על 100") @RequestParam int questionCount,
+            @Min(value = 1, message = "זמן המבחן חייב להיות לפחות דקה אחת") @RequestParam int timeLimitMinutes) {
 
             return teacherService.generateTestForStudents(
                     usersIds,

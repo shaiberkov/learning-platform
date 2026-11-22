@@ -60,7 +60,7 @@ Everyone registers as a `STUDENT` with no school. The system admin turns a user 
 
 ## API
 
-About 60 endpoints in 17 controllers, all under `/Learning-App`. The full list with parameters is in Swagger (`/swagger-ui.html` on a running backend); the path constants are in `backend/.../constants/ControllerConstants.java` and their frontend mirror in `frontend/src/constants/pages.constants.js`. Most responses are `BasicResponse { success, errorCode, data }`, where `errorCode` is a Hebrew message for the user.
+About 60 endpoints in 17 controllers, all under `/Learning-App`. The full list with parameters is in Swagger (`/swagger-ui.html` on a running backend); the path constants are in `backend/.../constants/ControllerConstants.java` and their frontend mirror in `frontend/src/constants/pages.constants.js`. Most responses are `BasicResponse { success, errorCode, data }`, where `errorCode` is a Hebrew message for the user. Requests that fail validation (missing or invalid parameters), framework errors and unexpected server errors return HTTP 4xx/5xx with an RFC 7807 `application/problem+json` body: `{ type, title, status, detail, errors?, success: false, errorCode }`, where `detail` (= `errorCode`) is Hebrew and `errors` maps each invalid field to its Hebrew message. `GET /actuator/health` is public; other Actuator endpoints need a `SYSTEM_ADMIN` token.
 
 ## Background work
 

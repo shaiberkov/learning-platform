@@ -13,6 +13,8 @@ import org.example.learningprojectserver.response.BasicResponse;
 import org.example.learningprojectserver.security.AccessDeniedAdvice;
 import org.example.learningprojectserver.service.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
+import org.springframework.boot.actuate.health.HealthEndpoint;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.jcache.JCacheCacheManager;
 import org.springframework.context.annotation.Bean;
@@ -109,6 +111,10 @@ public class SecurityConfig {
                         .requestMatchers(LESSON_ALL).authenticated()
                         .requestMatchers(SCHEDULE_ALL).authenticated()
                         .requestMatchers(UPCOMING_EVENTS_ALL).authenticated()
+                        // Actuator: health (and its liveness/readiness groups) is public for Render's health check;
+                        // every other endpoint (info, metrics) needs a SYSTEM_ADMIN JWT.
+                        .requestMatchers(EndpointRequest.to(HealthEndpoint.class)).permitAll()
+                        .requestMatchers(EndpointRequest.toAnyEndpoint()).hasRole(SYSTEM_ADMIN)
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(metricsFilter, UsernamePasswordAuthenticationFilter.class)

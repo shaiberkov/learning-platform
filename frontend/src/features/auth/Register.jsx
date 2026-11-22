@@ -3,6 +3,7 @@ import {FaUser, FaEnvelope, FaLock, FaKey, FaPhone} from 'react-icons/fa';
 import {useNavigate} from 'react-router-dom';
 import axios from "axios";
 import AuthShell from "../../components/ui/AuthShell.jsx";
+import {getFieldErrors} from "../../api/httpErrors.js";
 import {ADD_USER, LOGIN, QUESTION, USER_BASE_PATH} from "../../constants/pages.constants.js";
 
 function Register() {
@@ -153,8 +154,16 @@ function Register() {
             }
 
         } catch (error) {
+            // The message itself is shown by ErrorToaster; field errors from the server go next to their fields.
             console.error("Error during the request:", error);
-            alert('אירעה שגיאה במהלך שליחת הבקשה.');
+            const fieldErrors = getFieldErrors(error);
+            setErrors((prevErrors) => {
+                const next = { ...prevErrors };
+                Object.keys(prevErrors).forEach((field) => {
+                    if (fieldErrors[field]) next[field] = fieldErrors[field];
+                });
+                return next;
+            });
         }
     };
 

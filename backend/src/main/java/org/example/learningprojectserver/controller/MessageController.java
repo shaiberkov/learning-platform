@@ -1,6 +1,8 @@
 package org.example.learningprojectserver.controller;
 
 import org.springframework.security.access.prepost.PreAuthorize;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.example.learningprojectserver.response.BasicResponse;
 import org.example.learningprojectserver.service.MessageService;
@@ -28,11 +30,11 @@ private final MessageService messageService;
     @PreAuthorize("@authz.isSelf(#senderId) and @features.enabledForCurrentUser('MESSAGES')")
     @PostMapping(SEND_MESSAGE)
     public BasicResponse sendMessage(
-            @RequestParam String senderId,
-            @RequestParam String recipientType,
+            @NotBlank(message = "חסר מזהה השולח") @RequestParam String senderId,
+            @NotBlank(message = "יש לבחור סוג נמענים") @RequestParam String recipientType,
             @RequestParam String recipientValue,
-            @RequestParam String title,
-            @RequestParam String content
+            @NotBlank(message = "יש להזין כותרת להודעה") @Size(max = 255, message = "כותרת ההודעה ארוכה מדי (עד 255 תווים)") @RequestParam String title,
+            @NotBlank(message = "יש להזין תוכן להודעה") @Size(max = 255, message = "תוכן ההודעה ארוך מדי (עד 255 תווים)") @RequestParam String content
     ) {
         return messageService.sendMessage(senderId, recipientType, recipientValue, title, content);
     }

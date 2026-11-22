@@ -33,7 +33,8 @@ let refreshInFlight = null;
 /** Renews the access cookie. Parallel callers share one request. Resolves true on success. */
 export const refreshSession = () => {
     if (!refreshInFlight) {
-        refreshInFlight = axios.post(REFRESH_URL)
+        // silentError: a failed refresh just means "not signed in"; the error toaster stays quiet.
+        refreshInFlight = axios.post(REFRESH_URL, null, { silentError: true })
             .then((response) => response.data?.success === true)
             .catch(() => false)
             .finally(() => { refreshInFlight = null; });

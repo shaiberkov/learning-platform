@@ -1,6 +1,8 @@
 package org.example.learningprojectserver.controller;
 
 import org.springframework.security.access.prepost.PreAuthorize;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.example.learningprojectserver.dto.StudentTestStatusDTO;
 import org.example.learningprojectserver.response.BasicResponse;
@@ -56,8 +58,8 @@ private final TestResultService testResultService;
             @RequestParam String subject,
             @RequestParam String topic,
             @RequestParam String difficulty,
-            @RequestParam int questionCount,
-            @RequestParam int timeLimitMinutes) {
+            @Min(value = 1, message = "מספר השאלות חייב להיות לפחות 1") @Max(value = 100, message = "מספר השאלות לא יכול לעלות על 100") @RequestParam int questionCount,
+            @Min(value = 1, message = "זמן המבחן חייב להיות לפחות דקה אחת") @RequestParam int timeLimitMinutes) {
 
         return studentService.generatePracticeTest(userId, subject, topic, difficulty, questionCount, timeLimitMinutes);
     }

@@ -152,6 +152,52 @@ public final class ControllerConstants {
         public static final String RESET_PASSWORD            = "/reset-password";
         public static final String GET_USER_PHONE            = "/user/phone";
     }
+    public static final class Engagement {
+        private Engagement() {}
+
+        public static final String ENGAGEMENT_BASE_PATH      = BASE_API + "/engagement";
+        public static final String GET_SUMMARY               = "/get-summary";
+        public static final String CREATE_CLASS_CHALLENGE    = "/create-class-challenge";
+        public static final String TEACHER_CHALLENGES        = "/teacher-challenges";
+    }
+    public static final class StudyPlan {
+        private StudyPlan() {}
+
+        public static final String STUDY_PLAN_BASE_PATH      = BASE_API + "/study-plan";
+        public static final String GET_PLAN                  = "/get-plan";
+        public static final String COMPLETE_TASK             = "/complete-task";
+    }
+    public static final class LessonContent {
+        private LessonContent() {}
+
+        public static final String LESSON_CONTENT_BASE_PATH  = BASE_API + "/lesson-content";
+        public static final String CREATE                    = "/create";
+        public static final String UPDATE                    = "/update";
+        public static final String DELETE                    = "/delete";
+        public static final String TEACHER_LESSONS           = "/teacher-lessons";
+        public static final String STUDENT_LESSONS           = "/student-lessons";
+        public static final String GET                       = "/get";
+        public static final String UPDATE_PROGRESS           = "/update-progress";
+    }
+    public static final class Homework {
+        private Homework() {}
+
+        public static final String HOMEWORK_BASE_PATH        = BASE_API + "/homework";
+        public static final String CREATE                    = "/create";
+        public static final String TEACHER_CLASSES           = "/teacher-classes";
+        public static final String TEACHER_BOARD             = "/teacher-board";
+        public static final String STUDENT_HOMEWORK          = "/student-homework";
+        public static final String SUBMIT                    = "/submit";
+    }
+    public static final class Accommodation {
+        private Accommodation() {}
+
+        public static final String ACCOMMODATION_BASE_PATH   = BASE_API + "/accommodation";
+        public static final String GET                       = "/get";
+        public static final String TEACHER_STUDENTS          = "/teacher-students";
+        public static final String SET_EXTRA_TIME            = "/set-extra-time";
+        public static final String SET_PREFERENCES           = "/set-preferences";
+    }
 
 
 }

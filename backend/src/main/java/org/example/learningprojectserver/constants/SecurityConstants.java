@@ -18,6 +18,11 @@ import static org.example.learningprojectserver.constants.ControllerConstants.Te
 import static org.example.learningprojectserver.constants.ControllerConstants.UpcomingEvents.UPCOMING_EVENTS_BASE_PATH;
 import static org.example.learningprojectserver.constants.ControllerConstants.User.USER_BASE_PATH;
 import static org.example.learningprojectserver.constants.ControllerConstants.UserStatistic.USER_STATISTIC_BASE_PATH;
+import static org.example.learningprojectserver.constants.ControllerConstants.Engagement.ENGAGEMENT_BASE_PATH;
+import static org.example.learningprojectserver.constants.ControllerConstants.StudyPlan.STUDY_PLAN_BASE_PATH;
+import static org.example.learningprojectserver.constants.ControllerConstants.LessonContent.LESSON_CONTENT_BASE_PATH;
+import static org.example.learningprojectserver.constants.ControllerConstants.Homework.HOMEWORK_BASE_PATH;
+import static org.example.learningprojectserver.constants.ControllerConstants.Accommodation.ACCOMMODATION_BASE_PATH;
 
 public final class SecurityConstants {
     public static final class JwtAuthenticationFilterConstants {
@@ -69,6 +74,11 @@ public final class SecurityConstants {
         public static final String LESSON_ALL                = LESSON_BASE_PATH       + CORS_MAPPING_PATH;
         public static final String SCHEDULE_ALL              = SCHEDULE_BASE_PATH     + CORS_MAPPING_PATH;
         public static final String UPCOMING_EVENTS_ALL       = UPCOMING_EVENTS_BASE_PATH + CORS_MAPPING_PATH;
+        public static final String ENGAGEMENT_ALL            = ENGAGEMENT_BASE_PATH   + CORS_MAPPING_PATH;
+        public static final String STUDY_PLAN_ALL            = STUDY_PLAN_BASE_PATH   + CORS_MAPPING_PATH;
+        public static final String LESSON_CONTENT_ALL        = LESSON_CONTENT_BASE_PATH + CORS_MAPPING_PATH;
+        public static final String HOMEWORK_ALL              = HOMEWORK_BASE_PATH     + CORS_MAPPING_PATH;
+        public static final String ACCOMMODATION_ALL         = ACCOMMODATION_BASE_PATH + CORS_MAPPING_PATH;
 
         public static final String SYSTEM_ADMIN   = "SYSTEM_ADMIN";
         public static final String TEACHER        = "TEACHER";

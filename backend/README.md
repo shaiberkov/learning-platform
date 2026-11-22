@@ -14,7 +14,7 @@ REST API · JWT + SMS 2FA · Real-time notifications (SSE) · AI tutor · Auto-g
 [![Swagger](https://img.shields.io/badge/OpenAPI-Swagger%20UI-85EA2D?logo=swagger&logoColor=black)](#-api-documentation)
 [![Render](https://img.shields.io/badge/Deployed%20on-Render-46E3B7?logo=render&logoColor=white)](https://learning-project-server.onrender.com)
 
-[**Live app**](https://schoolmanagmentsystem-z0m5.onrender.com) · [**Frontend repo**](https://github.com/shaiberkov/SchoolManagmentSystem) · [**API docs**](#-api-documentation)
+[**Live app**](https://schoolmanagmentsystem-z0m5.onrender.com) · [**Frontend**](../frontend) · [**API docs**](#-api-documentation)
 
 </div>
 
@@ -130,8 +130,8 @@ A `.env` file in the project root is picked up automatically (`spring-dotenv`).
 ### Run locally
 
 ```bash
-git clone https://github.com/shaiberkov/Learning-Project-Server.git
-cd Learning-Project-Server
+git clone https://github.com/shaiberkov/learning-platform.git
+cd learning-platform/backend
 ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 

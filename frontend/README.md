@@ -15,7 +15,7 @@ Role-based dashboards · Timetables · Unlimited math practice · Timed tests ·
 [![Axios](https://img.shields.io/badge/Axios-HTTP-5A29E4?logo=axios&logoColor=white)](https://axios-http.com/)
 [![Render](https://img.shields.io/badge/Live%20on-Render-46E3B7?logo=render&logoColor=white)](https://schoolmanagmentsystem-z0m5.onrender.com)
 
-### [🌐 Live demo](https://schoolmanagmentsystem-z0m5.onrender.com) · [⚙️ Backend repo](https://github.com/shaiberkov/Learning-Project-Server)
+### [🌐 Live demo](https://schoolmanagmentsystem-z0m5.onrender.com) · [⚙️ Backend](../backend)
 
 </div>
 
@@ -26,7 +26,7 @@ Role-based dashboards · Timetables · Unlimited math practice · Timed tests ·
 
 ## 📌 Overview
 
-The front end of a full-stack platform for running a school and helping its students practice. It talks to a [Spring Boot REST API](https://github.com/shaiberkov/Learning-Project-Server) and gives each of the four user roles its own dashboard, sidebar and set of pages. The interface is in Hebrew and fully **right-to-left**.
+The front end of a full-stack platform for running a school and helping its students practice. It talks to a [Spring Boot REST API](../backend) and gives each of the four user roles its own dashboard, sidebar and set of pages. The interface is in Hebrew and fully **right-to-left**.
 
 ## ✨ Features by Role
 
@@ -128,15 +128,15 @@ src/
 ## 🚀 Getting Started
 
 ```bash
-git clone https://github.com/shaiberkov/SchoolManagmentSystem.git
-cd SchoolManagmentSystem
+git clone https://github.com/shaiberkov/learning-platform.git
+cd learning-platform/frontend
 npm install
 npm run dev
 ```
 
 The app runs on `http://localhost:5173`.
 
-By default it calls the deployed API. To work against a local server, set `API_BASE_URL` in `src/constants/base.constants.js` to `http://localhost:8080` and start the [backend](https://github.com/shaiberkov/Learning-Project-Server).
+By default it calls the deployed API. To work against a local server, set `API_BASE_URL` in `src/constants/base.constants.js` to `http://localhost:8080` and start the [backend](../backend).
 
 | Script | Description |
 |---|---|

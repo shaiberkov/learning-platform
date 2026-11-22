@@ -1,0 +1,33 @@
+# secrets
+.env
+.env.*
+!.env.example
+*.pem
+
+# java / maven
+backend/target/
+*.class
+*.log
+
+# node / vite
+node_modules/
+frontend/dist/
+frontend/dist-ssr/
+*.local
+
+# generated
+repomix-output.xml
+
+# os / editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.iml
+
+# claude (per-machine)
+.claude/settings.local.json
+.claude/worktrees/
+
+# graphify (local knowledge graph, rebuilt by git hooks)
+graphify-out/

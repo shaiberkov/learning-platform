@@ -24,6 +24,10 @@ import static org.example.learningprojectserver.constants.ControllerConstants.Te
 import static org.example.learningprojectserver.constants.ControllerConstants.Test.TEST_BASE_PATH;
 import static org.example.learningprojectserver.constants.ControllerConstants.UpcomingEvents.UPCOMING_EVENTS_BASE_PATH;
 import static org.example.learningprojectserver.constants.ControllerConstants.User.USER_BASE_PATH;
+import static org.example.learningprojectserver.constants.ControllerConstants.QuestionBank.QUESTION_BANK_BASE_PATH;
+import static org.example.learningprojectserver.constants.ControllerConstants.Gradebook.GRADEBOOK_BASE_PATH;
+import static org.example.learningprojectserver.constants.ControllerConstants.LiveQuiz.LIVE_QUIZ_BASE_PATH;
+import static org.example.learningprojectserver.constants.ControllerConstants.Attendance.ATTENDANCE_BASE_PATH;
 import static org.example.learningprojectserver.constants.ControllerConstants.UserStatistic.USER_STATISTIC_BASE_PATH;
 import static org.example.learningprojectserver.constants.ControllerConstants.Engagement.ENGAGEMENT_BASE_PATH;
 import static org.example.learningprojectserver.constants.ControllerConstants.StudyPlan.STUDY_PLAN_BASE_PATH;
@@ -96,6 +100,10 @@ public final class SecurityConstants {
         public static final String ACCOMMODATION_ALL         = ACCOMMODATION_BASE_PATH + CORS_MAPPING_PATH;
         public static final String AI_STAFF_ALL              = AI_STAFF_BASE_PATH     + CORS_MAPPING_PATH;
         public static final String AI_ALL                    = AI_BASE_PATH           + CORS_MAPPING_PATH;
+        public static final String QUESTION_BANK_ALL         = QUESTION_BANK_BASE_PATH + CORS_MAPPING_PATH;
+        public static final String GRADEBOOK_ALL             = GRADEBOOK_BASE_PATH    + CORS_MAPPING_PATH;
+        public static final String LIVE_QUIZ_ALL             = LIVE_QUIZ_BASE_PATH    + CORS_MAPPING_PATH;
+        public static final String ATTENDANCE_ALL            = ATTENDANCE_BASE_PATH   + CORS_MAPPING_PATH;
 
         public static final String SYSTEM_ADMIN   = "SYSTEM_ADMIN";
         public static final String TEACHER        = "TEACHER";

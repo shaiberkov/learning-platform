@@ -86,6 +86,7 @@ function SideBar() {
                     label: "כיתות",
                     children: [
                         { to: "classes-weekly-schedule", label: "מערכת שעות לפי כיתה" },
+                        { to: "attendance-report", label: "דוח היעדרויות" },
 
                     ],
                 },
@@ -139,6 +140,10 @@ function SideBar() {
                 { to: "ai-questions", label: "יצירת שאלות עם AI" },
                 { to: "ai-grading", label: "בדיקת שאלות פתוחות" },
                 { to: "ai-insights", label: "תובנות שבועיות" },
+                { to: "question-bank", label: "מאגר שאלות" },
+                { to: "gradebook", label: "יומן ציונים" },
+                { to: "live-quiz-host", label: "חידון בכיתה" },
+                { to: "attendance", label: "נוכחות" },
             ],
             STUDENT: [
                 { to: "student-dashboard", label: "מסך בית" },
@@ -155,6 +160,7 @@ function SideBar() {
                 { to: "accessibility", label: "נגישות" },
                 { to: "ai-tutor", label: "מורה-עזר AI" },
                 { to: "open-questions", label: "שאלות פתוחות" },
+                { to: "live-quiz", label: "חידון בכיתה" },
             ],
         }[user.role] || [];
     };

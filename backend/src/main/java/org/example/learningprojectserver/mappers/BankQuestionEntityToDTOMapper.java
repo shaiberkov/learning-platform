@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 public class BankQuestionEntityToDTOMapper implements Mapper<BankQuestionEntity, BankQuestionDTO> {
     @Override
     public BankQuestionDTO apply(BankQuestionEntity q) {
-        return new BankQuestionDTO(q.getId(), q.getSubject(), q.getTopic(), q.getSubTopic(), q.getDifficulty(),
-                q.getGradeLevel(), q.getQuestionText(), q.getAnswer(), q.getExplanation(), q.getSource(), q.getCreatedAt());
+        return new BankQuestionDTO(q.getId(), q.getSubject(), q.getTopic(), q.getSubTopic(), q.getLevel(),
+                q.getGrade(), q.getQuestionText(), q.getAnswer(), q.getExplanation(), q.getSource(), q.getCreatedAt());
     }
 }

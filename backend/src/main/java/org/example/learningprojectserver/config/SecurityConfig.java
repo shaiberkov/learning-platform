@@ -129,6 +129,10 @@ public class SecurityConfig {
                         // (quota, exam lock, ownership). Staff routes also check the role.
                         .requestMatchers(AI_STAFF_ALL).hasAnyRole(TEACHER, SCHOOL_MANAGER, SYSTEM_ADMIN)
                         .requestMatchers(AI_ALL).authenticated()
+                        .requestMatchers(QUESTION_BANK_ALL).hasAnyRole(TEACHER, SYSTEM_ADMIN)
+                        .requestMatchers(GRADEBOOK_ALL).hasAnyRole(TEACHER, SYSTEM_ADMIN)
+                        .requestMatchers(LIVE_QUIZ_ALL).hasAnyRole(TEACHER, STUDENT, SYSTEM_ADMIN)
+                        .requestMatchers(ATTENDANCE_ALL).hasAnyRole(TEACHER, SCHOOL_MANAGER, SYSTEM_ADMIN)
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(metricsFilter, UsernamePasswordAuthenticationFilter.class)

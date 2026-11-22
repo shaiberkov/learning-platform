@@ -11,7 +11,7 @@ Configured in `backend/src/main/resources/ehcache.xml` and enabled by `@EnableCa
 | Cache | Filled by (`@Cacheable`) | Key | Evicted by | Size |
 |---|---|---|---|---|
 | `upcomingEvents` | `UpcomingEventService.getUpcomingEvents(role, userId)` | `role + '_' + userId` (e.g. `STUDENT_123`) | `TeacherService.generateTestForStudents`: the teacher's key (`@CacheEvict`) and each student's key (`cacheManager`) | 1000 |
-| `receivedMessages` | `MessageService.getAllRecivedMessages(userId)` | `userId` | `MessageService.sendMessage`: each recipient's key | 1000 |
+| `receivedMessages` | `MessageService.getAllRecivedMessages(userId)` | `userId` | `MessageService.sendMessage`: each recipient's key; `AttendanceService.mark`: the school manager's key when it sends an unusual-absence alert | 1000 |
 | `teacherSchedule` | `TeacherService.getTeacherSchedule(teacherId)` | `teacherId` | `TeacherService.addLessonToTeacher` (`@CacheEvict`) | 500 |
 | `classRoomSchedule` | `ClassRoomService.getScheduleForClassRoom(schoolCode, classRoomName)` | `schoolCode + '_' + classRoomName` | `TeacherService.addLessonToTeacher`: the lesson's class | 100 |
 | `studentSchedule` | `StudentService.getStudentSchedule(schoolCode, studentId)` | `studentId` | `TeacherService.addLessonToTeacher`: each student in the class | **missing from `ehcache.xml`** |
@@ -39,6 +39,7 @@ Not Spring caches: plain `ConcurrentHashMap`s in singleton beans. Lost on restar
 | `NotificationService.emitters` | one `SseEmitter` per connected user | on completion, timeout, error, or a failed send |
 | `ChatGptService.userConversations` (static) | history of the legacy `/Chat` endpoints per user (the practice screen now uses the AI tutor, whose history is in MySQL: `ai_conversation_message`) | reset to empty by the `clear-conversation` endpoint |
 | `ActiveUserService.activeUsers` | who is online | `disconnectUser` |
+| `LiveQuizService.sessions` | running live in-class quizzes: class roster, current question with its answer, students' answers, scoreboard (by 6-digit code) | `end`, a new `start` by the same teacher, or 3 hours without activity (checked on the next access) |
 | `StatisticsService.userStats` | per-student statistics | currently unused (its writes are commented out) |
 | `filter/MetricsFilter` | request counts and response times | never |
 | `security/RateLimiter.buckets` | Bucket4j token buckets per (rule, IP) and (rule, userId) for login, OTP, password reset and AI chat | idle buckets dropped every 10 minutes once their period has passed (`evictIdleBuckets`); a restart resets all limits |
@@ -54,7 +55,9 @@ Recorded, not fixed. Fix one only when the task is about it.
 1. **`studentSchedule` has no alias in `ehcache.xml`.** JCache does not create caches on demand, so `@Cacheable("studentSchedule")` and `cacheManager.getCache("studentSchedule")` (which returns `null`) can fail at runtime. Adding the alias is the fix.
 2. **`schoolDTO` is never evicted.** Adding grades, classes, teachers or a manager to a school leaves the manager's view stale for up to 24 hours.
 3. **Writes outside the evicting methods.** Anything that changes lessons, tests or messages without going through the methods in the "Evicted by" column leaves the matching cache stale. Removing a lesson, a teacher or a student from a class evicts nothing.
-4. **Single instance only.** Everything above is per process. A second instance on Render would serve different data from each and break SSE delivery.
+4. **Single instance only.** Everything above is per process (a live quiz too: a restart ends every running quiz). A second instance on Render would serve different data from each and break SSE delivery.
+
+Not cached on purpose: the question bank, gradebooks and attendance (`QuestionBankService`, `GradebookService`, `AttendanceService`) read MySQL on every request, so their writes have nothing to evict.
 
 ## Checklist for a change that touches data
 

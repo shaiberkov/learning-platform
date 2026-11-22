@@ -43,6 +43,20 @@
             <version>3.9.4</version>
         </dependency>
 
+        <!-- Excel (.xlsx) import for the question bank and export for the gradebook -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.3.0</version>
+        </dependency>
+
+        <!-- In-memory database for repository query tests (no MySQL needed) -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+
 
 
         <dependency>

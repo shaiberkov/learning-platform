@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 /**
  * A question the AI proposed to a teacher. It waits in the teacher's approval queue
- * (PENDING); approving copies it into the question bank ({@link BankQuestionEntity}).
+ * (PENDING); approving copies it into the teachers' question bank ({@link BankQuestionEntity}, table bank_question).
  */
 @Entity
 @Getter

@@ -171,10 +171,10 @@ public class AiQuestionGenerationService {
         question.setQuestionText(draft.getQuestionText());
         question.setAnswer(draft.getAnswer());
         question.setExplanation(draft.getExplanation());
-        question.setDifficulty(draft.getDifficulty());
-        question.setGradeLevel(draft.getGradeLevel());
-        question.setOwnerTeacherUserId(teacher.userId());
-        question.setSchoolCode(teacher.schoolCode());
+        question.setLevel(draft.getDifficulty());
+        question.setGrade(draft.getGradeLevel());
+        question.setOwnerTeacherId(teacher.userId());
+        question.setSchoolCode(teacher.schoolCode() == null ? "" : teacher.schoolCode());
         question.setSource("AI");
         question.setCreatedAt(AiGateway.now());
         bankRepository.save(question);
@@ -200,7 +200,7 @@ public class AiQuestionGenerationService {
 
     public BasicResponse<List<BankQuestionDTO>> bank(AiUser teacher) {
         BasicResponse<List<BankQuestionDTO>> response = new BasicResponse<>(true, null);
-        response.setData(bankRepository.findByOwnerTeacherUserIdOrderByIdDesc(teacher.userId())
+        response.setData(bankRepository.findByOwnerTeacherIdOrderByIdDesc(teacher.userId())
                 .stream().map(bankMapper).toList());
         return response;
     }

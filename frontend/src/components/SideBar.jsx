@@ -93,6 +93,13 @@ function SideBar() {
                         { to: "send-message", label: "שליחת הודעה" },
                     ],
                 },
+
+                {
+                    label: "AI",
+                    children: [
+                        { to: "ai-school", label: "שימוש ובטיחות AI" },
+                    ],
+                },
             ];
         }
 
@@ -108,6 +115,9 @@ function SideBar() {
                 { to: "teacher-dashboard", label: "מסך בית" },
                 { to: "teacher-weekly-schedule", label: "מערכת שעות" },
                 { to: "test-configurator", label: "יצירת מבחן לתלמידים" },
+                { to: "ai-questions", label: "יצירת שאלות עם AI" },
+                { to: "ai-grading", label: "בדיקת שאלות פתוחות" },
+                { to: "ai-insights", label: "תובנות שבועיות" },
             ],
             STUDENT: [
                 { to: "student-dashboard", label: "מסך בית" },
@@ -115,6 +125,8 @@ function SideBar() {
                 { to: "question-practice-selector", label: "תרגול שאלות" },
                 { to: "test-configurator", label: "תרגול מבחנים" },
                 { to: "teacher-tests", label: "מבחנים" },
+                { to: "ai-tutor", label: "מורה-עזר AI" },
+                { to: "open-questions", label: "שאלות פתוחות" },
             ],
         }[user.role] || [];
     };

@@ -40,6 +40,12 @@ import PrivacyPolicy from "../pages/footer/PrivacyPolicy.jsx";
 import Faq from "../pages/footer/Faq.jsx";
 import About from "../pages/footer/About.jsx";
 import Footer from "../components/Footer.jsx";
+import AiQuestionStudio from "../pages/teacher/AiQuestionStudio.jsx";
+import AiGrading from "../pages/teacher/AiGrading.jsx";
+import AiInsights from "../pages/teacher/AiInsights.jsx";
+import AiTutorPage from "../pages/student/AiTutorPage.jsx";
+import OpenQuestions from "../pages/student/OpenQuestions.jsx";
+import AiSchoolOverview from "../pages/manager/AiSchoolOverview.jsx";
 export default function AppRoutes() {
 
     const {user}=useContext(UserContext)
@@ -88,6 +94,7 @@ export default function AppRoutes() {
                             <Route path="/assign-teacher-to-class" element={<AsignTeacherToClassRooms />} />
                             <Route path="/assign-student-to-class" element={<AssignStudentToClass />} />
                             <Route path="/classes-weekly-schedule" element={<ClassScheduleViewerForManager />} />
+                            <Route path="/ai-school" element={<AiSchoolOverview />} />
                         </>
                     )}
 
@@ -96,6 +103,9 @@ export default function AppRoutes() {
                             <Route path="/teacher-dashboard" element={<TeacherDashboard />} />
                             <Route path="/teacher-weekly-schedule" element={<TeacherWeeklySchedule />} />
                             <Route path="/test-configurator" element={<TestConfigurator type="teacher" />} />
+                            <Route path="/ai-questions" element={<AiQuestionStudio />} />
+                            <Route path="/ai-grading" element={<AiGrading />} />
+                            <Route path="/ai-insights" element={<AiInsights />} />
                         </>
                     )}
 
@@ -106,6 +116,8 @@ export default function AppRoutes() {
                             <Route path="/question-practice-selector" element={<QuestionPracticeSelector />} />
                             <Route path="/test-configurator" element={<TestConfigurator type="student" />} />
                             <Route path="/teacher-tests" element={<TestsTable />} />
+                            <Route path="/ai-tutor" element={<AiTutorPage />} />
+                            <Route path="/open-questions" element={<OpenQuestions />} />
                             <Route path="/exercises/:subjectName/:topicName/:exerciseName" element={<QuestionPractice />} />
                             <Route path="/test/:selectedSubject/:selectedTopic/:selectedDifficulty/:selectedQuestionCount/:selectedTimeMinutes" element={<TestSession type="practiceTest" />} />
                             <Route path="/test/:TeacherTestId/:timeLimitMinutes" element={<TestSession type="teacherTest" />} />

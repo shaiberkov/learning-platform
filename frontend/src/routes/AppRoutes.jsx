@@ -40,6 +40,13 @@ import PrivacyPolicy from "../pages/footer/PrivacyPolicy.jsx";
 import Faq from "../pages/footer/Faq.jsx";
 import About from "../pages/footer/About.jsx";
 import Footer from "../components/Footer.jsx";
+import BulkImport from "../pages/manager/BulkImport.jsx";
+import SchoolAnalytics from "../pages/manager/SchoolAnalytics.jsx";
+import TimetableBuilder from "../pages/manager/TimetableBuilder.jsx";
+import SchoolYears from "../pages/manager/SchoolYears.jsx";
+import ParentLinks from "../pages/manager/ParentLinks.jsx";
+import MessageParents from "../pages/teacher/MessageParents.jsx";
+import ParentDashboard from "../pages/parent/ParentDashboard.jsx";
 export default function AppRoutes() {
 
     const {user}=useContext(UserContext)
@@ -88,6 +95,12 @@ export default function AppRoutes() {
                             <Route path="/assign-teacher-to-class" element={<AsignTeacherToClassRooms />} />
                             <Route path="/assign-student-to-class" element={<AssignStudentToClass />} />
                             <Route path="/classes-weekly-schedule" element={<ClassScheduleViewerForManager />} />
+                            <Route path="/bulk-import" element={<BulkImport />} />
+                            <Route path="/school-analytics" element={<SchoolAnalytics />} />
+                            <Route path="/timetable-builder" element={<TimetableBuilder />} />
+                            <Route path="/school-years" element={<SchoolYears />} />
+                            <Route path="/parent-links" element={<ParentLinks />} />
+                            <Route path="/message-parents" element={<MessageParents />} />
                         </>
                     )}
 
@@ -96,6 +109,7 @@ export default function AppRoutes() {
                             <Route path="/teacher-dashboard" element={<TeacherDashboard />} />
                             <Route path="/teacher-weekly-schedule" element={<TeacherWeeklySchedule />} />
                             <Route path="/test-configurator" element={<TestConfigurator type="teacher" />} />
+                            <Route path="/message-parents" element={<MessageParents />} />
                         </>
                     )}
 
@@ -111,6 +125,12 @@ export default function AppRoutes() {
                             <Route path="/test/:TeacherTestId/:timeLimitMinutes" element={<TestSession type="teacherTest" />} />
                         </>
                     )}
+                    {user?.role === 'PARENT' && (
+                        <>
+                            <Route path="/parent-dashboard" element={<ParentDashboard />} />
+                        </>
+                    )}
+
                     {user?.role === 'STUDENT'&&!user?.schoolCode && (
                         <>
                             <Route path="/student-dashboard" element={<StudentDashboard />} />

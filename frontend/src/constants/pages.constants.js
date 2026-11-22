@@ -345,3 +345,58 @@ export const {
     AND,
 }=QueryDelimiters;
 
+
+/* SchoolAdministration: the school manager's tools (bulk import, dashboard, timetable builder,
+   school years, parent links). Mirrors ControllerConstants.SchoolAdministration. */
+export const SchoolAdministrationPaths = {
+    SCHOOL_ADMINISTRATION_BASE_PATH: `${API_BASE_URL}${BASE_API}/school-manager`,
+    BULK_IMPORT_PREVIEW: '/bulk-import/preview',
+    BULK_IMPORT_COMMIT: '/bulk-import/commit',
+    SCHOOL_ANALYTICS: '/analytics',
+    TIMETABLE_TEACHERS: '/timetable/teachers',
+    TIMETABLE_LESSONS: '/timetable/lessons',
+    TIMETABLE_CHECK: '/timetable/check',
+    TIMETABLE_SAVE: '/timetable/save',
+    TIMETABLE_DELETE: '/timetable/delete',
+    SCHOOL_YEARS: '/school-years',
+    CREATE_SCHOOL_YEAR: '/school-years/create',
+    ADD_SEMESTER: '/school-years/add-semester',
+    REMOVE_SEMESTER: '/school-years/remove-semester',
+    PROMOTION_PLAN: '/school-years/promotion-plan',
+    CLOSE_SCHOOL_YEAR: '/school-years/close',
+    SCHOOL_YEAR_ARCHIVE: '/school-years/archive',
+    LINK_PARENT: '/parents/link',
+    UNLINK_PARENT: '/parents/unlink',
+};
+export const {
+    SCHOOL_ADMINISTRATION_BASE_PATH,
+    BULK_IMPORT_PREVIEW,
+    BULK_IMPORT_COMMIT,
+    SCHOOL_ANALYTICS,
+    TIMETABLE_TEACHERS,
+    TIMETABLE_LESSONS,
+    TIMETABLE_CHECK,
+    TIMETABLE_SAVE,
+    TIMETABLE_DELETE,
+    SCHOOL_YEARS,
+    CREATE_SCHOOL_YEAR,
+    ADD_SEMESTER,
+    REMOVE_SEMESTER,
+    PROMOTION_PLAN,
+    CLOSE_SCHOOL_YEAR,
+    SCHOOL_YEAR_ARCHIVE,
+    LINK_PARENT,
+    UNLINK_PARENT,
+} = SchoolAdministrationPaths;
+
+/* Parent. Mirrors ControllerConstants.Parent. */
+export const ParentPaths = {
+    PARENT_BASE_PATH: `${API_BASE_URL}${BASE_API}/parent`,
+    GET_CHILDREN: '/children',
+    CHILD_OVERVIEW: '/child-overview',
+};
+export const {
+    PARENT_BASE_PATH,
+    GET_CHILDREN,
+    CHILD_OVERVIEW,
+} = ParentPaths;

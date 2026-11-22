@@ -91,6 +91,18 @@ function SideBar() {
                     label: "הודעות",
                     children: [
                         { to: "send-message", label: "שליחת הודעה" },
+                        { to: "message-parents", label: "הודעה להורים" },
+                    ],
+                },
+
+                {
+                    label: "ניהול בית הספר",
+                    children: [
+                        { to: "school-analytics", label: "לוח ציונים ונתונים" },
+                        { to: "timetable-builder", label: "בניית מערכת שעות" },
+                        { to: "school-years", label: "שנות לימודים" },
+                        { to: "bulk-import", label: "ייבוא משתמשים מקובץ" },
+                        { to: "parent-links", label: "קישור הורים לתלמידים" },
                     ],
                 },
             ];
@@ -108,6 +120,10 @@ function SideBar() {
                 { to: "teacher-dashboard", label: "מסך בית" },
                 { to: "teacher-weekly-schedule", label: "מערכת שעות" },
                 { to: "test-configurator", label: "יצירת מבחן לתלמידים" },
+                { to: "message-parents", label: "הודעה להורים" },
+            ],
+            PARENT: [
+                { to: "parent-dashboard", label: "מסך בית" },
             ],
             STUDENT: [
                 { to: "student-dashboard", label: "מסך בית" },
@@ -124,6 +140,7 @@ function SideBar() {
         SCHOOLMANAGER: "מנהל בית ספר",
         TEACHER: "מורה",
         STUDENT: "תלמיד",
+        PARENT: "הורה",
     }[user?.role];
 
     const navItemClass = ({ isActive }) =>

@@ -49,6 +49,7 @@ private final StudentRepository studentRepository;
 private final LessonRepository lessonRepository;
 private final MasteryService masteryService;
 private final ReviewService reviewService;
+private final EngagementEvents engagementEvents;
 
 
 
@@ -220,6 +221,7 @@ public List<StudentTestStatusDTO> getStudentTestsStatus(String userId) {
         studentProgressEntity.setSubTopicSuccessStreak(subTopicSuccessStreak);
         studentProgressEntity.setSubTopicIncorrectStreak(subTopicIncorrectStreak);
         studentProgressRepository.save(studentProgressEntity);
+        engagementEvents.practiceAnswer(userId, isCorrect, subTopic, skillLevelsBySubTopic.get(subTopic));
 
         SubmitAnswerResponse submitAnswerResponse=new SubmitAnswerResponse();
         submitAnswerResponse.setSuccess(true);

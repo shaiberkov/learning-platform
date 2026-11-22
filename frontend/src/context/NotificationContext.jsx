@@ -8,6 +8,7 @@ export const NotificationContext = createContext();
 export function NotificationProvider({ children }) {
     const [messages, setMessages] = useState([]);
     const [tests, setTests] = useState([]);
+    const [homeworkAlerts, setHomeworkAlerts] = useState([]);
     const { user } = useContext(UserContext);
 
 
@@ -24,6 +25,8 @@ export function NotificationProvider({ children }) {
                 console.log(data)
                 if (data.type === "SYSTEM_MESSAGE") {
                     setMessages(prevMessages => [data.payload.message, ...prevMessages]);
+                } else if (data.type === "NEW_HOMEWORK" || data.type === "HOMEWORK_REMINDER") {
+                    setHomeworkAlerts(prev => [{ ...data.payload, type: data.type }, ...prev]);
                 } else if (data.type === "NEW_TEST") {
                     if (user.role === "STUDENT") {
                         setTests(prevTests => [data.payload.userTestStatusDTO, ...prevTests]);
@@ -47,7 +50,7 @@ export function NotificationProvider({ children }) {
     }, [user?.userId]);
 
     return (
-        <NotificationContext.Provider value={{ messages, tests }}>
+        <NotificationContext.Provider value={{ messages, tests, homeworkAlerts }}>
             {children}
         </NotificationContext.Provider>
     );

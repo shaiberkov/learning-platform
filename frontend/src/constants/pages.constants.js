@@ -178,6 +178,47 @@ export const PagesConstants = {
         REFRESH_TOKEN: '/refresh-token',
         LOGOUT: '/logout',
     },
+
+    Engagement: {
+        ENGAGEMENT_BASE_PATH: `${API_BASE_URL}${BASE_API}/engagement`,
+        ENGAGEMENT_GET_SUMMARY: '/get-summary',
+        ENGAGEMENT_CREATE_CLASS_CHALLENGE: '/create-class-challenge',
+        ENGAGEMENT_TEACHER_CHALLENGES: '/teacher-challenges',
+    },
+
+    StudyPlan: {
+        STUDY_PLAN_BASE_PATH: `${API_BASE_URL}${BASE_API}/study-plan`,
+        STUDY_PLAN_GET_PLAN: '/get-plan',
+        STUDY_PLAN_COMPLETE_TASK: '/complete-task',
+    },
+
+    LessonContent: {
+        LESSON_CONTENT_BASE_PATH: `${API_BASE_URL}${BASE_API}/lesson-content`,
+        LESSON_CONTENT_CREATE: '/create',
+        LESSON_CONTENT_UPDATE: '/update',
+        LESSON_CONTENT_DELETE: '/delete',
+        LESSON_CONTENT_TEACHER_LESSONS: '/teacher-lessons',
+        LESSON_CONTENT_STUDENT_LESSONS: '/student-lessons',
+        LESSON_CONTENT_GET: '/get',
+        LESSON_CONTENT_UPDATE_PROGRESS: '/update-progress',
+    },
+
+    Homework: {
+        HOMEWORK_BASE_PATH: `${API_BASE_URL}${BASE_API}/homework`,
+        HOMEWORK_CREATE: '/create',
+        HOMEWORK_TEACHER_CLASSES: '/teacher-classes',
+        HOMEWORK_TEACHER_BOARD: '/teacher-board',
+        HOMEWORK_STUDENT_HOMEWORK: '/student-homework',
+        HOMEWORK_SUBMIT: '/submit',
+    },
+
+    Accommodation: {
+        ACCOMMODATION_BASE_PATH: `${API_BASE_URL}${BASE_API}/accommodation`,
+        ACCOMMODATION_GET: '/get',
+        ACCOMMODATION_TEACHER_STUDENTS: '/teacher-students',
+        ACCOMMODATION_SET_EXTRA_TIME: '/set-extra-time',
+        ACCOMMODATION_SET_PREFERENCES: '/set-preferences',
+    },
 };
 
 /* ActiveUser */
@@ -372,6 +413,52 @@ export const {
     REFRESH_TOKEN,
     LOGOUT
 } = PagesConstants.User;
+
+/* Engagement (gamification) */
+export const {
+    ENGAGEMENT_BASE_PATH,
+    ENGAGEMENT_GET_SUMMARY,
+    ENGAGEMENT_CREATE_CLASS_CHALLENGE,
+    ENGAGEMENT_TEACHER_CHALLENGES,
+} = PagesConstants.Engagement;
+
+/* StudyPlan */
+export const {
+    STUDY_PLAN_BASE_PATH,
+    STUDY_PLAN_GET_PLAN,
+    STUDY_PLAN_COMPLETE_TASK,
+} = PagesConstants.StudyPlan;
+
+/* LessonContent (lesson pages, not schedule slots) */
+export const {
+    LESSON_CONTENT_BASE_PATH,
+    LESSON_CONTENT_CREATE,
+    LESSON_CONTENT_UPDATE,
+    LESSON_CONTENT_DELETE,
+    LESSON_CONTENT_TEACHER_LESSONS,
+    LESSON_CONTENT_STUDENT_LESSONS,
+    LESSON_CONTENT_GET,
+    LESSON_CONTENT_UPDATE_PROGRESS,
+} = PagesConstants.LessonContent;
+
+/* Homework */
+export const {
+    HOMEWORK_BASE_PATH,
+    HOMEWORK_CREATE,
+    HOMEWORK_TEACHER_CLASSES,
+    HOMEWORK_TEACHER_BOARD,
+    HOMEWORK_STUDENT_HOMEWORK,
+    HOMEWORK_SUBMIT,
+} = PagesConstants.Homework;
+
+/* Accommodation */
+export const {
+    ACCOMMODATION_BASE_PATH,
+    ACCOMMODATION_GET,
+    ACCOMMODATION_TEACHER_STUDENTS,
+    ACCOMMODATION_SET_EXTRA_TIME,
+    ACCOMMODATION_SET_PREFERENCES,
+} = PagesConstants.Accommodation;
 
 
 const QueryParams = {

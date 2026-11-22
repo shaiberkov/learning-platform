@@ -23,7 +23,7 @@ Unit tests cover helpers and small components; still verify a screen change agai
 
 - `src/routes/AppRoutes.jsx`: every route. Routes for a role exist only inside a `user?.role === '...'` block, so a page for a role goes in that role's block. A student without a `schoolCode` gets a reduced set. `components/ProtectedRoute.jsx` (with `allowedRoles`) exists but is not used by `AppRoutes`.
 - `src/context/UserContext.jsx`: the tokens are httpOnly cookies the page cannot read; it calls the session endpoint on every navigation (refreshing once through `/user/refresh-token` if needed) and sets `user` (`userId`, `role`, `schoolCode`, ...). Without a token it sends the user to `/login`, except on the public pages it lists. A new public page is added to that list too.
-- `src/context/NotificationContext.jsx`: one `EventSource` to `/notifications/connect?userId=...`, handling `SYSTEM_MESSAGE` and `NEW_TEST` events. New live event types are handled here, matching `backend/.../notification/NotificationType.java`.
+- `src/context/NotificationContext.jsx`: one `EventSource` to `/notifications/connect?userId=...`, handling `SYSTEM_MESSAGE`, `NEW_TEST`, `NEW_HOMEWORK` and `HOMEWORK_REMINDER` events. New live event types are handled here, matching `backend/.../notification/NotificationType.java`.
 - `src/features/auth/`: Login → TwoFactorAuthForm (sets the `token` cookie) → dashboard; Register; ResetPassword.
 - `src/pages/<role>/`: screens per role (`admin`, `manager`, `teacher`, `student`, plus `footer` static pages).
 - `src/components/`: shared pieces (SideBar, WeeklySchedule, TestConfigurator, TestSession, ChatComponent, messages/).

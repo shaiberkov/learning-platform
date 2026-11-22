@@ -22,6 +22,10 @@ Configured in `backend/src/main/resources/ehcache.xml` and enabled by `@EnableCa
 
 Not cached: the adaptive-learning reads (mistakes notebook, skill maps, hints, exam feedback) query MySQL on every call, because each practice answer changes them. A future cache there must be evicted from `StudentService.submitAnswer`, `ReviewService.answer`, `HintService.saveTemplate` and `ExamFeedbackService.recordExamAnswers`.
 
+### Not cached on purpose
+
+Engagement (XP, streaks, badges, class challenges), study plans, lesson pages and their progress, homework and submissions, and accommodations are read from MySQL on every request. They change with almost every student action, and a stale extra-time value or homework status would be wrong in a way users notice. Their writes touch none of the caches above (homework and study plans are not part of `upcomingEvents`). If one of them gets a cache, add it to table 1 with its evictions.
+
 ## 2. Hand-rolled in-memory maps
 
 Not Spring caches: plain `ConcurrentHashMap`s in singleton beans. Lost on restart, never shared between instances.

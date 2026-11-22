@@ -87,7 +87,7 @@ Four roles, in this order of power: `SYSTEM_ADMIN` → `SCHOOLMANAGER` → `TEAC
 ## Security
 
 - Every route group is `permitAll()` in `SecurityConfig.java`, with the intended roles left in comments. The JWT filter still sets the principal, but nothing enforces roles. Do not assume an endpoint is protected; say so when a change relies on it.
-- Secrets come from the environment (`DB_URL`, `DB_USERNAME`, `DB_PASSWORD`, `GPT_TOKEN`, `SMS_TOKEN`, read through `Environment` / `spring-dotenv` from `backend/.env`). Never put a secret in a committed file. `application-dev.properties` already holds a local MySQL password in history; do not add more.
+- Secrets come from the environment (`DB_URL`, `DB_USERNAME`, `DB_PASSWORD`, `GPT_TOKEN`, `SMS_TOKEN`, read through `Environment` / `spring-dotenv` from `backend/.env`). Never put a secret in a committed file: the repository is public and GitHub push protection rejects pushes that contain keys. `application-dev.properties` reads the local MySQL password as `${DB_PASSWORD}` from `backend/.env`. An OpenAI key and that password were scrubbed from the history when the repositories were merged.
 
 ## Caching
 

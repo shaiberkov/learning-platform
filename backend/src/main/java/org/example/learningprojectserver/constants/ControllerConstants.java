@@ -152,6 +152,50 @@ public final class ControllerConstants {
         public static final String RESET_PASSWORD            = "/reset-password";
         public static final String GET_USER_PHONE            = "/user/phone";
     }
+    public static final class QuestionBank {
+        private QuestionBank() {}
 
+        public static final String QUESTION_BANK_BASE_PATH  = BASE_API + "/question-bank";
+        public static final String ADD_BANK_QUESTION        = "/add";
+        public static final String UPDATE_BANK_QUESTION     = "/update";
+        public static final String DELETE_BANK_QUESTION     = "/delete";
+        public static final String SEARCH_BANK_QUESTIONS    = "/search";
+        public static final String SET_BANK_QUESTION_SHARED = "/set-shared";
+        public static final String IMPORT_BANK_QUESTIONS    = "/import";
+        public static final String GET_BANK_TAGS            = "/tags";
+    }
+    public static final class Gradebook {
+        private Gradebook() {}
+
+        public static final String GRADEBOOK_BASE_PATH         = BASE_API + "/gradebook";
+        public static final String GET_GRADEBOOK_CLASSES       = "/classes";
+        public static final String GET_GRADEBOOK               = "/table";
+        public static final String ADD_GRADEBOOK_ASSIGNMENT    = "/add-assignment";
+        public static final String DELETE_GRADEBOOK_ASSIGNMENT = "/delete-assignment";
+        public static final String SET_GRADEBOOK_GRADE         = "/set-grade";
+        public static final String SET_GRADEBOOK_WEIGHTS       = "/set-weights";
+        public static final String EXPORT_GRADEBOOK            = "/export";
+    }
+    public static final class LiveQuiz {
+        private LiveQuiz() {}
+
+        public static final String LIVE_QUIZ_BASE_PATH    = BASE_API + "/live-quiz";
+        public static final String START_LIVE_QUIZ        = "/start";
+        public static final String PUSH_LIVE_QUESTION     = "/push-question";
+        public static final String CLOSE_LIVE_QUESTION    = "/close-question";
+        public static final String END_LIVE_QUIZ          = "/end";
+        public static final String GET_LIVE_QUIZ_RESULTS  = "/results";
+        public static final String GET_CURRENT_LIVE_QUIZ  = "/current";
+        public static final String ANSWER_LIVE_QUESTION   = "/answer";
+    }
+    public static final class Attendance {
+        private Attendance() {}
+
+        public static final String ATTENDANCE_BASE_PATH   = BASE_API + "/attendance";
+        public static final String GET_ATTENDANCE_LESSONS = "/lessons-for-day";
+        public static final String GET_ATTENDANCE_SHEET   = "/sheet";
+        public static final String MARK_ATTENDANCE        = "/mark";
+        public static final String GET_ATTENDANCE_REPORT  = "/report";
+    }
 
 }

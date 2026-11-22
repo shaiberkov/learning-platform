@@ -1,6 +1,7 @@
 package org.example.learningprojectserver.strategy.message;
 
 
+import org.example.learningprojectserver.repository.ParentRepository;
 import org.example.learningprojectserver.repository.SchoolRepository;
 import org.example.learningprojectserver.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,11 +12,14 @@ public class MessageRecipientStrategyFactory {
 
     private final SchoolRepository schoolRepository;
     private final UserRepository userRepository;
+    private final ParentRepository parentRepository;
 
     @Autowired
-    public MessageRecipientStrategyFactory(SchoolRepository schoolRepository, UserRepository userRepository) {
+    public MessageRecipientStrategyFactory(SchoolRepository schoolRepository, UserRepository userRepository,
+                                           ParentRepository parentRepository) {
         this.schoolRepository = schoolRepository;
         this.userRepository = userRepository;
+        this.parentRepository = parentRepository;
     }
 
 
@@ -29,6 +33,8 @@ public class MessageRecipientStrategyFactory {
             case "כל-המורים" -> new AllTeachersStrategy(schoolRepository);
             case "כל-התלמידים" -> new AllStudentsStrategy(schoolRepository);
             case "כל מנהלי בית ספר"-> new AllManagerStrategy(userRepository);
+            case "הורי-כיתה" -> new ParentsOfClassStrategy(parentRepository, recipientValue);
+            case "כל-ההורים" -> new AllParentsStrategy(parentRepository);
             default -> throw new IllegalArgumentException("סוג יעד לא חוקי: " + recipientType);
         };
     }

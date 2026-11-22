@@ -54,11 +54,11 @@ public class MessageService {
                 break;
             case SCHOOLMANAGER:
 //                recipientTypes = List.of("כיתה", "שכבה", "מורי-שכבה", "כל-המורים", "כל-התלמידים");
-                recipientTypes = List.of("כל-המורים", "כל-התלמידים");
+                recipientTypes = List.of("כל-המורים", "כל-התלמידים", "הורי-כיתה", "כל-ההורים");
 
                 break;
             case TEACHER:
-                recipientTypes = List.of("כיתה","כל-התלמידים");
+                recipientTypes = List.of("כיתה","כל-התלמידים", "הורי-כיתה", "כל-ההורים");
                 break;
             case STUDENT:
                 recipientTypes = List.of();

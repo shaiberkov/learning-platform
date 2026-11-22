@@ -154,4 +154,39 @@ public final class ControllerConstants {
     }
 
 
+    /** School administration tools of the manager: bulk import, dashboard, timetable builder, school years, parent links. */
+    public static final class SchoolAdministration {
+        private SchoolAdministration() {}
+
+        public static final String SCHOOL_ADMINISTRATION_BASE_PATH = BASE_API + "/school-manager";
+
+        public static final String BULK_IMPORT_PREVIEW      = "/bulk-import/preview";
+        public static final String BULK_IMPORT_COMMIT       = "/bulk-import/commit";
+
+        public static final String SCHOOL_ANALYTICS         = "/analytics";
+
+        public static final String TIMETABLE_TEACHERS       = "/timetable/teachers";
+        public static final String TIMETABLE_LESSONS        = "/timetable/lessons";
+        public static final String TIMETABLE_CHECK          = "/timetable/check";
+        public static final String TIMETABLE_SAVE           = "/timetable/save";
+        public static final String TIMETABLE_DELETE         = "/timetable/delete";
+
+        public static final String SCHOOL_YEARS             = "/school-years";
+        public static final String CREATE_SCHOOL_YEAR       = "/school-years/create";
+        public static final String ADD_SEMESTER             = "/school-years/add-semester";
+        public static final String REMOVE_SEMESTER          = "/school-years/remove-semester";
+        public static final String PROMOTION_PLAN           = "/school-years/promotion-plan";
+        public static final String CLOSE_SCHOOL_YEAR        = "/school-years/close";
+        public static final String SCHOOL_YEAR_ARCHIVE      = "/school-years/archive";
+
+        public static final String LINK_PARENT              = "/parents/link";
+        public static final String UNLINK_PARENT            = "/parents/unlink";
+    }
+    public static final class Parent {
+        private Parent() {}
+
+        public static final String PARENT_BASE_PATH = BASE_API + "/parent";
+        public static final String GET_CHILDREN     = "/children";
+        public static final String CHILD_OVERVIEW   = "/child-overview";
+    }
 }

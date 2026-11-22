@@ -79,6 +79,7 @@ public class SecurityConfig {
                         .requestMatchers(LESSON_ALL).permitAll()
                         .requestMatchers(SCHEDULE_ALL).permitAll()
                         .requestMatchers(UPCOMING_EVENTS_ALL).permitAll()
+                        .requestMatchers(PARENT_ALL).permitAll()//hasRole("PARENT"); ParentService checks the parent-child link itself
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(metricsFilter, UsernamePasswordAuthenticationFilter.class)

@@ -207,7 +207,7 @@ public class QuestionBankService {
         bankQuestionRepository.recordUsage(questionId, attempts, correct);
     }
 
-    static String validate(BankQuestionDTO dto) {
+    public static String validate(BankQuestionDTO dto) {
         if (dto == null || dto.getQuestionText() == null || dto.getQuestionText().isBlank()) {
             return "יש להזין את נוסח השאלה";
         }

@@ -53,7 +53,9 @@ export const UserProvider = ({ children }) => {
                     userId: session.userId,
                     role: session.role,
                     username: session.username,
-                    schoolCode: session.schoolCode
+                    schoolCode: session.schoolCode,
+                    impersonatorId: session.impersonatorId,
+                    impersonatorUsername: session.impersonatorUsername
                 });
                 return;
             }

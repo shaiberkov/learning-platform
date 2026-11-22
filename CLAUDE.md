@@ -86,7 +86,8 @@ Four roles, in this order of power: `SYSTEM_ADMIN` → `SCHOOLMANAGER` → `TEAC
 
 ## Security
 
-- Every route group is `permitAll()` in `SecurityConfig.java`, with the intended roles left in comments. The JWT filter still sets the principal, but nothing enforces roles. Do not assume an endpoint is protected; say so when a change relies on it.
+- Roles are enforced per route group in `SecurityConfig.java` (`hasRole` / `hasAnyRole`; `/user/**`, `/validate-token/**`, Swagger and the SSE `/notifications/**` stream stay `permitAll()`). Ownership is checked on each controller method with `@PreAuthorize("@authz....")` (`security/AccessGuard`): a new endpoint that takes a `userId`, `schoolCode`, `teacherId`, `studentId` or `testId` needs a matching check, or any logged-in user can pass someone else's id. A failed check answers 403 with a Hebrew `BasicResponse` (`security/AccessDeniedAdvice`).
+- Sensitive writes (role changes, class and timetable changes, recorded scores, impersonation, feature flags) call `AuditService.record(...)` (`audit_log` table). Per-school feature flags are checked through `security/FeatureFlags` (`@features.enabledForCurrentUser('...')` on an endpoint).
 - Secrets come from the environment (`DB_URL`, `DB_USERNAME`, `DB_PASSWORD`, `GPT_TOKEN`, `SMS_TOKEN`, read through `Environment` / `spring-dotenv` from `backend/.env`). Never put a secret in a committed file: the repository is public and GitHub push protection rejects pushes that contain keys. `application-dev.properties` reads the local MySQL password as `${DB_PASSWORD}` from `backend/.env`. An OpenAI key and that password were scrubbed from the history when the repositories were merged.
 
 ## Caching

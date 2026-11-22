@@ -40,6 +40,11 @@ import PrivacyPolicy from "../pages/footer/PrivacyPolicy.jsx";
 import Faq from "../pages/footer/Faq.jsx";
 import About from "../pages/footer/About.jsx";
 import Footer from "../components/Footer.jsx";
+import AuditLog from "../pages/admin/AuditLog.jsx";
+import SystemHealth from "../pages/admin/SystemHealth.jsx";
+import FeatureFlags from "../pages/admin/FeatureFlags.jsx";
+import Impersonate from "../pages/admin/Impersonate.jsx";
+import ImpersonationBanner from "../components/ImpersonationBanner.jsx";
 export default function AppRoutes() {
 
     const {user}=useContext(UserContext)
@@ -69,6 +74,10 @@ export default function AppRoutes() {
                             <Route path="/school-registration" element={<SchoolRegistration />} />
                             <Route path="/remove-manager-from-school" element={<RemoveSchoolManager />} />
                             <Route path="/send-message" element={<SendMessage />} />
+                            <Route path="/audit-log" element={<AuditLog />} />
+                            <Route path="/system-health" element={<SystemHealth />} />
+                            <Route path="/feature-flags" element={<FeatureFlags />} />
+                            <Route path="/impersonate" element={<Impersonate />} />
                         </>
                     )}
 
@@ -88,6 +97,7 @@ export default function AppRoutes() {
                             <Route path="/assign-teacher-to-class" element={<AsignTeacherToClassRooms />} />
                             <Route path="/assign-student-to-class" element={<AssignStudentToClass />} />
                             <Route path="/classes-weekly-schedule" element={<ClassScheduleViewerForManager />} />
+                            <Route path="/audit-log" element={<AuditLog />} />
                         </>
                     )}
 
@@ -126,6 +136,7 @@ export default function AppRoutes() {
             </main>
 
             <Footer />
+            <ImpersonationBanner />
         </div>
     );
 }

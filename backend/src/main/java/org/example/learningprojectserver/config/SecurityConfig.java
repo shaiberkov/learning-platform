@@ -1,5 +1,7 @@
 package org.example.learningprojectserver.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletResponse;
 import org.example.learningprojectserver.filter.JwtAuthenticationFilter;
 import org.example.learningprojectserver.filter.LoggingFilter;
 import org.example.learningprojectserver.filter.MetricsFilter;
@@ -7,6 +9,8 @@ import org.example.learningprojectserver.filter.CookieCsrfGuardFilter;
 import org.example.learningprojectserver.filter.RateLimitFilter;
 import org.example.learningprojectserver.security.RateLimitProperties;
 import org.example.learningprojectserver.security.RateLimiter;
+import org.example.learningprojectserver.response.BasicResponse;
+import org.example.learningprojectserver.security.AccessDeniedAdvice;
 import org.example.learningprojectserver.service.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.EnableCaching;
@@ -15,6 +19,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.http.MediaType;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -28,6 +34,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.cache.CacheManager;
 
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.example.learningprojectserver.constants.SecurityConstants.SecurityMatcherConstants.*;
@@ -36,7 +44,10 @@ import static org.example.learningprojectserver.constants.SecurityConstants.Secu
 @EnableAsync
 @EnableCaching
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
+
+    private static final ObjectMapper ERROR_WRITER = new ObjectMapper();
 
 
     @Bean
@@ -63,6 +74,14 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((request, response, e) ->
+                                writeError(response, HttpServletResponse.SC_UNAUTHORIZED, "נדרשת התחברות למערכת"))
+                        .accessDeniedHandler((request, response, e) ->
+                                writeError(response, HttpServletResponse.SC_FORBIDDEN, AccessDeniedAdvice.ACCESS_DENIED_MESSAGE))
+                )
+                // URL rules pick the roles; @PreAuthorize on the controllers (security/AccessGuard)
+                // checks that the user, school or test in the request belongs to the caller.
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 V3_API_DOCS,
@@ -70,21 +89,26 @@ public class SecurityConfig {
                                 SWAGGER_UI_HTML
                         ).permitAll()
                         .requestMatchers(USER_ALL).permitAll()
-                        .requestMatchers(VALIDATE_TOKEN_ALL).permitAll()//.hasAnyRole("SYSTEM_ADMIN","TEACHER", "SCHOOLMANAGER","STUDENT")
-                        .requestMatchers(SYSTEM_ADMIN_ALL).permitAll()//.hasRole("SYSTEM_ADMIN")
-                        .requestMatchers(SCHOOL_MANAGER_ALL).permitAll()    //hasAnyRole("SCHOOLMANAGER", "SYSTEM_ADMIN")
-                        .requestMatchers(TEACHER_ALL).permitAll()    //hasAnyRole("TEACHER", "SCHOOLMANAGER", "SYSTEM_ADMIN")//todo  לבודד את ההרשאות
-                        .requestMatchers(STUDENT_ALL).permitAll()//hasRole("STUDENT")//hasAnyRole("STUDENT")
-                        .requestMatchers(ACTIVE_USER_ALL).permitAll()//.hasAnyRole("SYSTEM_ADMIN","TEACHER", "SCHOOLMANAGER","STUDENT")
-                        .requestMatchers(CHAT_ALL).permitAll()//hasAnyRole("SYSTEM_ADMIN","TEACHER", "SCHOOLMANAGER","STUDENT" )
-                        .requestMatchers(QUESTION_ALL).permitAll()//.hasAnyRole("TEACHER", "SCHOOLMANAGER","STUDENT")
-                        .requestMatchers(USER_STATISTIC_ALL).permitAll()//.hasAnyRole("TEACHER", "SCHOOLMANAGER","STUDENT")
-                        .requestMatchers(TEST_ALL).permitAll()//hasAnyRole("STUDENT")
-                        .requestMatchers(MESSAGE_ALL).permitAll()//hasAnyRole("TEACHER", "SCHOOLMANAGER", "SYSTEM_ADMIN")
+                        .requestMatchers(VALIDATE_TOKEN_ALL).permitAll()
+                        // EventSource cannot send the Authorization header, so the SSE stream stays open.
                         .requestMatchers(NOTIFICATION_ALL).permitAll()
-                        .requestMatchers(LESSON_ALL).permitAll()
-                        .requestMatchers(SCHEDULE_ALL).permitAll()
-                        .requestMatchers(UPCOMING_EVENTS_ALL).permitAll()
+                        .requestMatchers(SYSTEM_ADMIN_ALL).hasRole(SYSTEM_ADMIN)
+                        .requestMatchers(SCHOOL_MANAGER_ALL).hasAnyRole(SCHOOL_MANAGER, SYSTEM_ADMIN)
+                        .requestMatchers(TEACHER_TEST_SUBMIT).hasAnyRole(STUDENT, SYSTEM_ADMIN)
+                        .requestMatchers(TEACHER_ALL).hasAnyRole(TEACHER, SCHOOL_MANAGER, SYSTEM_ADMIN)
+                        .requestMatchers(STUDENT_ALL).hasAnyRole(STUDENT, SYSTEM_ADMIN)
+                        .requestMatchers(TEST_ALL).hasAnyRole(STUDENT, TEACHER, SYSTEM_ADMIN)
+                        .requestMatchers(AUDIT_LOG_ALL).hasAnyRole(SCHOOL_MANAGER, SYSTEM_ADMIN)
+                        .requestMatchers(IMPERSONATION_START).hasRole(SYSTEM_ADMIN)
+                        .requestMatchers(IMPERSONATION_ALL).authenticated()
+                        .requestMatchers(ACTIVE_USER_ALL).authenticated()
+                        .requestMatchers(CHAT_ALL).authenticated()
+                        .requestMatchers(QUESTION_ALL).authenticated()
+                        .requestMatchers(USER_STATISTIC_ALL).authenticated()
+                        .requestMatchers(MESSAGE_ALL).authenticated()
+                        .requestMatchers(LESSON_ALL).authenticated()
+                        .requestMatchers(SCHEDULE_ALL).authenticated()
+                        .requestMatchers(UPCOMING_EVENTS_ALL).authenticated()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(metricsFilter, UsernamePasswordAuthenticationFilter.class)
@@ -96,6 +120,13 @@ public class SecurityConfig {
 
 
         return http.build();
+    }
+
+    private static void writeError(HttpServletResponse response, int status, String message) throws IOException {
+        response.setStatus(status);
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        response.getWriter().write(ERROR_WRITER.writeValueAsString(new BasicResponse<>(false, message)));
     }
 
     @Bean

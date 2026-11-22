@@ -96,6 +96,7 @@ function SideBar() {
                         { to: "send-message", label: "שליחת הודעה" },
                     ],
                 },
+                { to: "audit-log", label: "יומן פעולות" },
             ];
         }
 
@@ -106,6 +107,15 @@ function SideBar() {
                 { to: "school-registration", label: "רישום בית ספר" },
                 { to: "remove-manager-from-school", label: "הסרת מנהל בית ספר" },
                 { to: "send-message", label: "שליחת הודעה" },
+                {
+                    label: "כלי ניהול",
+                    children: [
+                        { to: "audit-log", label: "יומן פעולות" },
+                        { to: "system-health", label: "בריאות המערכת" },
+                        { to: "feature-flags", label: "פיצ'רים לפי בית ספר" },
+                        { to: "impersonate", label: "התחזות למשתמש" },
+                    ],
+                },
             ],
             TEACHER: [
                 { to: "teacher-dashboard", label: "מסך בית" },

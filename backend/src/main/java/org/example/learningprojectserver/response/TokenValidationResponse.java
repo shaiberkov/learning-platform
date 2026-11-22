@@ -7,6 +7,8 @@ public class TokenValidationResponse extends BasicResponse{
         private String username;
         private String role;
         private String SchoolCode;
+        private String impersonatorId;
+        private String impersonatorUsername;
 
         public TokenValidationResponse(boolean success, String error, boolean isValid,String username
         ) {
@@ -21,6 +23,22 @@ public class TokenValidationResponse extends BasicResponse{
 
     public void setSchoolCode(String schoolCode) {
         SchoolCode = schoolCode;
+    }
+
+    public String getImpersonatorId() {
+        return impersonatorId;
+    }
+
+    public void setImpersonatorId(String impersonatorId) {
+        this.impersonatorId = impersonatorId;
+    }
+
+    public String getImpersonatorUsername() {
+        return impersonatorUsername;
+    }
+
+    public void setImpersonatorUsername(String impersonatorUsername) {
+        this.impersonatorUsername = impersonatorUsername;
     }
 
     public TokenValidationResponse() {

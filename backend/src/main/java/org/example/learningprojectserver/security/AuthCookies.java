@@ -45,6 +45,11 @@ public class AuthCookies {
         add(response, REFRESH_COOKIE, tokens.refreshToken(), REFRESH_PATH, Duration.ofDays(refreshTtlDays));
     }
 
+    /** Replaces only the access cookie (impersonation); the refresh cookie still belongs to the admin. */
+    public void writeAccessOnly(HttpServletResponse response, String accessToken, Duration maxAge) {
+        add(response, ACCESS_COOKIE, accessToken, ACCESS_PATH, maxAge);
+    }
+
     public void clear(HttpServletResponse response) {
         add(response, ACCESS_COOKIE, "", ACCESS_PATH, Duration.ZERO);
         add(response, REFRESH_COOKIE, "", REFRESH_PATH, Duration.ZERO);

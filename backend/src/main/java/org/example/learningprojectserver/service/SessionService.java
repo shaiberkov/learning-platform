@@ -72,6 +72,10 @@ public class SessionService {
         if (!"SYSTEM_ADMIN".equals(role)) {
             tokenValidationResponse.setSchoolCode(schoolCode);
         }
+        if (isValid) {
+            tokenValidationResponse.setImpersonatorId(jwtService.extractImpersonatorId(cleanToken));
+            tokenValidationResponse.setImpersonatorUsername(jwtService.extractImpersonatorUsername(cleanToken));
+        }
 
         tokenCache.put(cleanToken, tokenValidationResponse);
 

@@ -19,6 +19,9 @@ public class JwtService {
 
     @Value("${auth.access-token.ttl-minutes:15}")
     private long accessTokenTtlMinutes;
+    private static final long IMPERSONATION_EXPIRATION_TIME = 1000 * 60 * 30;
+    private static final String IMPERSONATOR_ID_CLAIM = "impersonatorId";
+    private static final String IMPERSONATOR_USERNAME_CLAIM = "impersonatorUsername";
 
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(SECRET.getBytes());
@@ -43,6 +46,35 @@ public class JwtService {
                 .setExpiration(new Date(System.currentTimeMillis() + accessTokenTtlMinutes * 60_000))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    /**
+     * A token that acts as targetUserId for support, carrying the system admin who started it.
+     * Shorter lived than a login token.
+     */
+    public String generateImpersonationToken(String userId, String username, String role,
+                                             String impersonatorId, String impersonatorUsername) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("role", role);
+        claims.put("username", username);
+        claims.put(IMPERSONATOR_ID_CLAIM, impersonatorId);
+        claims.put(IMPERSONATOR_USERNAME_CLAIM, impersonatorUsername);
+
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(userId)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + IMPERSONATION_EXPIRATION_TIME))
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    public String extractImpersonatorId(String token) {
+        return extractAllClaims(token).get(IMPERSONATOR_ID_CLAIM, String.class);
+    }
+
+    public String extractImpersonatorUsername(String token) {
+        return extractAllClaims(token).get(IMPERSONATOR_USERNAME_CLAIM, String.class);
     }
 
     public Claims extractAllClaims(String token) throws JwtException {

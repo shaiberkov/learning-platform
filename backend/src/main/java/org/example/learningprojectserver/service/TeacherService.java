@@ -7,6 +7,7 @@ import org.example.learningprojectserver.dto.StudentTestStatusDTO;
 import org.example.learningprojectserver.dto.TeacherDTO;
 import org.example.learningprojectserver.dto.TestDTO;
 import org.example.learningprojectserver.entities.*;
+import org.example.learningprojectserver.enums.AuditAction;
 import org.example.learningprojectserver.enums.Role;
 import org.example.learningprojectserver.mappers.*;
 import org.example.learningprojectserver.notification.NotificationType;
@@ -47,6 +48,7 @@ public class TeacherService {
     private final TestService testService;
     private final CacheManager cacheManager;
     private final TeacherRepository teacherRepository;
+    private final AuditService auditService;
 
 
 
@@ -171,6 +173,10 @@ public BasicResponse getTeacherDTO(String teacherId,String schoolCode) {
         }
         cacheManager.getCache("classRoomSchedule")
                 .evict(classRoom.getSchool().getSchoolCode() + "_" + classRoom.getName());
+        auditService.record(AuditAction.LESSON_ADDED, "LESSON", String.valueOf(lesson.getId()), null,
+                "teacher=" + teacherId + ", class=" + classRoom.getName() + ", subject=" + dto.getSubject()
+                        + ", " + dayOfWeek + " " + startTime + "-" + endTime,
+                classRoom.getSchool().getSchoolCode());
 
         return new BasicResponse(true, "השיעור נוסף בהצלחה");
     }

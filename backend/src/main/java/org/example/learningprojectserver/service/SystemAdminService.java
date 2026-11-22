@@ -6,6 +6,7 @@ import org.example.learningprojectserver.dto.SchoolDTO;
 import org.example.learningprojectserver.entities.SchoolEntity;
 import org.example.learningprojectserver.entities.SchoolManagerEntity;
 import org.example.learningprojectserver.entities.UserEntity;
+import org.example.learningprojectserver.enums.AuditAction;
 import org.example.learningprojectserver.enums.Role;
 import org.example.learningprojectserver.mappers.Mapper;
 import org.example.learningprojectserver.mappers.SchoolEntityToSchoolDTOMapper;
@@ -29,6 +30,7 @@ private final UserRepository userRepository;
 private final SchoolRepository schoolRepository;
 private final UserMapperFactory userMapperFactory;
 private final SchoolEntityToSchoolDTOMapper schoolEntityToSchoolDTOMapper;
+private final AuditService auditService;
 
 
     @CacheEvict(value = "allSchools", allEntries = true)
@@ -45,6 +47,8 @@ private final SchoolEntityToSchoolDTOMapper schoolEntityToSchoolDTOMapper;
 
         userRepository.delete(user);
         userRepository.save(schoolManager);
+        auditService.record(AuditAction.USER_PROMOTED_TO_MANAGER, "USER", userId,
+                "role=" + Role.STUDENT, "role=" + Role.SCHOOLMANAGER, null);
 
         return new BasicResponse(true, "המשתמש " + schoolManager.getUsername() + " שוייך בהצלחה כמנהל בית ספר");
     }
@@ -95,6 +99,8 @@ private final SchoolEntityToSchoolDTOMapper schoolEntityToSchoolDTOMapper;
 
         userRepository.save(schoolManager);
         schoolRepository.save(school);
+        auditService.record(AuditAction.MANAGER_ASSIGNED_TO_SCHOOL, "USER", userId,
+                "school=null", "school=" + schoolCode, schoolCode);
 
         return new BasicResponse(true, "המשתמש " + schoolManager.getUsername() + " מונה בהצלחה כמנהל של בית הספר " + school.getSchoolName());
     }
@@ -118,6 +124,8 @@ private final SchoolEntityToSchoolDTOMapper schoolEntityToSchoolDTOMapper;
 
         userRepository.save(schoolManager);
         schoolRepository.save(school);
+        auditService.record(AuditAction.MANAGER_REMOVED_FROM_SCHOOL, "USER", userId,
+                "school=" + school.getSchoolCode(), "school=null", school.getSchoolCode());
 
         return new BasicResponse(true, "המנהל " + schoolManager.getUsername() + " הוסר בהצלחה מהשיוך לבית הספר " + school.getSchoolName());
     }

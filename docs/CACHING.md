@@ -29,6 +29,13 @@ Engagement (XP, streaks, badges, class challenges), study plans, lesson pages an
 
 Not cached on purpose: the school dashboard (`SchoolAnalyticsService`), the timetable builder's lesson list, school years and their archive, and the parent screens (`ParentService`) read MySQL on every request. Messages to parents go through `MessageService.sendMessage`, which already evicts `receivedMessages` per recipient.
 
+<!-- [s04] -->
+Not cached on purpose [s04]: flashcards, their per-student SM-2 schedule and the study notebook (`FlashcardService`, `FlashcardGenerationService`, `StudyNoteService`) read MySQL on every request; every review or note changes them. AI flashcard generation from a pasted summary goes through `AiGateway.complete(..., cacheable=true)`, so an identical summary is served from `aiPromptCache`; photos are never cached.
+[s06] Not cached on purpose: "explain it to me" (`FeynmanService`, table `feynman_explanation`) and the mistake-type diagnosis (`MistakeDiagnosisService`, columns on `review_item`) read MySQL on every request; each submission or AI analysis changes them. Their AI calls use `aiPromptCache` like the other one-shot features (an identical explanation or mistake gets the same verdict for 24 hours).
+<!-- [s07] -->
+Not cached on purpose [s07]: the "why does it matter to me?" cards (`RealWorldService`: built-in texts are static in `RealWorldCatalog`, school overrides in `real_world_override` are one indexed query) and the simulation exploration records (`SimulationService`, `simulation_exploration`) read MySQL on every request, so their writes have nothing to evict.
+[s09] Not cached on purpose: story quests (`QuestService`: `student_quest_progress`, `student_cosmetic`) and the portfolio (`PortfolioService`: `portfolio_project`, `portfolio_share`, plus reads of badges, engagement, archived years and teacher-test scores) read MySQL on every request. Every quest answer changes the progress, and a revoked share link must stop working at once, so the public page `/portfolio-public/{token}` is also uncached (and sent with `Cache-Control: no-store`). Quest XP and the quest badge go through `EngagementService.recordActivity`, which touches no cache. No in-memory state: the pending quest question and its answer are stored in `student_quest_progress`.
+
 ## 2. Hand-rolled in-memory maps
 
 Not Spring caches: plain `ConcurrentHashMap`s in singleton beans. Lost on restart, never shared between instances.
@@ -52,6 +59,10 @@ Refresh tokens are not cached: they live in the `refresh_tokens` table (hashed) 
 
 Not cached on purpose (read from MySQL on every request): the notification center (`NotificationCenterService`: list, unread count, preferences), paged inbox and sent-message read receipts, message threads and attachments, the `.ics` calendar feed (`CalendarService`) and global search (`SearchService`).
 
+<!-- [s01] study rooms -->
+**Study rooms [s01].** `StudyRoomService.presence` (who is in each room, with their task and last heartbeat) and `StudyRoomService.chats` (break-chat messages, at most 100 per room) are in-memory maps, lost on restart and per process. A member who sends no heartbeat for 15 seconds drops out; the chat shows only messages of the current break; both maps are cleared for a room when it is closed (empty and idle for 2 hours, checked when the school's rooms are listed). The rooms themselves (`study_room`) and focus sessions (`focus_session`) are read from MySQL on every request, and the focus insights are computed per request from `test_answer_record`, `focus_session` and `student_daily_activity`; no Ehcache cache is involved.
+<!-- [s01] end -->
+
 ## 3. Known gaps
 
 Recorded, not fixed. Fix one only when the task is about it.
@@ -62,6 +73,13 @@ Recorded, not fixed. Fix one only when the task is about it.
 4. **Single instance only.** Everything above is per process (a live quiz too: a restart ends every running quiz). A second instance on Render would serve different data from each and break SSE delivery.
 
 Not cached on purpose: the question bank, gradebooks and attendance (`QuestionBankService`, `GradebookService`, `AttendanceService`) read MySQL on every request, so their writes have nothing to evict.
+
+<!-- [s02] -->
+Not cached on purpose [s02]: the class forum and the student-authored questions (`ClassForumService`, `PeerQuestionService`; tables `class_forum_thread`, `class_forum_post`, `peer_question`) read MySQL on every request because the screens poll for new answers. Approving a student question adds a `bank_question` row through `QuestionBankService.addQuestion`, and classmates' practice answers update its `attempts` / `correct_attempts`; the bank is not cached, so nothing is evicted.
+[s03] Not cached on purpose: duels (`DuelService`, polled every 1.5 s by both players, one row per poll) and the daily challenge (`DailyChallengeService`) read MySQL on every request, so their writes have nothing to evict. Neither keeps in-memory state.
+[s05] Not cached either: summary sheets and study podcasts (`StudySummaryService`, tables `study_sheet`, `study_podcast`, `study_podcast_audio`) read MySQL on every request, and their AI calls skip `aiPromptCache` (each sheet or script is built from the student's current mistakes). A podcast's AI voice recording is stored once in `study_podcast_audio` and served from there, never regenerated.
+[s08] Not cached on purpose: past-exam simulations and the grade-target calculator (`ExamSimulationService`, `GradeTargetService`) read MySQL on every request; the calculator reads gradebooks through `GradebookService`, which is not cached either.
+[s10] Not cached on purpose: the reflection journal and the pre-exam check-in (`ReflectionService`, `ExamCheckinService`, tables `student_reflection`, `student_mood_checkin`, `student_wellbeing_consent`) read MySQL on every request; goal progress is computed on read from `student_daily_activity` and the `goal_progress` counter, so nothing needs evicting.
 
 ## Checklist for a change that touches data
 

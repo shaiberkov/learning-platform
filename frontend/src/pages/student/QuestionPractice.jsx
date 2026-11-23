@@ -11,10 +11,12 @@ import {
 } from "../../constants/pages.constants.js";
 import {BEARER_PREFIX} from "../../constants/shared.constant.js";
 import HintPanel from "../../features/adaptive/HintPanel.jsx";
+import NoteButton from "../../features/studyTools/NoteButton.jsx"; // [s04]
 import {skillColor} from "../../features/adaptive/adaptiveApi.js";
 import {useTranslation} from "react-i18next";
 import useOnlineStatus from "../../offline/useOnlineStatus.js";
 import {countQuestions, exerciseKey, queueAnswer, saveQuestions, takeQuestion} from "../../offline/practiceStore.js";
+import RealWorldCard from "../../features/realworld/RealWorldCard.jsx";
 
 const OFFLINE_BATCH = 10;
 
@@ -295,6 +297,14 @@ function QuestionPractice(){
                         <HintPanel key={exercise.id} userId={user.userId} questionId={exercise.id} />
                     )}
 
+                    {/* [s04] note on this question in the personal study notebook */}
+                    {exercise?.id && (
+                        <NoteButton target={{
+                            targetType: "QUESTION", targetId: exercise.id, targetTitle: exercise.questionText,
+                            subject: subjectName, topic: topicName, subTopic: exerciseName,
+                        }} />
+                    )}
+
                     {offlineNotice && <p className="notice" role="status">{offlineNotice}</p>}
 
                     <div className="pt-4 border-t border-dashed border-line flex flex-wrap items-center justify-between gap-2">
@@ -336,6 +346,8 @@ function QuestionPractice(){
                     />
                 </div>
             </section>
+
+            <RealWorldCard topic={topicName || exerciseName} className="mt-5" />
 
             <button
                 onClick={toggleChat}

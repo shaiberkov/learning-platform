@@ -390,4 +390,181 @@ public final class ControllerConstants {
         public static final String GLOBAL = "/global";
         public static final String STUDENTS_PAGE = "/students-page";
     }
+    // [s01] Study rooms and focus mode, under /student/** (STUDENT_ALL in SecurityConfig).
+    public static final class StudyRooms {
+        private StudyRooms() {}
+
+        public static final String STUDY_ROOMS_BASE_PATH = BASE_API + "/student/study-rooms";
+        public static final String LIST_ROOMS            = "/list";
+        public static final String CREATE_ROOM           = "/create";
+        public static final String ROOM_HEARTBEAT        = "/heartbeat";
+        public static final String LEAVE_ROOM            = "/leave";
+        public static final String ROOM_CHAT             = "/chat";
+    }
+    // [s01] end
+    // [s01] Focus mode and study-habit insights, under /student/**.
+    public static final class Focus {
+        private Focus() {}
+
+        public static final String FOCUS_BASE_PATH = BASE_API + "/student/focus";
+        public static final String RECORD_SESSION  = "/sessions/record";
+        public static final String INSIGHTS        = "/insights";
+    }
+    // [s01] end
+    // [s02] Class forum (questions with teacher-approved answers) and student-authored practice questions.
+    public static final class ClassCommunity {
+        private ClassCommunity() {}
+
+        public static final String CLASS_COMMUNITY_BASE_PATH = BASE_API + "/class-community";
+        public static final String FORUM_CLASSES             = "/forum/classes";
+        public static final String FORUM_THREADS             = "/forum/threads";
+        public static final String FORUM_SIMILAR             = "/forum/similar";
+        public static final String FORUM_THREAD              = "/forum/thread";
+        public static final String FORUM_CREATE_THREAD       = "/forum/threads/create";
+        public static final String FORUM_REPLY               = "/forum/reply";
+        public static final String FORUM_APPROVE_POST        = "/forum/approve";
+        public static final String FORUM_DELETE_POST         = "/forum/post";
+        public static final String FORUM_DELETE_THREAD       = "/forum/thread/delete";
+        public static final String PEER_SUBMIT               = "/peer-questions/submit";
+        public static final String PEER_MINE                 = "/peer-questions/mine";
+        public static final String PEER_PRACTICE             = "/peer-questions/practice";
+        public static final String PEER_ANSWER               = "/peer-questions/practice/answer";
+        public static final String PEER_REVIEW_QUEUE         = "/peer-questions/review";
+        public static final String PEER_APPROVE              = "/peer-questions/approve";
+        public static final String PEER_REJECT               = "/peer-questions/reject";
+    }
+    // [s03] 1-on-1 duels and the daily challenge (student side, under the STUDENT route group).
+    public static final class Duel {
+        private Duel() {}
+
+        public static final String DUEL_BASE_PATH = BASE_API + "/student/duels";
+        public static final String DUEL_TOPICS     = "/topics";
+        public static final String DUEL_OPPONENTS  = "/opponents";
+        public static final String DUEL_LIST       = "/mine";
+        public static final String DUEL_INVITE     = "/invite";
+        public static final String DUEL_STATE      = "/{duelId}";
+        public static final String DUEL_ACCEPT     = "/{duelId}/accept";
+        public static final String DUEL_DECLINE    = "/{duelId}/decline";
+        public static final String DUEL_ANSWER     = "/{duelId}/answer";
+        public static final String DUEL_FORFEIT    = "/{duelId}/forfeit";
+    }
+    public static final class DailyChallenge {
+        private DailyChallenge() {}
+
+        public static final String DAILY_CHALLENGE_BASE_PATH = BASE_API + "/student/daily-challenge";
+        public static final String DAILY_CHALLENGE_TODAY     = "/today";
+        public static final String DAILY_CHALLENGE_START     = "/start";
+        public static final String DAILY_CHALLENGE_ANSWER    = "/answer";
+    }
+    // [s04] Flashcards (AI from a photo or summary, shared with the class) and the personal study notebook.
+    // Under /student/** (STUDENT, SYSTEM_ADMIN); the student always comes from the access token.
+    public static final class StudyTools {
+        private StudyTools() {}
+
+        public static final String STUDY_TOOLS_BASE_PATH  = BASE_API + "/student";
+        public static final String FLASHCARDS             = "/flashcards";
+        public static final String FLASHCARDS_DUE         = "/flashcards/due";
+        public static final String FLASHCARDS_SUMMARY     = "/flashcards/summary";
+        public static final String FLASHCARDS_CLASS       = "/flashcards/class";
+        public static final String FLASHCARDS_GENERATE    = "/flashcards/generate";
+        public static final String FLASHCARD_BY_ID        = "/flashcards/{cardId}";
+        public static final String FLASHCARD_SHARE        = "/flashcards/{cardId}/share";
+        public static final String FLASHCARD_ADD_TO_DECK  = "/flashcards/{cardId}/add-to-deck";
+        public static final String FLASHCARD_REVIEW       = "/flashcards/{cardId}/review";
+        public static final String NOTES                  = "/notes";
+        public static final String NOTES_TOPICS           = "/notes/topics";
+        public static final String NOTE_BY_ID             = "/notes/{noteId}";
+    }
+    // [s05] Study summary: personal summary sheet and study podcast. Under /student/** (STUDENT, SYSTEM_ADMIN).
+    public static final class StudySummary {
+        private StudySummary() {}
+
+        public static final String STUDY_SUMMARY_BASE_PATH = BASE_API + "/student/study-summary";
+        public static final String STUDY_OPTIONS            = "/options";
+        public static final String STUDY_SHEETS             = "/sheets";
+        public static final String STUDY_SHEET              = "/sheets/{sheetId}";
+        public static final String STUDY_PODCASTS           = "/podcasts";
+        public static final String STUDY_PODCAST            = "/podcasts/{podcastId}";
+        public static final String STUDY_PODCAST_AUDIO      = "/podcasts/{podcastId}/audio";
+    }
+    // [s06] "Explain it to me" (Feynman) and mistake-type diagnosis. Student paths under /student (STUDENT_ALL), teacher paths under /teacher (TEACHER_ALL).
+    public static final class Diagnosis {
+        private Diagnosis() {}
+
+        public static final String STUDENT_DIAGNOSIS_BASE_PATH = BASE_API + "/student";
+        public static final String FEYNMAN_PROMPTS             = "/feynman/prompts";
+        public static final String FEYNMAN_EXPLANATIONS        = "/feynman/explanations";
+        public static final String MISTAKE_DIAGNOSIS           = "/mistake-diagnosis";
+        public static final String MISTAKE_SELF_CHECK          = "/mistake-diagnosis/{itemId}/self-check";
+        public static final String MISTAKE_AI_ANALYSIS         = "/mistake-diagnosis/{itemId}/ai";
+
+        public static final String TEACHER_DIAGNOSIS_BASE_PATH = BASE_API + "/teacher";
+        public static final String CLASS_MISTAKE_TYPES         = "/class-mistake-types";
+        public static final String CLASS_FEYNMAN               = "/class-feynman";
+    }
+    // [s07] Real-world connection cards and the interactive simulations gallery.
+    public static final class RealWorld {
+        private RealWorld() {}
+
+        public static final String REAL_WORLD_BASE_PATH = BASE_API + "/real-world";
+        public static final String TOPICS               = "/topics";
+        public static final String TOPIC                = "/topic";
+        public static final String SAVE_OVERRIDE        = "/override";
+        public static final String RESET_OVERRIDE       = "/override/reset";
+        public static final String SIMULATIONS_EXPLORED = "/simulations/explored";
+        public static final String RECORD_SIMULATION    = "/simulations/record";
+    }
+    // [s08] Past-exam simulations and the "what do I need?" grade calculator. Served under /student (STUDENT_ALL).
+    public static final class ExamSimulation {
+        private ExamSimulation() {}
+
+        public static final String EXAM_SIM_BASE_PATH = BASE_API + "/student";
+        public static final String SIM_EXAMS          = "/exam-sim/exams";
+        public static final String SIM_PREDICTION     = "/exam-sim/prediction";
+        public static final String SIM_START          = "/exam-sim/start";
+        public static final String SIM_SAVE           = "/exam-sim/save";
+        public static final String SIM_SUBMIT         = "/exam-sim/submit";
+        public static final String SIM_RESULT         = "/exam-sim/result";
+        public static final String GRADE_TARGET       = "/grade-target";
+    }
+    // [s09] Story quests and cosmetic rewards (under /student/**: STUDENT, SYSTEM_ADMIN).
+    public static final class Quest {
+        private Quest() {}
+
+        public static final String QUEST_BASE_PATH = BASE_API + "/student/quests";
+        public static final String LIST_QUESTS     = "/list";
+        public static final String QUEST_STATE     = "/state";
+        public static final String START_QUEST     = "/start";
+        public static final String ANSWER_QUEST    = "/answer";
+        public static final String COSMETICS       = "/cosmetics";
+        public static final String EQUIP_COSMETIC  = "/cosmetics/equip";
+    }
+    // [s09] Personal portfolio (under /student/**) and its read-only public share page.
+    public static final class Portfolio {
+        private Portfolio() {}
+
+        public static final String PORTFOLIO_BASE_PATH = BASE_API + "/student/portfolio";
+        public static final String MY_PORTFOLIO        = "/me";
+        public static final String ADD_PROJECT         = "/projects/add";
+        public static final String DELETE_PROJECT      = "/projects/delete";
+        public static final String CREATE_SHARE        = "/share/create";
+        public static final String REVOKE_SHARE        = "/share/revoke";
+
+        public static final String PORTFOLIO_PUBLIC_BASE_PATH = BASE_API + "/portfolio-public";
+        public static final String PUBLIC_PORTFOLIO           = "/{token}";
+    }
+    // [s10] Reflection journal and pre-exam check-in. Under /student/**, so the STUDENT_ALL rule applies.
+    public static final class Wellbeing {
+        private Wellbeing() {}
+
+        public static final String WELLBEING_BASE_PATH  = BASE_API + "/student/wellbeing";
+        public static final String WELLBEING_PROMPT     = "/prompt";
+        public static final String REFLECTION_CURRENT   = "/reflection/current";
+        public static final String REFLECTION_HISTORY   = "/reflection/history";
+        public static final String REFLECTION_SAVE      = "/reflection/save";
+        public static final String REFLECTION_MARK      = "/reflection/mark-achieved";
+        public static final String CHECKIN_STATUS       = "/checkin/status";
+        public static final String CHECKIN_SUBMIT       = "/checkin/submit";
+        public static final String CHECKIN_CONSENT      = "/checkin/consent";
+    }
 }

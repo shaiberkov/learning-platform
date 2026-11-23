@@ -137,6 +137,12 @@ public class SecurityConfig {
                         .requestMatchers(PARENT_ALL).hasAnyRole(PARENT, SYSTEM_ADMIN)
                         .requestMatchers(CALENDAR_ALL).authenticated()
                         .requestMatchers(SEARCH_ALL).authenticated()
+                        // [s02] class forum and student-authored questions
+                        .requestMatchers(CLASS_COMMUNITY_ALL).hasAnyRole(STUDENT, TEACHER, SYSTEM_ADMIN)
+                        // [s07] real-world cards and simulations; editing and simulation records also check the role per method.
+                        .requestMatchers(REAL_WORLD_ALL).hasAnyRole(STUDENT, TEACHER, SYSTEM_ADMIN)
+                        // [s09] Public, read-only shared portfolio: only GET /portfolio-public/{token}.
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, PORTFOLIO_PUBLIC_VIEW).permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(metricsFilter, UsernamePasswordAuthenticationFilter.class)

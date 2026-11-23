@@ -59,7 +59,9 @@ export const UserProvider = ({ children }) => {
 
 
     useEffect(() => {
-        const isPublicPage = PUBLIC_PATHS.includes(location.pathname);
+        const isPublicPage = PUBLIC_PATHS.includes(location.pathname)
+            // [s09] a shared portfolio opens with only its token in the URL
+            || location.pathname.startsWith('/shared-portfolio/');
 
         // The session lives in httpOnly cookies the page cannot read, so ask the server.
         const fetchSession = async () => {

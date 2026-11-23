@@ -1,10 +1,8 @@
 package org.example.learningprojectserver.service.adaptive;
 
-import org.example.learningprojectserver.entities.ReviewItemEntity;
-
 import java.time.LocalDate;
 
-/** SuperMemo-2 scheduling for the mistakes notebook. */
+/** SuperMemo-2 scheduling for the mistakes notebook and the flashcards. */
 public final class Sm2Scheduler {
 
     public static final double INITIAL_EASINESS = 2.5;
@@ -17,7 +15,7 @@ public final class Sm2Scheduler {
     private Sm2Scheduler() {}
 
     /** Puts a new mistake, or a known one answered wrong again, at the start of the schedule, due today. */
-    public static void resetAsNewMistake(ReviewItemEntity item, LocalDate today) {
+    public static void resetAsNewMistake(Sm2Schedulable item, LocalDate today) {
         if (item.getId() != null) {
             item.setLapses(item.getLapses() + 1);
         } else {
@@ -29,7 +27,7 @@ public final class Sm2Scheduler {
     }
 
     /** Applies one review with SM-2 quality 0-5 and moves the due date. */
-    public static void review(ReviewItemEntity item, int quality, LocalDate today) {
+    public static void review(Sm2Schedulable item, int quality, LocalDate today) {
         int q = Math.max(0, Math.min(5, quality));
         if (q >= 3) {
             int interval;

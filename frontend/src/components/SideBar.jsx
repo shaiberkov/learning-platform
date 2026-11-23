@@ -197,6 +197,13 @@ function SideBar() {
                 { to: "attendance", label: "נוכחות" },
                 { to: "message-parents", label: "הודעה להורים" },
                 { to: "send-message", label: t("nav.sendMessage") },
+                // [s02] class forum and student-authored questions
+                { to: "class-forum", label: "פורום הכיתה" },
+                { to: "peer-question-review", label: "שאלות שתלמידים כתבו" },
+                // [s06] class mistake types and Feynman explanations
+                { to: "class-diagnosis", label: "אבחון טעויות והסברים" },
+                // [s07] real-world card editor
+                { to: "real-world-editor", label: "למה זה חשוב? (עריכה)" },
                 ...common,
             ],
             PARENT: [
@@ -219,6 +226,36 @@ function SideBar() {
                     { to: "ai-tutor", label: "מורה-עזר AI" },
                     { to: "open-questions", label: "שאלות פתוחות" },
                     { to: "live-quiz", label: "חידון בכיתה" },
+                    // [s01] Study rooms and focus mode
+                    { to: "study-rooms", label: "חדרי למידה" },
+                    { to: "focus-mode", label: "מצב ריכוז" },
+                    // [s01] end
+                    // [s02] class forum and student-authored questions
+                    { to: "class-forum", label: "פורום הכיתה" },
+                    { to: "peer-questions", label: "שאלות מהכיתה" },
+                    // [s03] Duels and the daily challenge
+                    { to: "duels", label: "דו-קרבות" },
+                    { to: "daily-challenge", label: "אתגר יומי" },
+                    // [s04]
+                    { to: "flashcards", label: "כרטיסיות" },
+                    { to: "study-notebook", label: "המחברת שלי" },
+                    // [s05] Summary sheet and study podcast.
+                    { to: "study-summary-sheet", label: "דף סיכום למבחן" },
+                    { to: "study-podcast", label: "סיכום קולי" },
+                    // [s06] "Explain it to me" (Feynman) and mistake-type diagnosis
+                    { to: "explain-it", label: "תסביר לי" },
+                    { to: "mistake-diagnosis", label: "אבחון טעויות" },
+                    // [s07] simulations gallery
+                    { to: "simulations", label: "סימולציות" },
+                    // [s08] Past-exam simulations and the "what do I need?" calculator
+                    { to: "exam-simulations", label: "סימולציית בגרות" },
+                    { to: "grade-target", label: "מה אני צריך?" },
+                    // [s09] quests and portfolio
+                    { to: "quests", label: "מסעות למידה" },
+                    { to: "portfolio", label: "הפורטפוליו שלי" },
+                    // [s10] Reflection journal and pre-exam check-in
+                    { to: "reflection", label: "יומן רפלקציה" },
+                    { to: "exam-checkin", label: "צ'ק-אין לפני מבחן" },
                 ] : []),
                 { to: "accessibility-settings", label: "הגדרות נגישות" },
                 ...common,

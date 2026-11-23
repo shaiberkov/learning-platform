@@ -772,3 +772,224 @@ export const {
     GET_CHILDREN,
     CHILD_OVERVIEW,
 } = ParentPaths;
+
+/* [s01] Study rooms and focus mode. Mirrors ControllerConstants.StudyRooms and ControllerConstants.Focus. */
+export const StudyRoomPaths = {
+    STUDY_ROOMS_BASE_PATH: `${API_BASE_URL}${BASE_API}/student/study-rooms`,
+    STUDY_ROOMS_LIST: '/list',
+    STUDY_ROOMS_CREATE: '/create',
+    STUDY_ROOMS_HEARTBEAT: '/heartbeat',
+    STUDY_ROOMS_LEAVE: '/leave',
+    STUDY_ROOMS_CHAT: '/chat',
+    FOCUS_BASE_PATH: `${API_BASE_URL}${BASE_API}/student/focus`,
+    FOCUS_RECORD_SESSION: '/sessions/record',
+    FOCUS_INSIGHTS: '/insights',
+};
+export const {
+    STUDY_ROOMS_BASE_PATH,
+    STUDY_ROOMS_LIST,
+    STUDY_ROOMS_CREATE,
+    STUDY_ROOMS_HEARTBEAT,
+    STUDY_ROOMS_LEAVE,
+    STUDY_ROOMS_CHAT,
+    FOCUS_BASE_PATH,
+    FOCUS_RECORD_SESSION,
+    FOCUS_INSIGHTS,
+} = StudyRoomPaths;
+/* [s01] end */
+/* [s02] Class forum and student-authored questions. Mirrors ControllerConstants.ClassCommunity. */
+export const ClassCommunityPaths = {
+    CLASS_COMMUNITY_BASE_PATH: `${API_BASE_URL}${BASE_API}/class-community`,
+    FORUM_CLASSES: '/forum/classes',
+    FORUM_THREADS: '/forum/threads',
+    FORUM_SIMILAR: '/forum/similar',
+    FORUM_THREAD: '/forum/thread',
+    FORUM_CREATE_THREAD: '/forum/threads/create',
+    FORUM_REPLY: '/forum/reply',
+    FORUM_APPROVE_POST: '/forum/approve',
+    FORUM_DELETE_POST: '/forum/post',
+    FORUM_DELETE_THREAD: '/forum/thread/delete',
+    PEER_SUBMIT: '/peer-questions/submit',
+    PEER_MINE: '/peer-questions/mine',
+    PEER_PRACTICE: '/peer-questions/practice',
+    PEER_ANSWER: '/peer-questions/practice/answer',
+    PEER_REVIEW_QUEUE: '/peer-questions/review',
+    PEER_APPROVE: '/peer-questions/approve',
+    PEER_REJECT: '/peer-questions/reject',
+};
+/* [s03] Duels and the daily challenge. Mirrors ControllerConstants.Duel and ControllerConstants.DailyChallenge. */
+export const DuelPaths = {
+    DUEL_BASE_PATH: `${API_BASE_URL}${BASE_API}/student/duels`,
+    DUEL_TOPICS: '/topics',
+    DUEL_OPPONENTS: '/opponents',
+    DUEL_LIST: '/mine',
+    DUEL_INVITE: '/invite',
+    // DUEL_STATE is `/{duelId}`; these follow it as `/{duelId}<action>` (see duelPath).
+    DUEL_ACCEPT: '/accept',
+    DUEL_DECLINE: '/decline',
+    DUEL_ANSWER: '/answer',
+    DUEL_FORFEIT: '/forfeit',
+};
+export const {
+    DUEL_BASE_PATH, DUEL_TOPICS, DUEL_OPPONENTS, DUEL_LIST, DUEL_INVITE,
+    DUEL_ACCEPT, DUEL_DECLINE, DUEL_ANSWER, DUEL_FORFEIT,
+} = DuelPaths;
+/** `/{duelId}` (DUEL_STATE), or `/{duelId}` followed by one of DUEL_ACCEPT, DUEL_DECLINE, DUEL_ANSWER, DUEL_FORFEIT. */
+export const duelPath = (duelId, action = '') => `${DUEL_BASE_PATH}/${duelId}${action}`;
+export const DailyChallengePaths = {
+    DAILY_CHALLENGE_BASE_PATH: `${API_BASE_URL}${BASE_API}/student/daily-challenge`,
+    DAILY_CHALLENGE_TODAY: '/today',
+    DAILY_CHALLENGE_START: '/start',
+    DAILY_CHALLENGE_ANSWER: '/answer',
+};
+export const {
+    DAILY_CHALLENGE_BASE_PATH,
+    DAILY_CHALLENGE_TODAY,
+    DAILY_CHALLENGE_START,
+    DAILY_CHALLENGE_ANSWER,
+} = DailyChallengePaths;
+/* [s04] Flashcards and the study notebook. Mirrors ControllerConstants.StudyTools (under /student). */
+export const StudyToolsPaths = {
+    STUDY_TOOLS_BASE_PATH: `${API_BASE_URL}${BASE_API}/student`,
+    FLASHCARDS: '/flashcards',
+    FLASHCARDS_DUE: '/flashcards/due',
+    FLASHCARDS_SUMMARY: '/flashcards/summary',
+    FLASHCARDS_CLASS: '/flashcards/class',
+    FLASHCARDS_GENERATE: '/flashcards/generate',
+    NOTES: '/notes',
+    NOTES_TOPICS: '/notes/topics',
+};
+export const {
+    STUDY_TOOLS_BASE_PATH,
+    FLASHCARDS,
+    FLASHCARDS_DUE,
+    FLASHCARDS_SUMMARY,
+    FLASHCARDS_CLASS,
+    FLASHCARDS_GENERATE,
+    NOTES,
+    NOTES_TOPICS,
+} = StudyToolsPaths;
+/** Paths with an id: /flashcards/{cardId}, /flashcards/{cardId}/share|add-to-deck|review, /notes/{noteId}. */
+export const flashcardPath = (cardId, action = "") => `${FLASHCARDS}/${cardId}${action ? `/${action}` : ""}`;
+export const notePath = (noteId) => `${NOTES}/${noteId}`;
+/* [s05] Study summary: summary sheet and study podcast. Mirrors ControllerConstants.StudySummary. */
+export const StudySummaryPaths = {
+    STUDY_SUMMARY_BASE_PATH: `${API_BASE_URL}${BASE_API}/student/study-summary`,
+    STUDY_OPTIONS: '/options',
+    STUDY_SHEETS: '/sheets',
+    STUDY_PODCASTS: '/podcasts',
+};
+export const {
+    STUDY_SUMMARY_BASE_PATH,
+    STUDY_OPTIONS,
+    STUDY_SHEETS,
+    STUDY_PODCASTS,
+} = StudySummaryPaths;
+// [s06] "Explain it to me" (Feynman) and mistake-type diagnosis. Mirrors ControllerConstants.Diagnosis.
+// Paths with an id: `${MISTAKE_DIAGNOSIS}/${itemId}/self-check` and `${MISTAKE_DIAGNOSIS}/${itemId}/ai`.
+export const DiagnosisPaths = {
+    STUDENT_DIAGNOSIS_BASE_PATH: `${API_BASE_URL}${BASE_API}/student`,
+    FEYNMAN_PROMPTS: '/feynman/prompts',
+    FEYNMAN_EXPLANATIONS: '/feynman/explanations',
+    MISTAKE_DIAGNOSIS: '/mistake-diagnosis',
+    TEACHER_DIAGNOSIS_BASE_PATH: `${API_BASE_URL}${BASE_API}/teacher`,
+    CLASS_MISTAKE_TYPES: '/class-mistake-types',
+    CLASS_FEYNMAN: '/class-feynman',
+};
+export const {
+    STUDENT_DIAGNOSIS_BASE_PATH,
+    FEYNMAN_PROMPTS,
+    FEYNMAN_EXPLANATIONS,
+    MISTAKE_DIAGNOSIS,
+    TEACHER_DIAGNOSIS_BASE_PATH,
+    CLASS_MISTAKE_TYPES,
+    CLASS_FEYNMAN,
+} = DiagnosisPaths;
+/* [s07] Real-world cards and the simulations gallery. Mirrors ControllerConstants.RealWorld.
+   Exported as one object only, so its short path names do not clash with other exports. */
+export const RealWorldPaths = {
+    REAL_WORLD_BASE_PATH: `${API_BASE_URL}${BASE_API}/real-world`,
+    TOPICS: '/topics',
+    TOPIC: '/topic',
+    SAVE_OVERRIDE: '/override',
+    RESET_OVERRIDE: '/override/reset',
+    SIMULATIONS_EXPLORED: '/simulations/explored',
+    RECORD_SIMULATION: '/simulations/record',
+};
+/* [s08] Past-exam simulations and the "what do I need?" calculator. Mirrors ControllerConstants.ExamSimulation (under /student). */
+export const ExamSimulationPaths = {
+    EXAM_SIM_BASE_PATH: `${API_BASE_URL}${BASE_API}/student`,
+    SIM_EXAMS: '/exam-sim/exams',
+    SIM_PREDICTION: '/exam-sim/prediction',
+    SIM_START: '/exam-sim/start',
+    SIM_SAVE: '/exam-sim/save',
+    SIM_SUBMIT: '/exam-sim/submit',
+    SIM_RESULT: '/exam-sim/result',
+    GRADE_TARGET: '/grade-target',
+};
+export const {
+    EXAM_SIM_BASE_PATH,
+    SIM_EXAMS,
+    SIM_PREDICTION,
+    SIM_START,
+    SIM_SAVE,
+    SIM_SUBMIT,
+    SIM_RESULT,
+    GRADE_TARGET,
+} = ExamSimulationPaths;
+/* [s09] Story quests and portfolio. Mirrors ControllerConstants.Quest and ControllerConstants.Portfolio. */
+export const QuestPortfolioPaths = {
+    QUEST_BASE_PATH: `${API_BASE_URL}${BASE_API}/student/quests`,
+    LIST_QUESTS: '/list',
+    QUEST_STATE: '/state',
+    START_QUEST: '/start',
+    ANSWER_QUEST: '/answer',
+    QUEST_COSMETICS: '/cosmetics',
+    EQUIP_COSMETIC: '/cosmetics/equip',
+    PORTFOLIO_BASE_PATH: `${API_BASE_URL}${BASE_API}/student/portfolio`,
+    MY_PORTFOLIO: '/me',
+    ADD_PORTFOLIO_PROJECT: '/projects/add',
+    DELETE_PORTFOLIO_PROJECT: '/projects/delete',
+    CREATE_PORTFOLIO_SHARE: '/share/create',
+    REVOKE_PORTFOLIO_SHARE: '/share/revoke',
+    PORTFOLIO_PUBLIC_BASE_PATH: `${API_BASE_URL}${BASE_API}/portfolio-public`,
+};
+export const {
+    QUEST_BASE_PATH,
+    LIST_QUESTS,
+    QUEST_STATE,
+    START_QUEST,
+    ANSWER_QUEST,
+    QUEST_COSMETICS,
+    EQUIP_COSMETIC,
+    PORTFOLIO_BASE_PATH,
+    MY_PORTFOLIO,
+    ADD_PORTFOLIO_PROJECT,
+    DELETE_PORTFOLIO_PROJECT,
+    CREATE_PORTFOLIO_SHARE,
+    REVOKE_PORTFOLIO_SHARE,
+    PORTFOLIO_PUBLIC_BASE_PATH,
+} = QuestPortfolioPaths;
+/* [s10] Reflection journal and pre-exam check-in. Mirrors ControllerConstants.Wellbeing. */
+export const WellbeingPaths = {
+    WELLBEING_BASE_PATH: `${API_BASE_URL}${BASE_API}/student/wellbeing`,
+    WELLBEING_PROMPT: '/prompt',
+    REFLECTION_CURRENT: '/reflection/current',
+    REFLECTION_HISTORY: '/reflection/history',
+    REFLECTION_SAVE: '/reflection/save',
+    REFLECTION_MARK: '/reflection/mark-achieved',
+    CHECKIN_STATUS: '/checkin/status',
+    CHECKIN_SUBMIT: '/checkin/submit',
+    CHECKIN_CONSENT: '/checkin/consent',
+};
+export const {
+    WELLBEING_BASE_PATH,
+    WELLBEING_PROMPT,
+    REFLECTION_CURRENT,
+    REFLECTION_HISTORY,
+    REFLECTION_SAVE,
+    REFLECTION_MARK,
+    CHECKIN_STATUS,
+    CHECKIN_SUBMIT,
+    CHECKIN_CONSENT,
+} = WellbeingPaths;

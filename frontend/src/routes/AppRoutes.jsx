@@ -98,6 +98,33 @@ const SchoolYears = lazy(() => import("../pages/manager/SchoolYears.jsx"));
 const ParentLinks = lazy(() => import("../pages/manager/ParentLinks.jsx"));
 const MessageParents = lazy(() => import("../pages/teacher/MessageParents.jsx"));
 const ParentDashboard = lazy(() => import("../pages/parent/ParentDashboard.jsx"));
+// [s01] Study rooms and focus mode
+const StudyRooms = lazy(() => import("../pages/student/StudyRooms.jsx"));
+const FocusMode = lazy(() => import("../pages/student/FocusMode.jsx"));
+// [s01] end
+// [s03] Duels and the daily challenge (student)
+const Duels = lazy(() => import("../pages/student/Duels.jsx"));
+const DailyChallenge = lazy(() => import("../pages/student/DailyChallenge.jsx"));
+// [s04] Flashcards and the personal study notebook
+const Flashcards = lazy(() => import("../pages/student/Flashcards.jsx"));
+const StudyNotebook = lazy(() => import("../pages/student/StudyNotebook.jsx"));
+// [s05] Summary sheet and study podcast (student).
+const StudySummarySheet = lazy(() => import("../pages/student/StudySummarySheet.jsx"));
+const StudyPodcast = lazy(() => import("../pages/student/StudyPodcast.jsx"));
+// [s06] "Explain it to me" (Feynman) and mistake-type diagnosis
+const ExplainIt = lazy(() => import("../pages/student/ExplainIt.jsx"));
+const MistakeDiagnosis = lazy(() => import("../pages/student/MistakeDiagnosis.jsx"));
+const ClassDiagnosis = lazy(() => import("../pages/teacher/ClassDiagnosis.jsx"));
+// [s07] simulations gallery and real-world card editor
+const Simulations = lazy(() => import("../pages/student/Simulations.jsx"));
+const RealWorldEditor = lazy(() => import("../pages/teacher/RealWorldEditor.jsx"));
+// [s09] Story quests, personal portfolio and its public share page
+const Quests = lazy(() => import("../pages/student/Quests.jsx"));
+const Portfolio = lazy(() => import("../pages/student/Portfolio.jsx"));
+const SharedPortfolio = lazy(() => import("../pages/common/SharedPortfolio.jsx"));
+// [s10] Reflection journal and pre-exam check-in
+const ReflectionJournal = lazy(() => import("../pages/student/ReflectionJournal.jsx"));
+const ExamCheckin = lazy(() => import("../pages/student/ExamCheckin.jsx"));
 
 // Public static pages
 const TermsOfService = lazy(() => import("../pages/footer/TermsOfService.jsx"));
@@ -105,6 +132,17 @@ const PrivacyPolicy = lazy(() => import("../pages/footer/PrivacyPolicy.jsx"));
 const Faq = lazy(() => import("../pages/footer/Faq.jsx"));
 const About = lazy(() => import("../pages/footer/About.jsx"));
 const AccessibilityStatement = lazy(() => import("../pages/footer/AccessibilityStatement.jsx"));
+
+// [s02] Class forum and student-authored questions
+const ClassForum = lazy(() => import("../pages/student/ClassForum.jsx"));
+const PeerQuestions = lazy(() => import("../pages/student/PeerQuestions.jsx"));
+const ClassForumModeration = lazy(() => import("../pages/teacher/ClassForumModeration.jsx"));
+const PeerQuestionReview = lazy(() => import("../pages/teacher/PeerQuestionReview.jsx"));
+// [s08] Past-exam simulations and the "what do I need?" calculator
+const ExamSimulations = lazy(() => import("../pages/student/ExamSimulations.jsx"));
+const ExamSimSession = lazy(() => import("../pages/student/ExamSimSession.jsx"));
+const ExamSimResult = lazy(() => import("../pages/student/ExamSimResult.jsx"));
+const GradeTargetCalculator = lazy(() => import("../pages/student/GradeTargetCalculator.jsx"));
 
 export default function AppRoutes() {
 
@@ -219,6 +257,13 @@ export default function AppRoutes() {
                             <Route path="/attendance" element={<Attendance />} />
                             <Route path="/message-parents" element={<MessageParents />} />
                             <Route path="/send-message" element={<SendMessage />} />
+                            {/* [s02] class forum and student-authored questions */}
+                            <Route path="/class-forum" element={<ClassForumModeration />} />
+                            <Route path="/peer-question-review" element={<PeerQuestionReview />} />
+                            {/* [s06] class mistake types and Feynman explanations */}
+                            <Route path="/class-diagnosis" element={<ClassDiagnosis />} />
+                            {/* [s07] real-world card editor */}
+                            <Route path="/real-world-editor" element={<RealWorldEditor />} />
                             {commonRoutes}
                         </>
                     )}
@@ -245,6 +290,39 @@ export default function AppRoutes() {
                             <Route path="/study-plan" element={<StudyPlan />} />
                             <Route path="/achievements" element={<Achievements />} />
                             <Route path="/accessibility-settings" element={<AccessibilitySettings />} />
+                            {/* [s01] Study rooms and focus mode */}
+                            <Route path="/study-rooms" element={<StudyRooms />} />
+                            <Route path="/focus-mode" element={<FocusMode />} />
+                            {/* [s01] end */}
+                            {/* [s02] class forum and student-authored questions */}
+                            <Route path="/class-forum" element={<ClassForum />} />
+                            <Route path="/peer-questions" element={<PeerQuestions />} />
+                            {/* [s03] Duels and the daily challenge */}
+                            <Route path="/duels" element={<Duels />} />
+                            <Route path="/duels/:duelId" element={<Duels />} />
+                            <Route path="/daily-challenge" element={<DailyChallenge />} />
+                            {/* [s04] */}
+                            <Route path="/flashcards" element={<Flashcards />} />
+                            <Route path="/study-notebook" element={<StudyNotebook />} />
+                            {/* [s05] Summary sheet and study podcast. */}
+                            <Route path="/study-summary-sheet" element={<StudySummarySheet />} />
+                            <Route path="/study-podcast" element={<StudyPodcast />} />
+                            {/* [s06] "Explain it to me" (Feynman) and mistake-type diagnosis */}
+                            <Route path="/explain-it" element={<ExplainIt />} />
+                            <Route path="/mistake-diagnosis" element={<MistakeDiagnosis />} />
+                            {/* [s07] simulations gallery */}
+                            <Route path="/simulations" element={<Simulations />} />
+                            {/* [s08] Past-exam simulations and the "what do I need?" calculator */}
+                            <Route path="/exam-simulations" element={<ExamSimulations />} />
+                            <Route path="/exam-sim/:examId" element={<ExamSimSession />} />
+                            <Route path="/exam-sim/result/:attemptId" element={<ExamSimResult />} />
+                            <Route path="/grade-target" element={<GradeTargetCalculator />} />
+                            {/* [s09] quests and portfolio */}
+                            <Route path="/quests" element={<Quests />} />
+                            <Route path="/portfolio" element={<Portfolio />} />
+                            {/* [s10] Reflection journal and pre-exam check-in */}
+                            <Route path="/reflection" element={<ReflectionJournal />} />
+                            <Route path="/exam-checkin" element={<ExamCheckin />} />
                             {commonRoutes}
                         </>
                     )}
@@ -267,6 +345,8 @@ export default function AppRoutes() {
                     <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                     <Route path="/terms-of-service" element={<TermsOfService />} />
                     <Route path="/accessibility" element={<AccessibilityStatement />} />
+                    {/* [s09] public, read-only shared portfolio (token in the URL) */}
+                    <Route path="/shared-portfolio/:token" element={<SharedPortfolio />} />
                 </Routes>
                 </Suspense>
                 </div>

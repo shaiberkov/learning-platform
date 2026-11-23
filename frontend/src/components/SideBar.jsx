@@ -229,6 +229,9 @@ function SideBar() {
                     // [s02] class forum and student-authored questions
                     { to: "class-forum", label: "פורום הכיתה" },
                     { to: "peer-questions", label: "שאלות מהכיתה" },
+                    // [s03] Duels and the daily challenge
+                    { to: "duels", label: "דו-קרבות" },
+                    { to: "daily-challenge", label: "אתגר יומי" },
                 ] : []),
                 { to: "accessibility-settings", label: "הגדרות נגישות" },
                 ...common,

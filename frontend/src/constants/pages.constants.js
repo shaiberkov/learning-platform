@@ -817,3 +817,34 @@ export const ClassCommunityPaths = {
     PEER_APPROVE: '/peer-questions/approve',
     PEER_REJECT: '/peer-questions/reject',
 };
+/* [s03] Duels and the daily challenge. Mirrors ControllerConstants.Duel and ControllerConstants.DailyChallenge. */
+export const DuelPaths = {
+    DUEL_BASE_PATH: `${API_BASE_URL}${BASE_API}/student/duels`,
+    DUEL_TOPICS: '/topics',
+    DUEL_OPPONENTS: '/opponents',
+    DUEL_LIST: '/mine',
+    DUEL_INVITE: '/invite',
+    // DUEL_STATE is `/{duelId}`; these follow it as `/{duelId}<action>` (see duelPath).
+    DUEL_ACCEPT: '/accept',
+    DUEL_DECLINE: '/decline',
+    DUEL_ANSWER: '/answer',
+    DUEL_FORFEIT: '/forfeit',
+};
+export const {
+    DUEL_BASE_PATH, DUEL_TOPICS, DUEL_OPPONENTS, DUEL_LIST, DUEL_INVITE,
+    DUEL_ACCEPT, DUEL_DECLINE, DUEL_ANSWER, DUEL_FORFEIT,
+} = DuelPaths;
+/** `/{duelId}` (DUEL_STATE), or `/{duelId}` followed by one of DUEL_ACCEPT, DUEL_DECLINE, DUEL_ANSWER, DUEL_FORFEIT. */
+export const duelPath = (duelId, action = '') => `${DUEL_BASE_PATH}/${duelId}${action}`;
+export const DailyChallengePaths = {
+    DAILY_CHALLENGE_BASE_PATH: `${API_BASE_URL}${BASE_API}/student/daily-challenge`,
+    DAILY_CHALLENGE_TODAY: '/today',
+    DAILY_CHALLENGE_START: '/start',
+    DAILY_CHALLENGE_ANSWER: '/answer',
+};
+export const {
+    DAILY_CHALLENGE_BASE_PATH,
+    DAILY_CHALLENGE_TODAY,
+    DAILY_CHALLENGE_START,
+    DAILY_CHALLENGE_ANSWER,
+} = DailyChallengePaths;

@@ -9,6 +9,9 @@ import { FaCalendarAlt, FaChartBar, FaClipboardList, FaProjectDiagram, FaPuzzleP
 import ReviewDueTile from "../../features/adaptive/ReviewDueTile.jsx";
 import Prism from "../../components/ui/Prism.jsx";
 import DashboardHero, { QuickTile } from "../../components/ui/DashboardHero.jsx";
+// [s03] Daily challenge and duels tiles
+import DailyChallengeTile from "../../features/competition/DailyChallengeTile.jsx";
+import { FaFistRaised } from "react-icons/fa";
 
 function StudentDashboard() {
     const { user } = useContext(UserContext);
@@ -62,6 +65,9 @@ function StudentDashboard() {
                         <QuickTile index={7} to="/student-weekly-schedule" icon={<FaCalendarAlt />} label="מערכת שעות" hint="כל השבוע" />
                         <ReviewDueTile index={8} userId={user?.userId} />
                         <QuickTile index={9} to="/skill-map" icon={<FaProjectDiagram />} label="מפת מיומנויות" hint="שליטה לפי נושא" tone="icon-badge--mint" />
+                        {/* [s03] Daily challenge and duels */}
+                        <DailyChallengeTile index={10} />
+                        <QuickTile index={11} to="/duels" icon={<FaFistRaised />} label="דו-קרבות" hint="אתגרו חבר" tone="icon-badge--amber" />
                     </div>
                 </div>
             </div>

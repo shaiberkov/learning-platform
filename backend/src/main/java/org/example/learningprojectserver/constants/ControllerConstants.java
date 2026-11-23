@@ -432,5 +432,27 @@ public final class ControllerConstants {
         public static final String PEER_REVIEW_QUEUE         = "/peer-questions/review";
         public static final String PEER_APPROVE              = "/peer-questions/approve";
         public static final String PEER_REJECT               = "/peer-questions/reject";
+    // [s03] 1-on-1 duels and the daily challenge (student side, under the STUDENT route group).
+    public static final class Duel {
+        private Duel() {}
+
+        public static final String DUEL_BASE_PATH = BASE_API + "/student/duels";
+        public static final String DUEL_TOPICS     = "/topics";
+        public static final String DUEL_OPPONENTS  = "/opponents";
+        public static final String DUEL_LIST       = "/mine";
+        public static final String DUEL_INVITE     = "/invite";
+        public static final String DUEL_STATE      = "/{duelId}";
+        public static final String DUEL_ACCEPT     = "/{duelId}/accept";
+        public static final String DUEL_DECLINE    = "/{duelId}/decline";
+        public static final String DUEL_ANSWER     = "/{duelId}/answer";
+        public static final String DUEL_FORFEIT    = "/{duelId}/forfeit";
+    }
+    public static final class DailyChallenge {
+        private DailyChallenge() {}
+
+        public static final String DAILY_CHALLENGE_BASE_PATH = BASE_API + "/student/daily-challenge";
+        public static final String DAILY_CHALLENGE_TODAY     = "/today";
+        public static final String DAILY_CHALLENGE_START     = "/start";
+        public static final String DAILY_CHALLENGE_ANSWER    = "/answer";
     }
 }

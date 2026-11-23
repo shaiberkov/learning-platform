@@ -102,6 +102,9 @@ const ParentDashboard = lazy(() => import("../pages/parent/ParentDashboard.jsx")
 const StudyRooms = lazy(() => import("../pages/student/StudyRooms.jsx"));
 const FocusMode = lazy(() => import("../pages/student/FocusMode.jsx"));
 // [s01] end
+// [s03] Duels and the daily challenge (student)
+const Duels = lazy(() => import("../pages/student/Duels.jsx"));
+const DailyChallenge = lazy(() => import("../pages/student/DailyChallenge.jsx"));
 
 // Public static pages
 const TermsOfService = lazy(() => import("../pages/footer/TermsOfService.jsx"));
@@ -265,6 +268,10 @@ export default function AppRoutes() {
                             {/* [s02] class forum and student-authored questions */}
                             <Route path="/class-forum" element={<ClassForum />} />
                             <Route path="/peer-questions" element={<PeerQuestions />} />
+                            {/* [s03] Duels and the daily challenge */}
+                            <Route path="/duels" element={<Duels />} />
+                            <Route path="/duels/:duelId" element={<Duels />} />
+                            <Route path="/daily-challenge" element={<DailyChallenge />} />
                             {commonRoutes}
                         </>
                     )}

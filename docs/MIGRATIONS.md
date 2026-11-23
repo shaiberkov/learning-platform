@@ -9,6 +9,7 @@ Flyway.
 |---|---|
 | `V1__baseline_schema.sql` | the schema of the entities before the improvement branches. Existing databases are recorded as version 1 without running it (`baseline-on-migrate=true`). |
 | `V2__improvement_branches.sql` | everything the improvement branches added (below). |
+| `V5__s03_duels_daily_challenge.sql` | [s03] tables `duel`, `duel_question`, `daily_challenge`, `daily_challenge_attempt`. |
 
 ## What V2 adds
 

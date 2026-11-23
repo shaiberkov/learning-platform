@@ -235,6 +235,9 @@ function SideBar() {
                     // [s04]
                     { to: "flashcards", label: "כרטיסיות" },
                     { to: "study-notebook", label: "המחברת שלי" },
+                    // [s05] Summary sheet and study podcast.
+                    { to: "study-summary-sheet", label: "דף סיכום למבחן" },
+                    { to: "study-podcast", label: "סיכום קולי" },
                 ] : []),
                 { to: "accessibility-settings", label: "הגדרות נגישות" },
                 ...common,

@@ -59,4 +59,15 @@ public class AiProperties {
 
     @Value("${ai.tutor.history-messages:10}")
     private int tutorHistoryMessages;
+
+    // [s05] Text to speech for the study podcast.
+    @Value("${ai.tts-model:gpt-4o-mini-tts}")
+    private String ttsModel;
+
+    @Value("${ai.tts-voice:alloy}")
+    private String ttsVoice;
+
+    /** USD per 1,000 input characters of text to speech. */
+    @Value("${ai.price.tts-per-1k-chars:0.015}")
+    private double priceTtsPer1kChars;
 }

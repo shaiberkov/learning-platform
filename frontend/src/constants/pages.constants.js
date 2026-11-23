@@ -872,3 +872,16 @@ export const {
 /** Paths with an id: /flashcards/{cardId}, /flashcards/{cardId}/share|add-to-deck|review, /notes/{noteId}. */
 export const flashcardPath = (cardId, action = "") => `${FLASHCARDS}/${cardId}${action ? `/${action}` : ""}`;
 export const notePath = (noteId) => `${NOTES}/${noteId}`;
+/* [s05] Study summary: summary sheet and study podcast. Mirrors ControllerConstants.StudySummary. */
+export const StudySummaryPaths = {
+    STUDY_SUMMARY_BASE_PATH: `${API_BASE_URL}${BASE_API}/student/study-summary`,
+    STUDY_OPTIONS: '/options',
+    STUDY_SHEETS: '/sheets',
+    STUDY_PODCASTS: '/podcasts',
+};
+export const {
+    STUDY_SUMMARY_BASE_PATH,
+    STUDY_OPTIONS,
+    STUDY_SHEETS,
+    STUDY_PODCASTS,
+} = StudySummaryPaths;

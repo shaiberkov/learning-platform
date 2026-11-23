@@ -108,6 +108,9 @@ const DailyChallenge = lazy(() => import("../pages/student/DailyChallenge.jsx"))
 // [s04] Flashcards and the personal study notebook
 const Flashcards = lazy(() => import("../pages/student/Flashcards.jsx"));
 const StudyNotebook = lazy(() => import("../pages/student/StudyNotebook.jsx"));
+// [s05] Summary sheet and study podcast (student).
+const StudySummarySheet = lazy(() => import("../pages/student/StudySummarySheet.jsx"));
+const StudyPodcast = lazy(() => import("../pages/student/StudyPodcast.jsx"));
 
 // Public static pages
 const TermsOfService = lazy(() => import("../pages/footer/TermsOfService.jsx"));
@@ -278,6 +281,9 @@ export default function AppRoutes() {
                             {/* [s04] */}
                             <Route path="/flashcards" element={<Flashcards />} />
                             <Route path="/study-notebook" element={<StudyNotebook />} />
+                            {/* [s05] Summary sheet and study podcast. */}
+                            <Route path="/study-summary-sheet" element={<StudySummarySheet />} />
+                            <Route path="/study-podcast" element={<StudyPodcast />} />
                             {commonRoutes}
                         </>
                     )}

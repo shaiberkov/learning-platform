@@ -73,6 +73,7 @@ Not cached on purpose: the question bank, gradebooks and attendance (`QuestionBa
 <!-- [s02] -->
 Not cached on purpose [s02]: the class forum and the student-authored questions (`ClassForumService`, `PeerQuestionService`; tables `class_forum_thread`, `class_forum_post`, `peer_question`) read MySQL on every request because the screens poll for new answers. Approving a student question adds a `bank_question` row through `QuestionBankService.addQuestion`, and classmates' practice answers update its `attempts` / `correct_attempts`; the bank is not cached, so nothing is evicted.
 [s03] Not cached on purpose: duels (`DuelService`, polled every 1.5 s by both players, one row per poll) and the daily challenge (`DailyChallengeService`) read MySQL on every request, so their writes have nothing to evict. Neither keeps in-memory state.
+[s05] Not cached either: summary sheets and study podcasts (`StudySummaryService`, tables `study_sheet`, `study_podcast`, `study_podcast_audio`) read MySQL on every request, and their AI calls skip `aiPromptCache` (each sheet or script is built from the student's current mistakes). A podcast's AI voice recording is stored once in `study_podcast_audio` and served from there, never regenerated.
 
 ## Checklist for a change that touches data
 

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.example.learningprojectserver.service.adaptive.Sm2Schedulable;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -20,7 +21,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ReviewItemEntity {
+public class ReviewItemEntity implements Sm2Schedulable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

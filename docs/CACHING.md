@@ -29,6 +29,9 @@ Engagement (XP, streaks, badges, class challenges), study plans, lesson pages an
 
 Not cached on purpose: the school dashboard (`SchoolAnalyticsService`), the timetable builder's lesson list, school years and their archive, and the parent screens (`ParentService`) read MySQL on every request. Messages to parents go through `MessageService.sendMessage`, which already evicts `receivedMessages` per recipient.
 
+<!-- [s04] -->
+Not cached on purpose [s04]: flashcards, their per-student SM-2 schedule and the study notebook (`FlashcardService`, `FlashcardGenerationService`, `StudyNoteService`) read MySQL on every request; every review or note changes them. AI flashcard generation from a pasted summary goes through `AiGateway.complete(..., cacheable=true)`, so an identical summary is served from `aiPromptCache`; photos are never cached.
+
 ## 2. Hand-rolled in-memory maps
 
 Not Spring caches: plain `ConcurrentHashMap`s in singleton beans. Lost on restart, never shared between instances.

@@ -219,6 +219,9 @@ function SideBar() {
                     { to: "ai-tutor", label: "מורה-עזר AI" },
                     { to: "open-questions", label: "שאלות פתוחות" },
                     { to: "live-quiz", label: "חידון בכיתה" },
+                    // [s04]
+                    { to: "flashcards", label: "כרטיסיות" },
+                    { to: "study-notebook", label: "המחברת שלי" },
                 ] : []),
                 { to: "accessibility-settings", label: "הגדרות נגישות" },
                 ...common,

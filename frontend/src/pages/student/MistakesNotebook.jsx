@@ -4,6 +4,9 @@ import { FaBookOpen, FaCheck, FaRedo } from "react-icons/fa";
 import { UserContext } from "../../context/UserContext.jsx";
 import OrbitLoader from "../../components/ui/OrbitLoader.jsx";
 import { answerReviewItem, fetchDueReviewItems, fetchReviewSummary } from "../../features/adaptive/adaptiveApi.js";
+// [s04] Flashcards share the notebook's SM-2 review; the note button links an item to the study notebook.
+import FlashcardReviewPanel from "../../features/studyTools/FlashcardReviewPanel.jsx";
+import NoteButton from "../../features/studyTools/NoteButton.jsx";
 
 const SOURCE_LABELS = {
     PRACTICE: "תרגול שאלות",
@@ -140,6 +143,11 @@ function MistakesNotebook() {
                             <span className="chip">{current.subTopic}</span>
                             <span className="chip">{SOURCE_LABELS[current.source] || current.source}</span>
                             {current.lapses > 0 && <span className="chip">טעויות: <span className="num">{current.lapses}</span></span>}
+                            {/* [s04] */}
+                            <NoteButton target={{
+                                targetType: "REVIEW_ITEM", targetId: current.id, targetTitle: current.questionText,
+                                subject: current.subject, topic: current.topic, subTopic: current.subTopic,
+                            }} />
                         </div>
                     </div>
 
@@ -180,6 +188,9 @@ function MistakesNotebook() {
                     )}
                 </div>
             )}
+
+            {/* [s04] Today's flashcards, on the same spaced-repetition schedule. */}
+            <FlashcardReviewPanel />
         </div>
     );
 }

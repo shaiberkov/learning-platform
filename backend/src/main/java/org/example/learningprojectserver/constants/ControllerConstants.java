@@ -390,4 +390,23 @@ public final class ControllerConstants {
         public static final String GLOBAL = "/global";
         public static final String STUDENTS_PAGE = "/students-page";
     }
+    // [s04] Flashcards (AI from a photo or summary, shared with the class) and the personal study notebook.
+    // Under /student/** (STUDENT, SYSTEM_ADMIN); the student always comes from the access token.
+    public static final class StudyTools {
+        private StudyTools() {}
+
+        public static final String STUDY_TOOLS_BASE_PATH  = BASE_API + "/student";
+        public static final String FLASHCARDS             = "/flashcards";
+        public static final String FLASHCARDS_DUE         = "/flashcards/due";
+        public static final String FLASHCARDS_SUMMARY     = "/flashcards/summary";
+        public static final String FLASHCARDS_CLASS       = "/flashcards/class";
+        public static final String FLASHCARDS_GENERATE    = "/flashcards/generate";
+        public static final String FLASHCARD_BY_ID        = "/flashcards/{cardId}";
+        public static final String FLASHCARD_SHARE        = "/flashcards/{cardId}/share";
+        public static final String FLASHCARD_ADD_TO_DECK  = "/flashcards/{cardId}/add-to-deck";
+        public static final String FLASHCARD_REVIEW       = "/flashcards/{cardId}/review";
+        public static final String NOTES                  = "/notes";
+        public static final String NOTES_TOPICS           = "/notes/topics";
+        public static final String NOTE_BY_ID             = "/notes/{noteId}";
+    }
 }

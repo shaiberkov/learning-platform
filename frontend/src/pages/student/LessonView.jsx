@@ -4,6 +4,7 @@ import { FaArrowRight, FaCheck, FaPuzzlePiece, FaRedo } from "react-icons/fa";
 import { UserContext } from "../../context/UserContext.jsx";
 import OrbitLoader from "../../components/ui/OrbitLoader.jsx";
 import ReadAloudButton from "../../components/ReadAloudButton.jsx";
+import NoteButton from "../../features/studyTools/NoteButton.jsx"; // [s04]
 import { apiGet, apiPost, errorText } from "../../Utils/authApi.js";
 import {
     LESSON_CONTENT_BASE_PATH, LESSON_CONTENT_GET, LESSON_CONTENT_UPDATE_PROGRESS,
@@ -63,7 +64,14 @@ export default function LessonView() {
                 <span className="eyebrow">{lesson.subject} · {lesson.topic}{lesson.subTopic ? ` · ${lesson.subTopic}` : ""}</span>
                 <div className="flex items-start justify-between gap-3">
                     <h1 className="display text-3xl sm:text-4xl">{lesson.title}</h1>
-                    <ReadAloudButton text={fullText} label="הקרא את השיעור" />
+                    <div className="flex items-center gap-2">
+                        <ReadAloudButton text={fullText} label="הקרא את השיעור" />
+                        {/* [s04] note / highlight (selected text) / bookmark on this lesson */}
+                        <NoteButton target={{
+                            targetType: "LESSON", targetId: lesson.id ?? Number(lessonId), targetTitle: lesson.title,
+                            subject: lesson.subject, topic: lesson.topic, subTopic: lesson.subTopic,
+                        }} />
+                    </div>
                 </div>
                 <div className="grid grid-cols-3 gap-2" role="tablist">
                     {STEPS.map((s) => {

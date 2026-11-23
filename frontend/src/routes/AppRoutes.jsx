@@ -98,6 +98,9 @@ const SchoolYears = lazy(() => import("../pages/manager/SchoolYears.jsx"));
 const ParentLinks = lazy(() => import("../pages/manager/ParentLinks.jsx"));
 const MessageParents = lazy(() => import("../pages/teacher/MessageParents.jsx"));
 const ParentDashboard = lazy(() => import("../pages/parent/ParentDashboard.jsx"));
+// [s04] Flashcards and the personal study notebook
+const Flashcards = lazy(() => import("../pages/student/Flashcards.jsx"));
+const StudyNotebook = lazy(() => import("../pages/student/StudyNotebook.jsx"));
 
 // Public static pages
 const TermsOfService = lazy(() => import("../pages/footer/TermsOfService.jsx"));
@@ -245,6 +248,9 @@ export default function AppRoutes() {
                             <Route path="/study-plan" element={<StudyPlan />} />
                             <Route path="/achievements" element={<Achievements />} />
                             <Route path="/accessibility-settings" element={<AccessibilitySettings />} />
+                            {/* [s04] */}
+                            <Route path="/flashcards" element={<Flashcards />} />
+                            <Route path="/study-notebook" element={<StudyNotebook />} />
                             {commonRoutes}
                         </>
                     )}

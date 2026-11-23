@@ -848,3 +848,27 @@ export const {
     DAILY_CHALLENGE_START,
     DAILY_CHALLENGE_ANSWER,
 } = DailyChallengePaths;
+/* [s04] Flashcards and the study notebook. Mirrors ControllerConstants.StudyTools (under /student). */
+export const StudyToolsPaths = {
+    STUDY_TOOLS_BASE_PATH: `${API_BASE_URL}${BASE_API}/student`,
+    FLASHCARDS: '/flashcards',
+    FLASHCARDS_DUE: '/flashcards/due',
+    FLASHCARDS_SUMMARY: '/flashcards/summary',
+    FLASHCARDS_CLASS: '/flashcards/class',
+    FLASHCARDS_GENERATE: '/flashcards/generate',
+    NOTES: '/notes',
+    NOTES_TOPICS: '/notes/topics',
+};
+export const {
+    STUDY_TOOLS_BASE_PATH,
+    FLASHCARDS,
+    FLASHCARDS_DUE,
+    FLASHCARDS_SUMMARY,
+    FLASHCARDS_CLASS,
+    FLASHCARDS_GENERATE,
+    NOTES,
+    NOTES_TOPICS,
+} = StudyToolsPaths;
+/** Paths with an id: /flashcards/{cardId}, /flashcards/{cardId}/share|add-to-deck|review, /notes/{noteId}. */
+export const flashcardPath = (cardId, action = "") => `${FLASHCARDS}/${cardId}${action ? `/${action}` : ""}`;
+export const notePath = (noteId) => `${NOTES}/${noteId}`;

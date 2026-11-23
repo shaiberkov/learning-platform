@@ -105,6 +105,9 @@ const FocusMode = lazy(() => import("../pages/student/FocusMode.jsx"));
 // [s03] Duels and the daily challenge (student)
 const Duels = lazy(() => import("../pages/student/Duels.jsx"));
 const DailyChallenge = lazy(() => import("../pages/student/DailyChallenge.jsx"));
+// [s04] Flashcards and the personal study notebook
+const Flashcards = lazy(() => import("../pages/student/Flashcards.jsx"));
+const StudyNotebook = lazy(() => import("../pages/student/StudyNotebook.jsx"));
 
 // Public static pages
 const TermsOfService = lazy(() => import("../pages/footer/TermsOfService.jsx"));
@@ -272,6 +275,9 @@ export default function AppRoutes() {
                             <Route path="/duels" element={<Duels />} />
                             <Route path="/duels/:duelId" element={<Duels />} />
                             <Route path="/daily-challenge" element={<DailyChallenge />} />
+                            {/* [s04] */}
+                            <Route path="/flashcards" element={<Flashcards />} />
+                            <Route path="/study-notebook" element={<StudyNotebook />} />
                             {commonRoutes}
                         </>
                     )}

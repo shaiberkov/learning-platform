@@ -232,6 +232,9 @@ function SideBar() {
                     // [s03] Duels and the daily challenge
                     { to: "duels", label: "דו-קרבות" },
                     { to: "daily-challenge", label: "אתגר יומי" },
+                    // [s04]
+                    { to: "flashcards", label: "כרטיסיות" },
+                    { to: "study-notebook", label: "המחברת שלי" },
                 ] : []),
                 { to: "accessibility-settings", label: "הגדרות נגישות" },
                 ...common,

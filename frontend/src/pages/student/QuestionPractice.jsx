@@ -11,6 +11,7 @@ import {
 } from "../../constants/pages.constants.js";
 import {BEARER_PREFIX} from "../../constants/shared.constant.js";
 import HintPanel from "../../features/adaptive/HintPanel.jsx";
+import NoteButton from "../../features/studyTools/NoteButton.jsx"; // [s04]
 import {skillColor} from "../../features/adaptive/adaptiveApi.js";
 import {useTranslation} from "react-i18next";
 import useOnlineStatus from "../../offline/useOnlineStatus.js";
@@ -293,6 +294,14 @@ function QuestionPractice(){
 
                     {exercise?.id && user?.userId && (
                         <HintPanel key={exercise.id} userId={user.userId} questionId={exercise.id} />
+                    )}
+
+                    {/* [s04] note on this question in the personal study notebook */}
+                    {exercise?.id && (
+                        <NoteButton target={{
+                            targetType: "QUESTION", targetId: exercise.id, targetTitle: exercise.questionText,
+                            subject: subjectName, topic: topicName, subTopic: exerciseName,
+                        }} />
                     )}
 
                     {offlineNotice && <p className="notice" role="status">{offlineNotice}</p>}

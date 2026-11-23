@@ -390,4 +390,25 @@ public final class ControllerConstants {
         public static final String GLOBAL = "/global";
         public static final String STUDENTS_PAGE = "/students-page";
     }
+    // [s01] Study rooms and focus mode, under /student/** (STUDENT_ALL in SecurityConfig).
+    public static final class StudyRooms {
+        private StudyRooms() {}
+
+        public static final String STUDY_ROOMS_BASE_PATH = BASE_API + "/student/study-rooms";
+        public static final String LIST_ROOMS            = "/list";
+        public static final String CREATE_ROOM           = "/create";
+        public static final String ROOM_HEARTBEAT        = "/heartbeat";
+        public static final String LEAVE_ROOM            = "/leave";
+        public static final String ROOM_CHAT             = "/chat";
+    }
+    // [s01] end
+    // [s01] Focus mode and study-habit insights, under /student/**.
+    public static final class Focus {
+        private Focus() {}
+
+        public static final String FOCUS_BASE_PATH = BASE_API + "/student/focus";
+        public static final String RECORD_SESSION  = "/sessions/record";
+        public static final String INSIGHTS        = "/insights";
+    }
+    // [s01] end
 }

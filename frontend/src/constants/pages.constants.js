@@ -772,3 +772,28 @@ export const {
     GET_CHILDREN,
     CHILD_OVERVIEW,
 } = ParentPaths;
+
+/* [s01] Study rooms and focus mode. Mirrors ControllerConstants.StudyRooms and ControllerConstants.Focus. */
+export const StudyRoomPaths = {
+    STUDY_ROOMS_BASE_PATH: `${API_BASE_URL}${BASE_API}/student/study-rooms`,
+    STUDY_ROOMS_LIST: '/list',
+    STUDY_ROOMS_CREATE: '/create',
+    STUDY_ROOMS_HEARTBEAT: '/heartbeat',
+    STUDY_ROOMS_LEAVE: '/leave',
+    STUDY_ROOMS_CHAT: '/chat',
+    FOCUS_BASE_PATH: `${API_BASE_URL}${BASE_API}/student/focus`,
+    FOCUS_RECORD_SESSION: '/sessions/record',
+    FOCUS_INSIGHTS: '/insights',
+};
+export const {
+    STUDY_ROOMS_BASE_PATH,
+    STUDY_ROOMS_LIST,
+    STUDY_ROOMS_CREATE,
+    STUDY_ROOMS_HEARTBEAT,
+    STUDY_ROOMS_LEAVE,
+    STUDY_ROOMS_CHAT,
+    FOCUS_BASE_PATH,
+    FOCUS_RECORD_SESSION,
+    FOCUS_INSIGHTS,
+} = StudyRoomPaths;
+/* [s01] end */

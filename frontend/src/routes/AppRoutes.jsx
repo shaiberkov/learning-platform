@@ -98,6 +98,10 @@ const SchoolYears = lazy(() => import("../pages/manager/SchoolYears.jsx"));
 const ParentLinks = lazy(() => import("../pages/manager/ParentLinks.jsx"));
 const MessageParents = lazy(() => import("../pages/teacher/MessageParents.jsx"));
 const ParentDashboard = lazy(() => import("../pages/parent/ParentDashboard.jsx"));
+// [s01] Study rooms and focus mode
+const StudyRooms = lazy(() => import("../pages/student/StudyRooms.jsx"));
+const FocusMode = lazy(() => import("../pages/student/FocusMode.jsx"));
+// [s01] end
 
 // Public static pages
 const TermsOfService = lazy(() => import("../pages/footer/TermsOfService.jsx"));
@@ -245,6 +249,10 @@ export default function AppRoutes() {
                             <Route path="/study-plan" element={<StudyPlan />} />
                             <Route path="/achievements" element={<Achievements />} />
                             <Route path="/accessibility-settings" element={<AccessibilitySettings />} />
+                            {/* [s01] Study rooms and focus mode */}
+                            <Route path="/study-rooms" element={<StudyRooms />} />
+                            <Route path="/focus-mode" element={<FocusMode />} />
+                            {/* [s01] end */}
                             {commonRoutes}
                         </>
                     )}

@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -54,6 +55,9 @@ return new BasicResponse(true, schoolCode);
         if (user.getRole() != Role.STUDENT) {
             return new BasicResponse(false, "המשתמש " + user.getUsername() + " משובץ כ־" + user.getRole());
         }
+        if (!belongsToSchoolOrUnassigned(user, schoolCode)) {
+            return new BasicResponse(false, "המשתמש משויך לבית ספר אחר");
+        }
 
         SchoolEntity school = schoolRepository.findBySchoolCode(schoolCode);
         if (school == null) {
@@ -73,6 +77,15 @@ return new BasicResponse(true, schoolCode);
                 "role=" + Role.STUDENT, "role=" + Role.TEACHER + ", school=" + schoolCode, schoolCode);
 
         return new BasicResponse(true, "המורה " + teacher.getUsername() + " שויך בהצלחה לבית הספר " + school.getSchoolName());
+    }
+
+    /** A manager may take only users with no school yet, or users already in their own school. */
+    private static boolean belongsToSchoolOrUnassigned(UserEntity user, String schoolCode) {
+        if (!(user instanceof StudentEntity student)) {
+            return false;
+        }
+        SchoolEntity current = student.getSchoolName();
+        return current == null || Objects.equals(current.getSchoolCode(), schoolCode);
     }
 
     public BasicResponse removeTeacherFromSchool(String userId) {
@@ -363,6 +376,9 @@ return new BasicResponse(true, schoolCode);
         StudentEntity student=studentRepository.findStudentByStudentId(studentId);
         if (student == null) {
             return new BasicResponse(false, "המשתמש לא נמצא או שאינו תלמיד");
+        }
+        if (!belongsToSchoolOrUnassigned(student, schoolCode)) {
+            return new BasicResponse(false, "התלמיד משויך לבית ספר אחר");
         }
 
         String previousClass = student.getClassRoom() != null ? student.getClassRoom().getName() : null;

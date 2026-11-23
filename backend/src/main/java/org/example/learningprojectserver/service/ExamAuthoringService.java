@@ -16,6 +16,7 @@ import org.example.learningprojectserver.notification.NotificationType;
 import org.example.learningprojectserver.notification.dto.NewTestMessageDTO;
 import org.example.learningprojectserver.notification.dto.NotificationDTO;
 import org.example.learningprojectserver.notification.publisher.NotificationEventPublisher;
+import org.example.learningprojectserver.repository.AccessQueryRepository;
 import org.example.learningprojectserver.repository.ExamAttemptRepository;
 import org.example.learningprojectserver.repository.QuestionRepository;
 import org.example.learningprojectserver.repository.StudentRepository;
@@ -53,6 +54,7 @@ public class ExamAuthoringService {
     private final ExamQuestionCodec examQuestionCodec;
     private final TeacherTestToExamSummaryMapper summaryMapper;
     private final NotificationEventPublisher notificationEventPublisher;
+    private final AccessQueryRepository accessQueryRepository;
     private final CacheManager cacheManager;
 
     /** Everything needed to create one exam (or its A/B pair) from a list of question prototypes. */
@@ -185,6 +187,11 @@ public class ExamAuthoringService {
                     .filter(Objects::nonNull).map(String::trim).filter(s -> !s.isEmpty()).distinct().toList();
             if (ids.isEmpty()) {
                 return new BasicResponse<>(false, "יש להזין לפחות תלמיד אחד");
+            }
+            // Only students in the teacher's own classes; checked before the existence check so the
+            // message does not reveal which ID numbers exist elsewhere.
+            if (accessQueryRepository.countStudentsInTeacherClasses(teacher.getUserId(), new HashSet<>(ids)) != ids.size()) {
+                return new BasicResponse<>(false, "ניתן לשבץ למבחן רק תלמידים מהכיתות שאתה מלמד");
             }
             students = new ArrayList<>(studentRepository.findStudentsByUserIds(ids));
             if (students.size() != ids.size()) {

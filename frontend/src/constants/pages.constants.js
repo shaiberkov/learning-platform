@@ -797,3 +797,23 @@ export const {
     FOCUS_INSIGHTS,
 } = StudyRoomPaths;
 /* [s01] end */
+/* [s02] Class forum and student-authored questions. Mirrors ControllerConstants.ClassCommunity. */
+export const ClassCommunityPaths = {
+    CLASS_COMMUNITY_BASE_PATH: `${API_BASE_URL}${BASE_API}/class-community`,
+    FORUM_CLASSES: '/forum/classes',
+    FORUM_THREADS: '/forum/threads',
+    FORUM_SIMILAR: '/forum/similar',
+    FORUM_THREAD: '/forum/thread',
+    FORUM_CREATE_THREAD: '/forum/threads/create',
+    FORUM_REPLY: '/forum/reply',
+    FORUM_APPROVE_POST: '/forum/approve',
+    FORUM_DELETE_POST: '/forum/post',
+    FORUM_DELETE_THREAD: '/forum/thread/delete',
+    PEER_SUBMIT: '/peer-questions/submit',
+    PEER_MINE: '/peer-questions/mine',
+    PEER_PRACTICE: '/peer-questions/practice',
+    PEER_ANSWER: '/peer-questions/practice/answer',
+    PEER_REVIEW_QUEUE: '/peer-questions/review',
+    PEER_APPROVE: '/peer-questions/approve',
+    PEER_REJECT: '/peer-questions/reject',
+};

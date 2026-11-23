@@ -137,6 +137,8 @@ public class SecurityConfig {
                         .requestMatchers(PARENT_ALL).hasAnyRole(PARENT, SYSTEM_ADMIN)
                         .requestMatchers(CALENDAR_ALL).authenticated()
                         .requestMatchers(SEARCH_ALL).authenticated()
+                        // [s02] class forum and student-authored questions
+                        .requestMatchers(CLASS_COMMUNITY_ALL).hasAnyRole(STUDENT, TEACHER, SYSTEM_ADMIN)
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(metricsFilter, UsernamePasswordAuthenticationFilter.class)

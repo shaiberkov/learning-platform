@@ -411,4 +411,26 @@ public final class ControllerConstants {
         public static final String INSIGHTS        = "/insights";
     }
     // [s01] end
+    // [s02] Class forum (questions with teacher-approved answers) and student-authored practice questions.
+    public static final class ClassCommunity {
+        private ClassCommunity() {}
+
+        public static final String CLASS_COMMUNITY_BASE_PATH = BASE_API + "/class-community";
+        public static final String FORUM_CLASSES             = "/forum/classes";
+        public static final String FORUM_THREADS             = "/forum/threads";
+        public static final String FORUM_SIMILAR             = "/forum/similar";
+        public static final String FORUM_THREAD              = "/forum/thread";
+        public static final String FORUM_CREATE_THREAD       = "/forum/threads/create";
+        public static final String FORUM_REPLY               = "/forum/reply";
+        public static final String FORUM_APPROVE_POST        = "/forum/approve";
+        public static final String FORUM_DELETE_POST         = "/forum/post";
+        public static final String FORUM_DELETE_THREAD       = "/forum/thread/delete";
+        public static final String PEER_SUBMIT               = "/peer-questions/submit";
+        public static final String PEER_MINE                 = "/peer-questions/mine";
+        public static final String PEER_PRACTICE             = "/peer-questions/practice";
+        public static final String PEER_ANSWER               = "/peer-questions/practice/answer";
+        public static final String PEER_REVIEW_QUEUE         = "/peer-questions/review";
+        public static final String PEER_APPROVE              = "/peer-questions/approve";
+        public static final String PEER_REJECT               = "/peer-questions/reject";
+    }
 }

@@ -197,6 +197,9 @@ function SideBar() {
                 { to: "attendance", label: "נוכחות" },
                 { to: "message-parents", label: "הודעה להורים" },
                 { to: "send-message", label: t("nav.sendMessage") },
+                // [s02] class forum and student-authored questions
+                { to: "class-forum", label: "פורום הכיתה" },
+                { to: "peer-question-review", label: "שאלות שתלמידים כתבו" },
                 ...common,
             ],
             PARENT: [
@@ -223,6 +226,9 @@ function SideBar() {
                     { to: "study-rooms", label: "חדרי למידה" },
                     { to: "focus-mode", label: "מצב ריכוז" },
                     // [s01] end
+                    // [s02] class forum and student-authored questions
+                    { to: "class-forum", label: "פורום הכיתה" },
+                    { to: "peer-questions", label: "שאלות מהכיתה" },
                 ] : []),
                 { to: "accessibility-settings", label: "הגדרות נגישות" },
                 ...common,

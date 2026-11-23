@@ -67,6 +67,9 @@ Recorded, not fixed. Fix one only when the task is about it.
 
 Not cached on purpose: the question bank, gradebooks and attendance (`QuestionBankService`, `GradebookService`, `AttendanceService`) read MySQL on every request, so their writes have nothing to evict.
 
+<!-- [s02] -->
+Not cached on purpose [s02]: the class forum and the student-authored questions (`ClassForumService`, `PeerQuestionService`; tables `class_forum_thread`, `class_forum_post`, `peer_question`) read MySQL on every request because the screens poll for new answers. Approving a student question adds a `bank_question` row through `QuestionBankService.addQuestion`, and classmates' practice answers update its `attempts` / `correct_attempts`; the bank is not cached, so nothing is evicted.
+
 ## Checklist for a change that touches data
 
 - Does the method read something one of the caches above holds? Then every write to that data must evict it.

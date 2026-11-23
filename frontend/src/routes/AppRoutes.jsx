@@ -110,6 +110,12 @@ const Faq = lazy(() => import("../pages/footer/Faq.jsx"));
 const About = lazy(() => import("../pages/footer/About.jsx"));
 const AccessibilityStatement = lazy(() => import("../pages/footer/AccessibilityStatement.jsx"));
 
+// [s02] Class forum and student-authored questions
+const ClassForum = lazy(() => import("../pages/student/ClassForum.jsx"));
+const PeerQuestions = lazy(() => import("../pages/student/PeerQuestions.jsx"));
+const ClassForumModeration = lazy(() => import("../pages/teacher/ClassForumModeration.jsx"));
+const PeerQuestionReview = lazy(() => import("../pages/teacher/PeerQuestionReview.jsx"));
+
 export default function AppRoutes() {
 
     const {user}=useContext(UserContext)
@@ -223,6 +229,9 @@ export default function AppRoutes() {
                             <Route path="/attendance" element={<Attendance />} />
                             <Route path="/message-parents" element={<MessageParents />} />
                             <Route path="/send-message" element={<SendMessage />} />
+                            {/* [s02] class forum and student-authored questions */}
+                            <Route path="/class-forum" element={<ClassForumModeration />} />
+                            <Route path="/peer-question-review" element={<PeerQuestionReview />} />
                             {commonRoutes}
                         </>
                     )}
@@ -253,6 +262,9 @@ export default function AppRoutes() {
                             <Route path="/study-rooms" element={<StudyRooms />} />
                             <Route path="/focus-mode" element={<FocusMode />} />
                             {/* [s01] end */}
+                            {/* [s02] class forum and student-authored questions */}
+                            <Route path="/class-forum" element={<ClassForum />} />
+                            <Route path="/peer-questions" element={<PeerQuestions />} />
                             {commonRoutes}
                         </>
                     )}

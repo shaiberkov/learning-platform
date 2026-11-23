@@ -52,6 +52,10 @@ Refresh tokens are not cached: they live in the `refresh_tokens` table (hashed) 
 
 Not cached on purpose (read from MySQL on every request): the notification center (`NotificationCenterService`: list, unread count, preferences), paged inbox and sent-message read receipts, message threads and attachments, the `.ics` calendar feed (`CalendarService`) and global search (`SearchService`).
 
+<!-- [s01] study rooms -->
+**Study rooms [s01].** `StudyRoomService.presence` (who is in each room, with their task and last heartbeat) and `StudyRoomService.chats` (break-chat messages, at most 100 per room) are in-memory maps, lost on restart and per process. A member who sends no heartbeat for 15 seconds drops out; the chat shows only messages of the current break; both maps are cleared for a room when it is closed (empty and idle for 2 hours, checked when the school's rooms are listed). The rooms themselves (`study_room`) and focus sessions (`focus_session`) are read from MySQL on every request, and the focus insights are computed per request from `test_answer_record`, `focus_session` and `student_daily_activity`; no Ehcache cache is involved.
+<!-- [s01] end -->
+
 ## 3. Known gaps
 
 Recorded, not fixed. Fix one only when the task is about it.

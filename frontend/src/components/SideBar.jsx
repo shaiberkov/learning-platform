@@ -219,6 +219,10 @@ function SideBar() {
                     { to: "ai-tutor", label: "מורה-עזר AI" },
                     { to: "open-questions", label: "שאלות פתוחות" },
                     { to: "live-quiz", label: "חידון בכיתה" },
+                    // [s01] Study rooms and focus mode
+                    { to: "study-rooms", label: "חדרי למידה" },
+                    { to: "focus-mode", label: "מצב ריכוז" },
+                    // [s01] end
                 ] : []),
                 { to: "accessibility-settings", label: "הגדרות נגישות" },
                 ...common,

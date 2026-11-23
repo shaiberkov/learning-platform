@@ -780,10 +780,18 @@ export const DuelPaths = {
     DUEL_OPPONENTS: '/opponents',
     DUEL_LIST: '/mine',
     DUEL_INVITE: '/invite',
+    // DUEL_STATE is `/{duelId}`; these follow it as `/{duelId}<action>` (see duelPath).
+    DUEL_ACCEPT: '/accept',
+    DUEL_DECLINE: '/decline',
+    DUEL_ANSWER: '/answer',
+    DUEL_FORFEIT: '/forfeit',
 };
-export const { DUEL_BASE_PATH, DUEL_TOPICS, DUEL_OPPONENTS, DUEL_LIST, DUEL_INVITE } = DuelPaths;
-/** DUEL_STATE is `/{duelId}`; accept, decline and answer are `/{duelId}/<action>`. */
-export const duelPath = (duelId, action) => `${DUEL_BASE_PATH}/${duelId}${action ? `/${action}` : ''}`;
+export const {
+    DUEL_BASE_PATH, DUEL_TOPICS, DUEL_OPPONENTS, DUEL_LIST, DUEL_INVITE,
+    DUEL_ACCEPT, DUEL_DECLINE, DUEL_ANSWER, DUEL_FORFEIT,
+} = DuelPaths;
+/** `/{duelId}` (DUEL_STATE), or `/{duelId}` followed by one of DUEL_ACCEPT, DUEL_DECLINE, DUEL_ANSWER, DUEL_FORFEIT. */
+export const duelPath = (duelId, action = '') => `${DUEL_BASE_PATH}/${duelId}${action}`;
 export const DailyChallengePaths = {
     DAILY_CHALLENGE_BASE_PATH: `${API_BASE_URL}${BASE_API}/student/daily-challenge`,
     DAILY_CHALLENGE_TODAY: '/today',

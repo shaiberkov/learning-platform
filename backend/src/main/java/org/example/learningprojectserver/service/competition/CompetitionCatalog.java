@@ -87,6 +87,6 @@ public final class CompetitionCatalog {
     }
 
     static String normalize(String s) {
-        return s.replaceAll("\s+", "").toLowerCase(Locale.ROOT);
+        return s.replaceAll("\\s+", "").toLowerCase(Locale.ROOT);
     }
 }

@@ -21,7 +21,8 @@ import java.util.List;
  * One question a day per grade level of a school, the same for every student of that grade. The sub-topic is
  * picked deterministically from (school, grade, date); the question itself is generated once, by the first
  * student who opens the challenge that day, and stored (unique per school, grade and date), so everyone sees
- * the same question. A student has TIME_LIMIT_SECONDS from "start" to answer; the solution is sent only from
+ * the same question (the generator is random, so deleting the stored row would change that day's question).
+ * A student has TIME_LIMIT_SECONDS from "start" to answer; the solution is sent only from
  * the next day on. The streak counts consecutive days answered correctly.
  *
  * Days follow Israel time. Not transactional on purpose: two students creating the same day's challenge at once
@@ -88,19 +89,33 @@ public class DailyChallengeService {
         DailyChallengeEntity challenge = challengeFor(scope[0], scope[1], today);
         DailyChallengeAttemptEntity attempt = attemptRepository
                 .findByChallengeIdAndStudentUserId(challenge.getId(), userId).orElse(null);
-        if (attempt == null) return fail("יש להתחיל את האתגר לפני שעונים");
+        LocalDateTime now = LocalDateTime.now(clock);
+        DailyChallengeEntity answered = challenge;
+        if (attempt == null) {
+            // Started just before midnight: the answer belongs to yesterday's challenge while its clock runs.
+            DailyChallengeEntity prev = challengeRepository
+                    .findBySchoolCodeAndGradeNameAndChallengeDate(scope[0], scope[1], today.minusDays(1)).orElse(null);
+            DailyChallengeAttemptEntity open = prev == null ? null : attemptRepository
+                    .findByChallengeIdAndStudentUserId(prev.getId(), userId).orElse(null);
+            if (open == null || open.getAnsweredAt() != null
+                    || now.isAfter(open.getStartedAt().plusSeconds(TIME_LIMIT_SECONDS + GRACE_SECONDS))) {
+                return fail("יש להתחיל את האתגר לפני שעונים");
+            }
+            answered = prev;
+            attempt = open;
+        }
         if (attempt.getAnsweredAt() != null) return fail("כבר ענית על האתגר של היום");
 
-        LocalDateTime now = LocalDateTime.now(clock);
         boolean inTime = !now.isAfter(attempt.getStartedAt().plusSeconds(TIME_LIMIT_SECONDS + GRACE_SECONDS));
         attempt.setAnsweredAt(now);
         attempt.setAnswer(given);
-        attempt.setCorrect(inTime && CompetitionCatalog.answersMatch(given, challenge.getAnswer()));
+        attempt.setCorrect(inTime && CompetitionCatalog.answersMatch(given, answered.getAnswer()));
         attemptRepository.save(attempt);
 
         String message = !inTime ? "הזמן נגמר. התשובה לא נספרה"
                 : attempt.isCorrect() ? "תשובה נכונה! הפתרון ייפתח מחר" : "התשובה לא נכונה. הפתרון ייפתח מחר";
-        return ok(message, today(userId, scope, challenge, attempt));
+        // After a midnight answer the screen moves on to today's challenge, which is not started yet.
+        return ok(message, today(userId, scope, challenge, answered == challenge ? attempt : null));
     }
 
     // ---- rules ----

@@ -5,7 +5,11 @@ import { FaFistRaised, FaHandshake, FaCheckCircle, FaTimesCircle } from "react-i
 import { UserContext } from "../../context/UserContext.jsx";
 import { apiGet, apiPost, errorMessage } from "../../lib/api.js";
 import {
+    DUEL_ACCEPT,
+    DUEL_ANSWER,
     DUEL_BASE_PATH,
+    DUEL_DECLINE,
+    DUEL_FORFEIT,
     DUEL_INVITE,
     DUEL_LIST,
     DUEL_OPPONENTS,
@@ -75,7 +79,7 @@ function DuelLobby() {
         mutationFn: ({ id, action }) => apiPost(duelPath(id, action)),
         onSuccess: (res, { id, action }) => {
             queryClient.invalidateQueries({ queryKey: ["duels", "mine"] });
-            if (action === "accept") navigate(`/duels/${id}`);
+            if (action === DUEL_ACCEPT) navigate(`/duels/${id}`);
             else setMessage({ tone: "mint", text: res.errorCode });
         },
         onError: (e) => setMessage({ tone: "danger", text: errorMessage(e, "הפעולה נכשלה") }),
@@ -128,18 +132,18 @@ function DuelLobby() {
                                     {incoming && (
                                         <>
                                             <button className="btn btn-primary btn-sm" disabled={act.isPending}
-                                                    onClick={() => act.mutate({ id: d.id, action: "accept" })}>
+                                                    onClick={() => act.mutate({ id: d.id, action: DUEL_ACCEPT })}>
                                                 קבלה
                                             </button>
                                             <button className="btn btn-ghost btn-sm" disabled={act.isPending}
-                                                    onClick={() => act.mutate({ id: d.id, action: "decline" })}>
+                                                    onClick={() => act.mutate({ id: d.id, action: DUEL_DECLINE })}>
                                                 דחייה
                                             </button>
                                         </>
                                     )}
                                     {outgoing && (
                                         <button className="btn btn-ghost btn-sm" disabled={act.isPending}
-                                                onClick={() => act.mutate({ id: d.id, action: "decline" })}>
+                                                onClick={() => act.mutate({ id: d.id, action: DUEL_DECLINE })}>
                                             ביטול
                                         </button>
                                     )}
@@ -266,7 +270,7 @@ function DuelArena({ duelId }) {
     });
 
     const answer = useMutation({
-        mutationFn: ({ position, value }) => apiPost(duelPath(duelId, "answer"), null, { position, answer: value }),
+        mutationFn: ({ position, value }) => apiPost(duelPath(duelId, DUEL_ANSWER), null, { position, answer: value }),
         onSuccess: (res) => {
             queryClient.setQueryData(["duel", duelId], res.data);
             setFeedback({ tone: res.errorCode === "נכון!" ? "mint" : "danger", text: res.errorCode });
@@ -328,14 +332,14 @@ function DuelArena({ duelId }) {
                 {duel.status === "PENDING" && (sides.iAmChallenger ? (
                     <div className="space-y-3">
                         <div className="notice">ממתינים ש{sides.theirName} יאשר את ההזמנה. המסך יתעדכן לבד.</div>
-                        <button className="btn btn-ghost" disabled={act.isPending} onClick={() => act.mutate("decline")}>ביטול ההזמנה</button>
+                        <button className="btn btn-ghost" disabled={act.isPending} onClick={() => act.mutate(DUEL_DECLINE)}>ביטול ההזמנה</button>
                     </div>
                 ) : (
                     <div className="space-y-3">
                         <div className="notice notice--mint">{sides.theirName} הזמין/ה אותך לדו-קרב!</div>
                         <div className="flex gap-2">
-                            <button className="btn btn-primary" disabled={act.isPending} onClick={() => act.mutate("accept")}>קבלה והתחלה</button>
-                            <button className="btn btn-ghost" disabled={act.isPending} onClick={() => act.mutate("decline")}>דחייה</button>
+                            <button className="btn btn-primary" disabled={act.isPending} onClick={() => act.mutate(DUEL_ACCEPT)}>קבלה והתחלה</button>
+                            <button className="btn btn-ghost" disabled={act.isPending} onClick={() => act.mutate(DUEL_DECLINE)}>דחייה</button>
                         </div>
                     </div>
                 ))}
@@ -360,6 +364,18 @@ function DuelArena({ duelId }) {
 
                 {duel.status === "ACTIVE" && !current && (
                     <div className="notice notice--mint">סיימת! מחכים ש{sides.theirName} יסיים/תסיים...</div>
+                )}
+
+                {duel.status === "ACTIVE" && (
+                    <button className="btn btn-ghost" disabled={act.isPending}
+                            onClick={() => {
+                                const warn = coop
+                                    ? "לסיים את הדו-קרב עכשיו? שאלות שלא נענו ייחשבו כטעויות."
+                                    : "לעזוב את הדו-קרב? אם היריב/ה עדיין פעיל/ה, זה ייחשב כהפסד.";
+                                if (window.confirm(warn)) act.mutate(DUEL_FORFEIT);
+                            }}>
+                        {coop ? "סיום הדו-קרב" : "עזיבת הדו-קרב"}
+                    </button>
                 )}
 
                 {feedback && duel.status !== "PENDING" && (

@@ -114,6 +114,29 @@ class DailyChallengeServiceTest {
     }
 
     @Test
+    void answerAfterMidnightCountsForTheChallengeStartedBeforeIt() {
+        at(TODAY.atTime(23, 59, 30));
+        service.start("s1");
+        DailyChallengeEntity started = challenges.values().iterator().next();
+
+        at(TODAY.plusDays(1).atTime(0, 0, 30));
+        BasicResponse<DailyChallengeTodayDTO> res = service.answer("s1", started.getAnswer());
+
+        assertTrue(res.isSuccess());
+        assertTrue(attempts.get(started.getId() + "|s1").isCorrect());
+        assertEquals("NOT_STARTED", res.getData().status(), "the screen moves on to the new day");
+        assertTrue(res.getData().yesterday().correct());
+
+        at(TODAY.plusDays(1).atTime(0, 5));
+        assertFalse(service.answer("s1", "1").isSuccess(), "yesterday's attempt is closed now");
+    }
+
+    @Test
+    void answersMatchIgnoresEveryWhitespaceCharacter() {
+        assertTrue(CompetitionCatalog.answersMatch("x =\t3\n", "X=3"));
+    }
+
+    @Test
     void yesterdaysSolutionIsUnlockedToday() {
         service.start("s1");
         String answer = challenges.values().iterator().next().getAnswer();

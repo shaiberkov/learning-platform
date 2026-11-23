@@ -135,6 +135,37 @@ class DuelServiceTest {
     }
 
     @Test
+    void leavingAnActiveDuelFinishesItAndTheLeaverLosesWhileTheOtherIsActive() {
+        service.invite("a", new DuelInviteRequest("b", SUB_TOPIC, DuelMode.COMPETITIVE));
+        assertFalse(service.forfeit("a", 1L).isSuccess(), "a pending duel is cancelled, not left");
+        service.accept("b", 1L);
+        DuelQuestionEntity first = saved.getQuestions().get(0);
+        service.answer("a", 1L, new DuelAnswerRequest(first.getPosition(), first.getAnswer()));
+
+        assertFalse(service.forfeit("x", 1L).isSuccess(), "not a participant");
+        assertTrue(service.forfeit("a", 1L).isSuccess());
+
+        assertEquals(DuelStatus.FINISHED, saved.getStatus());
+        assertEquals("OPPONENT", saved.getOutcome());
+        assertFalse(service.forfeit("b", 1L).isSuccess(), "already finished");
+        assertFalse(service.answer("b", 1L, new DuelAnswerRequest(0, "1")).isSuccess());
+    }
+
+    @Test
+    void leavingADuelWhoseOtherPlayerIsIdleScoresItAsItStands() {
+        service.invite("a", new DuelInviteRequest("b", SUB_TOPIC, DuelMode.COMPETITIVE));
+        service.accept("b", 1L);
+        saved.setStartedAt(LocalDateTime.now().minusMinutes(DuelService.IDLE_MINUTES + 1));
+        DuelQuestionEntity first = saved.getQuestions().get(0);
+        service.answer("a", 1L, new DuelAnswerRequest(first.getPosition(), first.getAnswer()));
+
+        assertTrue(service.forfeit("a", 1L).isSuccess());
+
+        assertEquals(DuelStatus.FINISHED, saved.getStatus());
+        assertEquals("CHALLENGER", saved.getOutcome(), "b abandoned the duel, a had more correct answers");
+    }
+
+    @Test
     void coopOutcomeComparesTheTeamWithTheSystemScore() {
         DuelEntity d = new DuelEntity();
         d.setMode(DuelMode.COOP);

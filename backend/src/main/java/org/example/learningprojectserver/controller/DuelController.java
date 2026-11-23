@@ -57,6 +57,11 @@ public class DuelController {
         return duelService.decline(CurrentUser.userId(), duelId);
     }
 
+    @PostMapping(DUEL_FORFEIT)
+    public BasicResponse forfeit(@PathVariable Long duelId) {
+        return duelService.forfeit(CurrentUser.userId(), duelId);
+    }
+
     @PostMapping(DUEL_ANSWER)
     public BasicResponse answer(@PathVariable Long duelId, @Valid @RequestBody DuelAnswerRequest request) {
         return duelService.answer(CurrentUser.userId(), duelId, request);

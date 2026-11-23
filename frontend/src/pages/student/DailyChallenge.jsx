@@ -40,7 +40,7 @@ function DailyChallenge() {
         onError: (e) => setMessage({ tone: "danger", text: errorMessage(e, "שליחת התשובה נכשלה") }),
     });
 
-    const secondsLeft = useCountdown(data?.status === "IN_PROGRESS" ? data.secondsLeft : null, () =>
+    const secondsLeft = useCountdown(data?.status === "IN_PROGRESS" ? data.secondsLeft : null, today.dataUpdatedAt, () =>
         queryClient.invalidateQueries({ queryKey: DAILY_CHALLENGE_QUERY_KEY })
     );
 
@@ -148,8 +148,11 @@ function DailyChallenge() {
     );
 }
 
-/** Counts down from the server's secondsLeft; calls onDone once when it reaches 0. */
-function useCountdown(initialSeconds, onDone) {
+/**
+ * Counts down from the server's secondsLeft; calls onDone once when it reaches 0. Re-arms on every fetch
+ * (fetchedAt), so a refetch that returns the same secondsLeft still restarts the clock.
+ */
+function useCountdown(initialSeconds, fetchedAt, onDone) {
     const [left, setLeft] = useState(initialSeconds ?? 0);
 
     useEffect(() => {
@@ -169,7 +172,7 @@ function useCountdown(initialSeconds, onDone) {
         return () => clearInterval(id);
         // onDone only refetches; restarting the clock on its identity would reset the countdown.
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [initialSeconds]);
+    }, [initialSeconds, fetchedAt]);
 
     return left;
 }

@@ -44,6 +44,7 @@ public class DuelService {
     static final int MAX_OPPONENTS = 20;
     static final int LIST_LIMIT = 30;
     static final int MAX_ANSWER_LENGTH = 200;
+    static final int IDLE_MINUTES = 5;
     private static final List<DuelStatus> OPEN = List.of(DuelStatus.PENDING, DuelStatus.ACTIVE);
 
     private final DuelRepository duelRepository;
@@ -156,6 +157,29 @@ public class DuelService {
         return ok("ההזמנה בוטלה", state(duel, userId));
     }
 
+    /**
+     * A player leaves an active duel, which ends it so it no longer blocks new invites. Competitive: the leaver
+     * loses, unless the other player has been idle for IDLE_MINUTES (no answer since the start or their last
+     * answer), in which case the duel is scored as it stands with unanswered questions counted wrong.
+     * Coop: always scored as it stands against the system.
+     */
+    @Transactional
+    public BasicResponse<DuelStateDTO> forfeit(String userId, Long duelId) {
+        DuelEntity duel = duelRepository.findForUpdate(duelId).orElse(null);
+        if (duel == null || !isParticipant(duel, userId)) return fail("הדו-קרב לא נמצא");
+        if (duel.getStatus() != DuelStatus.ACTIVE) return fail("אפשר לעזוב רק דו-קרב פעיל");
+        LocalDateTime now = LocalDateTime.now();
+        boolean challenger = userId.equals(duel.getChallengerId());
+        duel.setStatus(DuelStatus.FINISHED);
+        duel.setFinishedAt(now);
+        if (duel.getMode() == DuelMode.COOP || otherIsIdle(duel, challenger, now)) {
+            duel.setOutcome(outcome(duel));
+        } else {
+            duel.setOutcome(challenger ? "OPPONENT" : "CHALLENGER");
+        }
+        return ok("הדו-קרב הסתיים", state(duel, userId));
+    }
+
     @Transactional
     public BasicResponse<DuelStateDTO> answer(String userId, Long duelId, DuelAnswerRequest request) {
         DuelEntity duel = duelRepository.findForUpdate(duelId).orElse(null);
@@ -239,6 +263,17 @@ public class DuelService {
     }
 
     // ---- internals ----
+
+    /** True when the player other than the caller has not answered for IDLE_MINUTES (or has already finished). */
+    private static boolean otherIsIdle(DuelEntity duel, boolean callerIsChallenger, LocalDateTime now) {
+        if ((callerIsChallenger ? duel.getOpponentFinishedAt() : duel.getChallengerFinishedAt()) != null) return true;
+        LocalDateTime last = duel.getStartedAt();
+        for (DuelQuestionEntity q : duel.getQuestions()) {
+            LocalDateTime at = callerIsChallenger ? q.getOpponentAnsweredAt() : q.getChallengerAnsweredAt();
+            if (at != null && (last == null || at.isAfter(last))) last = at;
+        }
+        return last == null || !last.plusMinutes(IDLE_MINUTES).isAfter(now);
+    }
 
     private DuelStateDTO state(DuelEntity duel, String userId) {
         boolean challenger = userId.equals(duel.getChallengerId());

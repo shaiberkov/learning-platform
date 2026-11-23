@@ -403,6 +403,7 @@ public final class ControllerConstants {
         public static final String DUEL_ACCEPT     = "/{duelId}/accept";
         public static final String DUEL_DECLINE    = "/{duelId}/decline";
         public static final String DUEL_ANSWER     = "/{duelId}/answer";
+        public static final String DUEL_FORFEIT    = "/{duelId}/forfeit";
     }
     public static final class DailyChallenge {
         private DailyChallenge() {}

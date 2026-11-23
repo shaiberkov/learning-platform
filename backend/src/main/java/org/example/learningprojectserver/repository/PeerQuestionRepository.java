@@ -23,6 +23,11 @@ public interface PeerQuestionRepository extends JpaRepository<PeerQuestionEntity
     List<PeerQuestionEntity> findByClassRoomIdInAndStatusOrderByCreatedAtAsc(Collection<Long> classRoomIds,
                                                                              PeerQuestionStatus status);
 
+    /** Moves a question between review states only if it is still in {@code from}; 0 when another review won. */
+    @Modifying
+    @Query("UPDATE PeerQuestionEntity q SET q.status = :to WHERE q.id = :id AND q.status = :from")
+    int switchStatus(@Param("id") Long id, @Param("from") PeerQuestionStatus from, @Param("to") PeerQuestionStatus to);
+
     /** One classmate answer to an approved question, counted on its bank question (not a "time asked"). */
     @Modifying
     @Query("""

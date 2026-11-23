@@ -171,6 +171,10 @@ public class PeerQuestionService {
         if (q == null) return new BasicResponse<>(false, "השאלה לא נמצאה");
         if (q.getStatus() != PeerQuestionStatus.PENDING) return new BasicResponse<>(false, "השאלה כבר נבדקה");
         if (note != null && note.length() > MAX_NOTE) return new BasicResponse<>(false, "ההערה ארוכה מדי");
+        // Claim the question first so two approvals sent together cannot both add it to the bank.
+        if (peerQuestionRepository.switchStatus(q.getId(), PeerQuestionStatus.PENDING, PeerQuestionStatus.APPROVED) == 0) {
+            return new BasicResponse<>(false, "השאלה כבר נבדקה");
+        }
 
         BankQuestionDTO bankDto = new BankQuestionDTO();
         bankDto.setQuestionText(q.getQuestionText());
@@ -183,6 +187,7 @@ public class PeerQuestionService {
         bankDto.setShared(false);
         BasicResponse<BankQuestionDTO> added = questionBankService.addQuestion(teacherId, bankDto);
         if (!added.isSuccess() || added.getData() == null) {
+            peerQuestionRepository.switchStatus(q.getId(), PeerQuestionStatus.APPROVED, PeerQuestionStatus.PENDING);
             return new BasicResponse<>(false, added.getErrorCode());
         }
         Long bankId = added.getData().getId();
@@ -216,7 +221,10 @@ public class PeerQuestionService {
         if (note.length() > MAX_NOTE) return new BasicResponse<>(false, "ההערה ארוכה מדי");
         PeerQuestionEntity q = findReviewable(teacherId, role, peerQuestionId);
         if (q == null) return new BasicResponse<>(false, "השאלה לא נמצאה");
-        if (q.getStatus() != PeerQuestionStatus.PENDING) return new BasicResponse<>(false, "השאלה כבר נבדקה");
+        if (q.getStatus() != PeerQuestionStatus.PENDING
+                || peerQuestionRepository.switchStatus(q.getId(), PeerQuestionStatus.PENDING, PeerQuestionStatus.REJECTED) == 0) {
+            return new BasicResponse<>(false, "השאלה כבר נבדקה");
+        }
 
         q.setStatus(PeerQuestionStatus.REJECTED);
         q.setReviewerTeacherId(teacherId);

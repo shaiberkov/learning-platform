@@ -110,6 +110,7 @@ class PeerQuestionServiceTest {
         PeerQuestionEntity q = pending(3);
         when(peerQuestionRepository.findById(3L)).thenReturn(Optional.of(q));
         when(support.belongsTo("t1", "TEACHER", 7L)).thenReturn(true);
+        when(peerQuestionRepository.switchStatus(3L, PeerQuestionStatus.PENDING, PeerQuestionStatus.APPROVED)).thenReturn(1);
         BankQuestionDTO added = new BankQuestionDTO();
         added.setId(99L);
         BasicResponse<BankQuestionDTO> addedResponse = new BasicResponse<>(true, "ok");
@@ -145,6 +146,16 @@ class PeerQuestionServiceTest {
     }
 
     @Test
+    void approvalThatLosesTheRaceAddsNothingToTheBank() {
+        when(peerQuestionRepository.findById(3L)).thenReturn(Optional.of(pending(3)));
+        when(support.belongsTo("t1", "TEACHER", 7L)).thenReturn(true);
+        when(peerQuestionRepository.switchStatus(3L, PeerQuestionStatus.PENDING, PeerQuestionStatus.APPROVED)).thenReturn(0);
+
+        assertFalse(service.approve("t1", "TEACHER", 3L, null).isSuccess());
+        verifyNoInteractions(questionBankService);
+    }
+
+    @Test
     void teacherOfAnotherClassCannotReview() {
         when(peerQuestionRepository.findById(3L)).thenReturn(Optional.of(pending(3)));
         when(support.belongsTo("t2", "TEACHER", 7L)).thenReturn(false);
@@ -161,6 +172,7 @@ class PeerQuestionServiceTest {
         when(peerQuestionRepository.findById(3L)).thenReturn(Optional.of(q));
         when(support.belongsTo("t1", "TEACHER", 7L)).thenReturn(true);
 
+        when(peerQuestionRepository.switchStatus(3L, PeerQuestionStatus.PENDING, PeerQuestionStatus.REJECTED)).thenReturn(1);
         assertTrue(service.reject("t1", "TEACHER", 3L, "המסיח 7 קל מדי").isSuccess());
         assertEquals(PeerQuestionStatus.REJECTED, q.getStatus());
         verify(support).notify(eq(List.of("s1")), anyString(), contains("המסיח"), any());

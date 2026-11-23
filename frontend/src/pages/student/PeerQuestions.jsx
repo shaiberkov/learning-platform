@@ -57,11 +57,6 @@ function PracticeCard({ question, index }) {
                 </div>
             )}
             {answer.isError && <div className="notice notice--danger">{errorMessage(answer.error, "לא ניתן לבדוק את התשובה")}</div>}
-            {result && (
-                <button type="button" className="btn btn-ghost btn-sm" onClick={() => { setChosen(null); answer.reset(); }}>
-                    לנסות שוב
-                </button>
-            )}
         </div>
     );
 }

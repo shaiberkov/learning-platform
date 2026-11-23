@@ -81,6 +81,11 @@ public class ClassCommunityAccess {
         return q != null && belongsTo(CurrentUser.userId(), role, q.getClassRoomId());
     }
 
+    /** Approving puts the question into the reviewer's own bank, so only the class teacher approves. */
+    public boolean canApprovePeerQuestion(Long peerQuestionId) {
+        return isTeacher(CurrentUser.role()) && canReviewPeerQuestion(peerQuestionId);
+    }
+
     public boolean canPracticePeerQuestion(Long peerQuestionId) {
         String role = CurrentUser.role();
         if (!(isStudent(role) || isAdmin(role)) || peerQuestionId == null) return false;

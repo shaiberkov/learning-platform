@@ -116,7 +116,7 @@ public class ClassCommunityController {
         return peerQuestionService.reviewQueue(CurrentUser.userId(), CurrentUser.role(), classId, status);
     }
 
-    @PreAuthorize("@communityAuthz.canReviewPeerQuestion(#peerQuestionId)")
+    @PreAuthorize("@communityAuthz.canApprovePeerQuestion(#peerQuestionId)")
     @PostMapping(PEER_APPROVE)
     public BasicResponse approveQuestion(@RequestParam Long peerQuestionId,
                                          @Valid @RequestBody(required = false) ReviewRequest request) {

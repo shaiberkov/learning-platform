@@ -272,12 +272,17 @@ export default function ClassForumBoard({ moderator = false }) {
                         </button>
                     </div>
                 )}
-                {openId ? (
+                {openId && (
                     <ThreadView key={openId} threadId={openId} moderator={moderator} onDeleted={() => setOpenId(null)} />
-                ) : moderator ? (
+                )}
+                {!openId && moderator && (
                     <div className="glass"><EmptyState title="בחרו דיון" body="אשרו תשובות נכונות ✓ כדי שתלמידים שייתקעו באותה שאלה יראו אותן מיד." /></div>
-                ) : (
-                    <NewThreadForm classId={classId} onOpen={setOpenId} onCreated={(t) => t && setOpenId(t.id)} />
+                )}
+                {/* Stays mounted while a suggested thread is open, so a half-typed question is not lost. */}
+                {!moderator && (
+                    <div hidden={Boolean(openId)}>
+                        <NewThreadForm classId={classId} onOpen={setOpenId} onCreated={(t) => t && setOpenId(t.id)} />
+                    </div>
                 )}
             </section>
         </div>

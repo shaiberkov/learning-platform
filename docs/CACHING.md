@@ -79,6 +79,7 @@ Not cached on purpose [s02]: the class forum and the student-authored questions 
 [s03] Not cached on purpose: duels (`DuelService`, polled every 1.5 s by both players, one row per poll) and the daily challenge (`DailyChallengeService`) read MySQL on every request, so their writes have nothing to evict. Neither keeps in-memory state.
 [s05] Not cached either: summary sheets and study podcasts (`StudySummaryService`, tables `study_sheet`, `study_podcast`, `study_podcast_audio`) read MySQL on every request, and their AI calls skip `aiPromptCache` (each sheet or script is built from the student's current mistakes). A podcast's AI voice recording is stored once in `study_podcast_audio` and served from there, never regenerated.
 [s08] Not cached on purpose: past-exam simulations and the grade-target calculator (`ExamSimulationService`, `GradeTargetService`) read MySQL on every request; the calculator reads gradebooks through `GradebookService`, which is not cached either.
+[s10] Not cached on purpose: the reflection journal and the pre-exam check-in (`ReflectionService`, `ExamCheckinService`, tables `student_reflection`, `student_mood_checkin`, `student_wellbeing_consent`) read MySQL on every request; goal progress is computed on read from `student_daily_activity` and the `goal_progress` counter, so nothing needs evicting.
 
 ## Checklist for a change that touches data
 

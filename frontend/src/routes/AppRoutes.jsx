@@ -122,6 +122,9 @@ const RealWorldEditor = lazy(() => import("../pages/teacher/RealWorldEditor.jsx"
 const Quests = lazy(() => import("../pages/student/Quests.jsx"));
 const Portfolio = lazy(() => import("../pages/student/Portfolio.jsx"));
 const SharedPortfolio = lazy(() => import("../pages/common/SharedPortfolio.jsx"));
+// [s10] Reflection journal and pre-exam check-in
+const ReflectionJournal = lazy(() => import("../pages/student/ReflectionJournal.jsx"));
+const ExamCheckin = lazy(() => import("../pages/student/ExamCheckin.jsx"));
 
 // Public static pages
 const TermsOfService = lazy(() => import("../pages/footer/TermsOfService.jsx"));
@@ -317,6 +320,9 @@ export default function AppRoutes() {
                             {/* [s09] quests and portfolio */}
                             <Route path="/quests" element={<Quests />} />
                             <Route path="/portfolio" element={<Portfolio />} />
+                            {/* [s10] Reflection journal and pre-exam check-in */}
+                            <Route path="/reflection" element={<ReflectionJournal />} />
+                            <Route path="/exam-checkin" element={<ExamCheckin />} />
                             {commonRoutes}
                         </>
                     )}

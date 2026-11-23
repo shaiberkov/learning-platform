@@ -545,5 +545,18 @@ public final class ControllerConstants {
 
         public static final String PORTFOLIO_PUBLIC_BASE_PATH = BASE_API + "/portfolio-public";
         public static final String PUBLIC_PORTFOLIO           = "/{token}";
+    // [s10] Reflection journal and pre-exam check-in. Under /student/**, so the STUDENT_ALL rule applies.
+    public static final class Wellbeing {
+        private Wellbeing() {}
+
+        public static final String WELLBEING_BASE_PATH  = BASE_API + "/student/wellbeing";
+        public static final String WELLBEING_PROMPT     = "/prompt";
+        public static final String REFLECTION_CURRENT   = "/reflection/current";
+        public static final String REFLECTION_HISTORY   = "/reflection/history";
+        public static final String REFLECTION_SAVE      = "/reflection/save";
+        public static final String REFLECTION_MARK      = "/reflection/mark-achieved";
+        public static final String CHECKIN_STATUS       = "/checkin/status";
+        public static final String CHECKIN_SUBMIT       = "/checkin/submit";
+        public static final String CHECKIN_CONSENT      = "/checkin/consent";
     }
 }

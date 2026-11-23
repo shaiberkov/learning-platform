@@ -253,6 +253,9 @@ function SideBar() {
                     // [s09] quests and portfolio
                     { to: "quests", label: "מסעות למידה" },
                     { to: "portfolio", label: "הפורטפוליו שלי" },
+                    // [s10] Reflection journal and pre-exam check-in
+                    { to: "reflection", label: "יומן רפלקציה" },
+                    { to: "exam-checkin", label: "צ'ק-אין לפני מבחן" },
                 ] : []),
                 { to: "accessibility-settings", label: "הגדרות נגישות" },
                 ...common,

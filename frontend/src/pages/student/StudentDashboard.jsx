@@ -12,6 +12,8 @@ import DashboardHero, { QuickTile } from "../../components/ui/DashboardHero.jsx"
 // [s03] Daily challenge and duels tiles
 import DailyChallengeTile from "../../features/competition/DailyChallengeTile.jsx";
 import { FaFistRaised } from "react-icons/fa";
+// [s10] Sunday reflection and pre-exam check-in prompt
+import WellbeingPromptCard from "../../features/wellbeing/WellbeingPromptCard.jsx";
 
 function StudentDashboard() {
     const { user } = useContext(UserContext);
@@ -68,6 +70,11 @@ function StudentDashboard() {
                         {/* [s03] Daily challenge and duels */}
                         <DailyChallengeTile index={10} />
                         <QuickTile index={11} to="/duels" icon={<FaFistRaised />} label="דו-קרבות" hint="אתגרו חבר" tone="icon-badge--amber" />
+                    </div>
+
+                    {/* [s10] Sunday reflection and pre-exam check-in prompt */}
+                    <div className="lg:col-span-7">
+                        <WellbeingPromptCard />
                     </div>
                 </div>
             </div>

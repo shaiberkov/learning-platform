@@ -34,6 +34,10 @@ public interface AttendanceRecordRepository extends JpaRepository<AttendanceReco
     long countByStudentAndStatus(@Param("studentId") String studentId, @Param("status") AttendanceStatus status,
                                  @Param("from") LocalDate from, @Param("to") LocalDate to);
 
+    /** Rows of [AttendanceStatus, count] for one student, over all recorded lessons. */
+    @Query("SELECT a.status, COUNT(a) FROM AttendanceRecordEntity a WHERE a.studentUserId = :studentId GROUP BY a.status")
+    List<Object[]> countByStatusForStudent(@Param("studentId") String studentId);
+
     /** The teacher's timetable lessons on one weekday. */
     @Query("""
         SELECT new org.example.learningprojectserver.dto.AttendanceLessonDTO(

@@ -12,7 +12,8 @@ Settings come from Spring profiles plus environment variables (backend) and buil
 | `DB_URL`, `DB_USERNAME`, `DB_PASSWORD` | yes | MySQL (`production` profile) |
 | `JWT_SECRET` | yes | JWT signing key, Base64 of at least 32 random bytes (`openssl rand -base64 32`). The `production` profile refuses to start without it; changing it logs everyone out |
 | `JPA_DDL_AUTO` | no | default `validate`; `none` only as an emergency fallback (see `docs/BACKUP.md`) |
-| `GPT_TOKEN`, `SMS_TOKEN` | for those features | OpenAI and SMS provider keys |
+| `GPT_TOKEN` | for AI features | OpenAI key |
+| `EMAIL_APP_PASSWORD` | yes | Gmail app password for outgoing e-mail, including the login and password-reset codes |
 | `SENTRY_DSN`, `SENTRY_ENVIRONMENT`, `SENTRY_TRACES_SAMPLE_RATE` | no | error reporting; empty DSN = off |
 
 | Frontend variable (build time) | Purpose |

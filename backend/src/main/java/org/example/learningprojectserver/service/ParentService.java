@@ -11,6 +11,7 @@ import org.example.learningprojectserver.entities.StudentEntity;
 import org.example.learningprojectserver.entities.UserEntity;
 import org.example.learningprojectserver.enums.Role;
 import org.example.learningprojectserver.mappers.UserToParentMapper;
+import org.example.learningprojectserver.repository.AttendanceRecordRepository;
 import org.example.learningprojectserver.repository.ParentRepository;
 import org.example.learningprojectserver.repository.SchoolAnalyticsRepository;
 import org.example.learningprojectserver.repository.StudentRepository;
@@ -37,6 +38,7 @@ public class ParentService {
     private final StudentRepository studentRepository;
     private final UserRepository userRepository;
     private final SchoolAnalyticsRepository schoolAnalyticsRepository;
+    private final AttendanceRecordRepository attendanceRecordRepository;
     private final UserToParentMapper userToParentMapper;
 
     /**
@@ -140,7 +142,10 @@ public class ParentService {
                 && child.getStudentProgressEntity().getSkillLevelsBySubTopic() != null) {
             overview.setSkillLevels(new TreeMap<>(child.getStudentProgressEntity().getSkillLevelsBySubTopic()));
         }
-        overview.setAttendanceAvailable(false);
+        for (Object[] row : attendanceRecordRepository.countByStatusForStudent(childId)) {
+            overview.getAttendanceCounts().put(String.valueOf(row[0]), (Long) row[1]);
+        }
+        overview.setAttendanceAvailable(!overview.getAttendanceCounts().isEmpty());
 
         BasicResponse<ChildOverviewDTO> response = new BasicResponse<>(true, null);
         response.setData(overview);

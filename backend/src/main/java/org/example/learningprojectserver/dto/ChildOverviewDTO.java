@@ -22,6 +22,8 @@ public class ChildOverviewDTO {
     private Double practiceTestsAverage;
     /** Practice skill level per sub-topic, as tracked by the practice engine. */
     private Map<String, Integer> skillLevels;
-    /** Attendance is not recorded by the system yet: false until it is, and the UI says so. */
+    /** False while no lesson attendance was marked for the child; the UI says so. */
     private boolean attendanceAvailable;
+    /** Marked lessons per status (PRESENT, LATE, ABSENT, EXCUSED). */
+    private Map<String, Long> attendanceCounts = new java.util.LinkedHashMap<>();
 }

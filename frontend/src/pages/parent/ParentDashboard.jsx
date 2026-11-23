@@ -16,6 +16,26 @@ function Stat({label, value, tone = ""}) {
     );
 }
 
+const ATTENDANCE_LABELS = [["PRESENT", "נוכח/ת"], ["LATE", "איחור"], ["ABSENT", "חיסור"], ["EXCUSED", "חיסור מוצדק"]];
+
+function AttendanceSummary({counts = {}}) {
+    const total = Object.values(counts).reduce((a, b) => a + b, 0);
+    const attended = (counts.PRESENT ?? 0) + (counts.LATE ?? 0);
+    return (
+        <>
+            <p className="text-sm">
+                נוכחות בשיעורים: <span className="num text-2xl font-semibold">{Math.round(100 * attended / total)}%</span>
+                <span className="faint"> · מתוך <span className="num">{total}</span> שיעורים שסומנו</span>
+            </p>
+            <div className="flex flex-wrap gap-2 mt-3">
+                {ATTENDANCE_LABELS.map(([key, label]) => (
+                    <span key={key} className="chip">{label} · <span className="num">{counts[key] ?? 0}</span></span>
+                ))}
+            </div>
+        </>
+    );
+}
+
 function ParentDashboard() {
     const {user} = useContext(UserContext);
     const [children, setChildren] = useState([]);
@@ -89,8 +109,8 @@ function ParentDashboard() {
                             <span className="eyebrow">Attendance</span>
                             <h3 className="title text-lg mt-1 mb-4">נוכחות</h3>
                             {overview.attendanceAvailable
-                                ? null
-                                : <p className="faint text-sm">נתוני נוכחות עדיין לא נאספים במערכת. הם יוצגו כאן כשבית הספר יתחיל לרשום נוכחות.</p>}
+                                ? <AttendanceSummary counts={overview.attendanceCounts}/>
+                                : <p className="faint text-sm">עדיין לא נרשמה נוכחות לתלמיד/ה. היא תוצג כאן כשהמורים יתחילו לסמן נוכחות בשיעורים.</p>}
                             {skills.length > 0 && (
                                 <>
                                     <h3 className="title text-lg mt-6 mb-3">רמת מיומנות בתרגול</h3>

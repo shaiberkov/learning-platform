@@ -11,6 +11,7 @@ import org.example.learningprojectserver.repository.ReviewItemRepository;
 import org.example.learningprojectserver.response.BasicResponse;
 import org.example.learningprojectserver.service.adaptive.SkillCatalog;
 import org.example.learningprojectserver.service.adaptive.Sm2Scheduler;
+import org.example.learningprojectserver.service.diagnosis.MistakeClassifier;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -33,8 +34,11 @@ public class ReviewService {
         return LocalDate.now(SCHOOL_ZONE);
     }
 
-    /** Queues a wrongly answered question, or restarts its schedule if it is already in the notebook. */
-    public void addMistake(String userId, QuestionEntity question, String source) {
+    /**
+     * Queues a wrongly answered question, or restarts its schedule if it is already in the notebook.
+     * [s06] The given answer is kept and the mistake type is diagnosed by rules (MistakeClassifier).
+     */
+    public void addMistake(String userId, QuestionEntity question, String source, String givenAnswer) {
         if (question == null || question.getId() == null) {
             return;
         }
@@ -54,6 +58,11 @@ public class ReviewService {
                     return i;
                 });
         Sm2Scheduler.resetAsNewMistake(item, today());
+        MistakeClassifier.Diagnosis diagnosis = MistakeClassifier.classify(item.getQuestionText(), item.getAnswer(), givenAnswer);
+        item.setGivenAnswer(givenAnswer == null || givenAnswer.length() <= 500 ? givenAnswer : givenAnswer.substring(0, 500));
+        item.setErrorType(diagnosis.type());
+        item.setErrorTypeSource("RULE");
+        item.setErrorNote(diagnosis.reason());
         reviewItemRepository.save(item);
     }
 
@@ -61,7 +70,8 @@ public class ReviewService {
         List<ReviewItemDTO> items = reviewItemRepository.findDue(userId, today()).stream()
                 .limit(MAX_DUE_ITEMS)
                 .map(i -> new ReviewItemDTO(i.getId(), i.getSubject(), i.getTopic(), i.getSubTopic(),
-                        i.getQuestionText(), i.getSource(), i.getReviewCount(), i.getLapses(), i.getDueDate()))
+                        i.getQuestionText(), i.getSource(), i.getReviewCount(), i.getLapses(), i.getDueDate(),
+                        i.getErrorType() == null ? null : i.getErrorType().name()))
                 .toList();
         BasicResponse response = new BasicResponse(true, null);
         response.setData(items);

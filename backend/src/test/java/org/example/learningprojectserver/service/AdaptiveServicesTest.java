@@ -40,7 +40,7 @@ class AdaptiveServicesTest {
         @Test
         void wrongAnswerEntersNotebookDueToday() {
             when(reviewItemRepository.findByStudentUserIdAndQuestionId("s1", 7L)).thenReturn(Optional.empty());
-            reviewService.addMistake("s1", question(7L, "חיבור מספרים שלמים", "2"), "PRACTICE");
+            reviewService.addMistake("s1", question(7L, "חיבור מספרים שלמים", "2"), "PRACTICE", "3");
 
             ArgumentCaptor<ReviewItemEntity> saved = ArgumentCaptor.forClass(ReviewItemEntity.class);
             verify(reviewItemRepository).save(saved.capture());
@@ -116,8 +116,8 @@ class AdaptiveServicesTest {
 
             examFeedbackService.recordExamAnswers("s1", test, ExamFeedbackService.PRACTICE_TEST, Map.of(1L, "5", 2L, "13"));
 
-            verify(reviewService).addMistake("s1", wrong, ExamFeedbackService.PRACTICE_TEST);
-            verify(reviewService, never()).addMistake(eq("s1"), eq(right), anyString());
+            verify(reviewService).addMistake("s1", wrong, ExamFeedbackService.PRACTICE_TEST, "13");
+            verify(reviewService, never()).addMistake(eq("s1"), eq(right), anyString(), any());
             verify(masteryService, times(2)).recordAnswer(eq("s1"), anyString(), anyString(), anyString(), eq(2), anyDouble(), anyBoolean());
             verify(testAnswerRecordRepository).saveAll(argThat(list -> ((List<?>) list).size() == 2));
         }

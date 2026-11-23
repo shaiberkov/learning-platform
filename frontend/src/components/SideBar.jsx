@@ -197,6 +197,8 @@ function SideBar() {
                 { to: "attendance", label: "נוכחות" },
                 { to: "message-parents", label: "הודעה להורים" },
                 { to: "send-message", label: t("nav.sendMessage") },
+                // [s06] class mistake types and Feynman explanations
+                { to: "class-diagnosis", label: "אבחון טעויות והסברים" },
                 ...common,
             ],
             PARENT: [
@@ -219,6 +221,9 @@ function SideBar() {
                     { to: "ai-tutor", label: "מורה-עזר AI" },
                     { to: "open-questions", label: "שאלות פתוחות" },
                     { to: "live-quiz", label: "חידון בכיתה" },
+                    // [s06] "Explain it to me" (Feynman) and mistake-type diagnosis
+                    { to: "explain-it", label: "תסביר לי" },
+                    { to: "mistake-diagnosis", label: "אבחון טעויות" },
                 ] : []),
                 { to: "accessibility-settings", label: "הגדרות נגישות" },
                 ...common,

@@ -390,4 +390,19 @@ public final class ControllerConstants {
         public static final String GLOBAL = "/global";
         public static final String STUDENTS_PAGE = "/students-page";
     }
+    // [s06] "Explain it to me" (Feynman) and mistake-type diagnosis. Student paths under /student (STUDENT_ALL), teacher paths under /teacher (TEACHER_ALL).
+    public static final class Diagnosis {
+        private Diagnosis() {}
+
+        public static final String STUDENT_DIAGNOSIS_BASE_PATH = BASE_API + "/student";
+        public static final String FEYNMAN_PROMPTS             = "/feynman/prompts";
+        public static final String FEYNMAN_EXPLANATIONS        = "/feynman/explanations";
+        public static final String MISTAKE_DIAGNOSIS           = "/mistake-diagnosis";
+        public static final String MISTAKE_SELF_CHECK          = "/mistake-diagnosis/{itemId}/self-check";
+        public static final String MISTAKE_AI_ANALYSIS         = "/mistake-diagnosis/{itemId}/ai";
+
+        public static final String TEACHER_DIAGNOSIS_BASE_PATH = BASE_API + "/teacher";
+        public static final String CLASS_MISTAKE_TYPES         = "/class-mistake-types";
+        public static final String CLASS_FEYNMAN               = "/class-feynman";
+    }
 }

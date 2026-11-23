@@ -98,6 +98,10 @@ const SchoolYears = lazy(() => import("../pages/manager/SchoolYears.jsx"));
 const ParentLinks = lazy(() => import("../pages/manager/ParentLinks.jsx"));
 const MessageParents = lazy(() => import("../pages/teacher/MessageParents.jsx"));
 const ParentDashboard = lazy(() => import("../pages/parent/ParentDashboard.jsx"));
+// [s06] "Explain it to me" (Feynman) and mistake-type diagnosis
+const ExplainIt = lazy(() => import("../pages/student/ExplainIt.jsx"));
+const MistakeDiagnosis = lazy(() => import("../pages/student/MistakeDiagnosis.jsx"));
+const ClassDiagnosis = lazy(() => import("../pages/teacher/ClassDiagnosis.jsx"));
 
 // Public static pages
 const TermsOfService = lazy(() => import("../pages/footer/TermsOfService.jsx"));
@@ -219,6 +223,8 @@ export default function AppRoutes() {
                             <Route path="/attendance" element={<Attendance />} />
                             <Route path="/message-parents" element={<MessageParents />} />
                             <Route path="/send-message" element={<SendMessage />} />
+                            {/* [s06] class mistake types and Feynman explanations */}
+                            <Route path="/class-diagnosis" element={<ClassDiagnosis />} />
                             {commonRoutes}
                         </>
                     )}
@@ -245,6 +251,9 @@ export default function AppRoutes() {
                             <Route path="/study-plan" element={<StudyPlan />} />
                             <Route path="/achievements" element={<Achievements />} />
                             <Route path="/accessibility-settings" element={<AccessibilitySettings />} />
+                            {/* [s06] "Explain it to me" (Feynman) and mistake-type diagnosis */}
+                            <Route path="/explain-it" element={<ExplainIt />} />
+                            <Route path="/mistake-diagnosis" element={<MistakeDiagnosis />} />
                             {commonRoutes}
                         </>
                     )}

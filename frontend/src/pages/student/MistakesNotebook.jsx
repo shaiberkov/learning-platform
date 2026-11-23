@@ -4,6 +4,7 @@ import { FaBookOpen, FaCheck, FaRedo } from "react-icons/fa";
 import { UserContext } from "../../context/UserContext.jsx";
 import OrbitLoader from "../../components/ui/OrbitLoader.jsx";
 import { answerReviewItem, fetchDueReviewItems, fetchReviewSummary } from "../../features/adaptive/adaptiveApi.js";
+import { mistakeType } from "../../features/diagnosis/mistakeTypes.js";
 
 const SOURCE_LABELS = {
     PRACTICE: "תרגול שאלות",
@@ -140,6 +141,12 @@ function MistakesNotebook() {
                             <span className="chip">{current.subTopic}</span>
                             <span className="chip">{SOURCE_LABELS[current.source] || current.source}</span>
                             {current.lapses > 0 && <span className="chip">טעויות: <span className="num">{current.lapses}</span></span>}
+                            {/* [s06] mistake type, with the practice it calls for on the diagnosis page */}
+                            {current.errorType && (
+                                <Link to="/mistake-diagnosis" className={`chip ${mistakeType(current.errorType).chip}`}>
+                                    {mistakeType(current.errorType).label} · {mistakeType(current.errorType).actionLabel}
+                                </Link>
+                            )}
                         </div>
                     </div>
 

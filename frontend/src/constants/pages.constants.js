@@ -772,3 +772,24 @@ export const {
     GET_CHILDREN,
     CHILD_OVERVIEW,
 } = ParentPaths;
+
+// [s06] "Explain it to me" (Feynman) and mistake-type diagnosis. Mirrors ControllerConstants.Diagnosis.
+// Paths with an id: `${MISTAKE_DIAGNOSIS}/${itemId}/self-check` and `${MISTAKE_DIAGNOSIS}/${itemId}/ai`.
+export const DiagnosisPaths = {
+    STUDENT_DIAGNOSIS_BASE_PATH: `${API_BASE_URL}${BASE_API}/student`,
+    FEYNMAN_PROMPTS: '/feynman/prompts',
+    FEYNMAN_EXPLANATIONS: '/feynman/explanations',
+    MISTAKE_DIAGNOSIS: '/mistake-diagnosis',
+    TEACHER_DIAGNOSIS_BASE_PATH: `${API_BASE_URL}${BASE_API}/teacher`,
+    CLASS_MISTAKE_TYPES: '/class-mistake-types',
+    CLASS_FEYNMAN: '/class-feynman',
+};
+export const {
+    STUDENT_DIAGNOSIS_BASE_PATH,
+    FEYNMAN_PROMPTS,
+    FEYNMAN_EXPLANATIONS,
+    MISTAKE_DIAGNOSIS,
+    TEACHER_DIAGNOSIS_BASE_PATH,
+    CLASS_MISTAKE_TYPES,
+    CLASS_FEYNMAN,
+} = DiagnosisPaths;

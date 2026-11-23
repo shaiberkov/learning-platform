@@ -164,7 +164,7 @@ public List<StudentTestStatusDTO> getStudentTestsStatus(String userId) {
                     PracticeScoring.eloOutcome(isCorrect, hintsUsed), isCorrect);
             // A question solved only after opening the full solution goes to the notebook too.
             if (!isCorrect || hintsUsed >= PracticeScoring.FULL_SOLUTION_STEP) {
-                reviewService.addMistake(userId, questionEntity, "PRACTICE");
+                reviewService.addMistake(userId, questionEntity, "PRACTICE", answer);
                 addedToReview = true;
             }
         }

@@ -98,6 +98,9 @@ const SchoolYears = lazy(() => import("../pages/manager/SchoolYears.jsx"));
 const ParentLinks = lazy(() => import("../pages/manager/ParentLinks.jsx"));
 const MessageParents = lazy(() => import("../pages/teacher/MessageParents.jsx"));
 const ParentDashboard = lazy(() => import("../pages/parent/ParentDashboard.jsx"));
+// [s05] Summary sheet and study podcast (student).
+const StudySummarySheet = lazy(() => import("../pages/student/StudySummarySheet.jsx"));
+const StudyPodcast = lazy(() => import("../pages/student/StudyPodcast.jsx"));
 
 // Public static pages
 const TermsOfService = lazy(() => import("../pages/footer/TermsOfService.jsx"));
@@ -245,6 +248,9 @@ export default function AppRoutes() {
                             <Route path="/study-plan" element={<StudyPlan />} />
                             <Route path="/achievements" element={<Achievements />} />
                             <Route path="/accessibility-settings" element={<AccessibilitySettings />} />
+                            {/* [s05] Summary sheet and study podcast. */}
+                            <Route path="/study-summary-sheet" element={<StudySummarySheet />} />
+                            <Route path="/study-podcast" element={<StudyPodcast />} />
                             {commonRoutes}
                         </>
                     )}

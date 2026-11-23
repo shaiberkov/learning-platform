@@ -219,6 +219,9 @@ function SideBar() {
                     { to: "ai-tutor", label: "מורה-עזר AI" },
                     { to: "open-questions", label: "שאלות פתוחות" },
                     { to: "live-quiz", label: "חידון בכיתה" },
+                    // [s05] Summary sheet and study podcast.
+                    { to: "study-summary-sheet", label: "דף סיכום למבחן" },
+                    { to: "study-podcast", label: "סיכום קולי" },
                 ] : []),
                 { to: "accessibility-settings", label: "הגדרות נגישות" },
                 ...common,

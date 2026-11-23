@@ -151,6 +151,23 @@ public class AiGateway {
         }
     }
 
+    // [s05] Text to speech for the study podcast.
+    public static final String SPEECH_FAILED = "לא הצלחנו להפיק הקראה קולית כרגע. אפשר להשתמש בהקראה של הדפדפן.";
+
+    /** Text to speech (MP3). Counts against the daily quota like any other request. */
+    public byte[] speak(AiUser user, String feature, String text) {
+        ensureCanServe(user);
+        try {
+            byte[] audio = provider().speak(text, properties.getTtsVoice(), "he");
+            record(user, feature, new AiResult("", 0, 0, properties.getTtsModel()), false,
+                    text.length() / 1000.0 * properties.getPriceTtsPer1kChars());
+            return audio;
+        } catch (AiProviderException e) {
+            log.warn("AI speech failed for {}: {}", user.userId(), e.getMessage());
+            throw new AiException(SPEECH_FAILED);
+        }
+    }
+
     /** The provider's moderation verdict; false when the provider has none or is unavailable. */
     public boolean flaggedByProviderModeration(String text) {
         if (!properties.isProviderModeration() || !isAvailable()) {

@@ -25,6 +25,12 @@ public interface AiProvider {
         throw new AiProviderException(name() + " does not support transcription");
     }
 
+    // [s05] Text to speech for the study podcast.
+    /** Text to speech. Returns the audio bytes (MP3). */
+    default byte[] speak(String text, String voice, String language) {
+        throw new AiProviderException(name() + " does not support text to speech");
+    }
+
     /** True when the provider's own moderation flags the text. Providers without one return false. */
     default boolean isFlaggedByModeration(String text) {
         return false;

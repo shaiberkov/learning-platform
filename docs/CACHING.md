@@ -63,6 +63,8 @@ Recorded, not fixed. Fix one only when the task is about it.
 
 Not cached on purpose: the question bank, gradebooks and attendance (`QuestionBankService`, `GradebookService`, `AttendanceService`) read MySQL on every request, so their writes have nothing to evict.
 
+[s05] Not cached either: summary sheets and study podcasts (`StudySummaryService`, tables `study_sheet`, `study_podcast`, `study_podcast_audio`) read MySQL on every request, and their AI calls skip `aiPromptCache` (each sheet or script is built from the student's current mistakes). A podcast's AI voice recording is stored once in `study_podcast_audio` and served from there, never regenerated.
+
 ## Checklist for a change that touches data
 
 - Does the method read something one of the caches above holds? Then every write to that data must evict it.

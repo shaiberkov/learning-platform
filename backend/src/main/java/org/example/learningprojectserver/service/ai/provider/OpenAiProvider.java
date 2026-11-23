@@ -213,6 +213,37 @@ public class OpenAiProvider implements AiProvider {
         }
     }
 
+    // [s05] Text to speech for the study podcast.
+    @Override
+    public byte[] speak(String text, String voice, String language) {
+        ObjectNode body = objectMapper.createObjectNode();
+        body.put("model", properties.getTtsModel());
+        body.put("input", text);
+        body.put("voice", voice);
+        body.put("response_format", "mp3");
+        if (properties.getTtsModel().startsWith("gpt-")) {
+            // Only the gpt-*-tts models take instructions; tts-1 rejects the field.
+            body.put("instructions", "Speak in fluent, warm Israeli Hebrew (" + language + "), like a friendly teacher hosting a short study podcast.");
+        }
+        HttpRequest httpRequest = post("/audio/speech")
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(body.toString(), StandardCharsets.UTF_8))
+                .build();
+        try {
+            HttpResponse<byte[]> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofByteArray());
+            if (response.statusCode() != 200) {
+                throw new AiProviderException("OpenAI speech returned " + response.statusCode() + ": "
+                        + abbreviate(new String(response.body(), StandardCharsets.UTF_8)));
+            }
+            return response.body();
+        } catch (IOException e) {
+            throw new AiProviderException("OpenAI speech failed", e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new AiProviderException("OpenAI speech interrupted", e);
+        }
+    }
+
     @Override
     public boolean isFlaggedByModeration(String text) {
         ObjectNode body = objectMapper.createObjectNode();

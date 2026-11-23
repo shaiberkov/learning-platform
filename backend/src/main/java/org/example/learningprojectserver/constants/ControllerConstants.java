@@ -390,4 +390,16 @@ public final class ControllerConstants {
         public static final String GLOBAL = "/global";
         public static final String STUDENTS_PAGE = "/students-page";
     }
+    // [s05] Study summary: personal summary sheet and study podcast. Under /student/** (STUDENT, SYSTEM_ADMIN).
+    public static final class StudySummary {
+        private StudySummary() {}
+
+        public static final String STUDY_SUMMARY_BASE_PATH = BASE_API + "/student/study-summary";
+        public static final String STUDY_OPTIONS            = "/options";
+        public static final String STUDY_SHEETS             = "/sheets";
+        public static final String STUDY_SHEET              = "/sheets/{sheetId}";
+        public static final String STUDY_PODCASTS           = "/podcasts";
+        public static final String STUDY_PODCAST            = "/podcasts/{podcastId}";
+        public static final String STUDY_PODCAST_AUDIO      = "/podcasts/{podcastId}/audio";
+    }
 }

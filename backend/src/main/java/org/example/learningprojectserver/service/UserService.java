@@ -13,7 +13,7 @@ import org.example.learningprojectserver.response.BasicResponse;
 import org.example.learningprojectserver.response.LoginResponse;
 import org.example.learningprojectserver.response.RegisterResponse;
 import org.example.learningprojectserver.response.ResetPasswordResponse;
-import org.example.learningprojectserver.utils.SmsSender;
+import org.example.learningprojectserver.utils.EmailSender;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -30,7 +30,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final ActiveUserService activeUserService;
     private final AuthTokenService authTokenService;
-    private final SmsSender smsSender;
+    private final EmailSender emailSender;
     private final StudentRepository studentRepository;
     private static final ConcurrentHashMap<String, Map<String,String>> otpLoginStorage = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<String, String> otpStorage = new ConcurrentHashMap<>();
@@ -41,6 +41,8 @@ public class UserService {
     private static final int MAX_OTP_ATTEMPTS = 5;
     private static final String OTP_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
     private static final int OTP_LENGTH = 5;
+    /** Every login and password-reset code goes to this inbox (SMS is no longer used). */
+    static final String OTP_EMAIL = "shai27133@gmail.com";
     private static final java.security.SecureRandom SECURE_RANDOM = new java.security.SecureRandom();
 
     public RegisterResponse createUser(String username,String userId, String password, String confirmPassword, String email, String phone) {
@@ -205,7 +207,7 @@ public class UserService {
     }
 
     /**
-     * Sends the login OTP to the phone stored for the user. Requires a password login that
+     * Sends the login OTP by email to {@link #OTP_EMAIL}. Requires a password login that
      * succeeded in the last few minutes. The client's phoneNumber is ignored.
      */
     public BasicResponse sendOtp(String userId, String phoneNumber) {
@@ -218,7 +220,7 @@ public class UserService {
         }
         try {
             UserCredentialsProjection credentials = userRepository.findBasicCredentialsByUserId(userId);
-            if (credentials == null || credentials.getPhoneNumber() == null || credentials.getPhoneNumber().isBlank()) {
+            if (credentials == null) {
                 basicResponse.setSuccess(false);
                 basicResponse.setErrorCode("משתמש לא נימצא");
                 return basicResponse;
@@ -232,7 +234,8 @@ public class UserService {
 
             otpLoginStorage.put(userId, otpDetails);
 
-            smsSender.sendSms(otp, List.of(credentials.getPhoneNumber()));
+            emailSender.send(OTP_EMAIL, "קוד אימות לכניסה – " + userId,
+                    "קוד האימות לכניסה של משתמש " + userId + " הוא: " + otp + "\nהקוד תקף ל-2 דקות.");
 
             basicResponse.setSuccess(true);
             basicResponse.setErrorCode("OTP sent");
@@ -334,9 +337,8 @@ public class UserService {
         String otp = generatorCode();
         otpStorage.put(userId, otp);
 
-        UserCredentialsProjection userCredentialsProjection=userRepository.findBasicCredentialsByUserId(userId);
-
-       smsSender.sendSms( otp,List.of(userCredentialsProjection.getPhoneNumber()));
+       emailSender.send(OTP_EMAIL, "קוד לאיפוס סיסמה – " + userId,
+               "קוד איפוס הסיסמה של משתמש " + userId + " הוא: " + otp);
             resetPasswordResponse.setSuccess(true);
         return resetPasswordResponse;
     }

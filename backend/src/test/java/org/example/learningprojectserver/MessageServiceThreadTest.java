@@ -13,7 +13,6 @@ import org.example.learningprojectserver.response.BasicResponse;
 import org.example.learningprojectserver.service.MessageService;
 import org.example.learningprojectserver.strategy.message.MessageRecipientStrategyFactory;
 import org.example.learningprojectserver.utils.LocalizedMessages;
-import org.example.learningprojectserver.utils.SmsSender;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,7 +40,6 @@ class MessageServiceThreadTest {
     @Mock MessageEntityToMessageDTOMapper mapper;
     @Mock NotificationEventPublisher publisher;
     @Mock CacheManager cacheManager;
-    @Mock SmsSender smsSender;
     @Mock LocalizedMessages messages;
 
     @InjectMocks MessageService messageService;
@@ -127,6 +125,5 @@ class MessageServiceThreadTest {
         assertNotNull(copy.getBatchId());
         assertEquals(copy.getBatchId(), copy.getThreadId());
         verifyNoInteractions(publisher);
-        verifyNoInteractions(smsSender);
     }
 }

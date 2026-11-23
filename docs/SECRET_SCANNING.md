@@ -2,7 +2,7 @@
 
 The repository is public. A key that reaches a commit is leaked, even if a later commit deletes it.
 Secrets live only in `backend/.env` (git-ignored) locally and in Render's environment in production,
-and are read through `Environment.getProperty(...)` or `${...}` placeholders (`GPT_TOKEN`, `SMS_TOKEN`,
+and are read through `Environment.getProperty(...)` or `${...}` placeholders (`GPT_TOKEN`, `EMAIL_APP_PASSWORD`,
 `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`).
 
 ## What is in place

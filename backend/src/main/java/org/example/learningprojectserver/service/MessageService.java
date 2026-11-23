@@ -21,7 +21,6 @@ import org.example.learningprojectserver.response.PageResponse;
 import org.example.learningprojectserver.strategy.message.MessageRecipientStrategy;
 import org.example.learningprojectserver.strategy.message.MessageRecipientStrategyFactory;
 import org.example.learningprojectserver.utils.LocalizedMessages;
-import org.example.learningprojectserver.utils.SmsSender;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
@@ -63,7 +62,6 @@ public class MessageService {
     private final MessageEntityToMessageDTOMapper messageEntityToMessageDTOMapper;
     private final NotificationEventPublisher notificationEventPublisher;
     private final CacheManager cacheManager;
-    private final SmsSender smsSender;
     private final LocalizedMessages messages;
 
 
@@ -167,7 +165,7 @@ public class MessageService {
                     scheduledFor.format(SCHEDULE_FORMAT), messageEntities.size()));
         }
 
-        deliver(sender, title, content, recipients, true);
+        deliver(sender, title, content, recipients);
         return new BasicResponse(true, "ההודעה נשלחה בהצלחה ל־" + messageEntities.size() + " נמענים");
     }
 
@@ -190,12 +188,12 @@ public class MessageService {
             messageRepository.saveAll(batch);
             MessageEntity first = batch.get(0);
             List<UserEntity> recipients = batch.stream().map(MessageEntity::getReceiver).toList();
-            deliver(first.getSender(), first.getTitle(), first.getContent(), recipients, true);
+            deliver(first.getSender(), first.getTitle(), first.getContent(), recipients);
         }
         return due.size();
     }
 
-    private void deliver(UserEntity sender, String title, String content, Collection<UserEntity> recipients, boolean sms) {
+    private void deliver(UserEntity sender, String title, String content, Collection<UserEntity> recipients) {
         MessageDTO messageDTO = new MessageDTO();
         messageDTO.setTitle(title);
         messageDTO.setContent(content);
@@ -211,15 +209,8 @@ public class MessageService {
                 .map(UserEntity::getUserId)
                 .toList();
 
+        // The notification listener also e-mails recipients whose preferences ask for it.
         notificationEventPublisher.publish(recipientsIds, notificationDTO);
-
-        if (sms) {
-            List<String> recipientsPhoneNumber = recipients.stream()
-                    .map(UserEntity::getPhoneNumber)
-                    .toList();
-            String smsMessage = "קיבלת הודעה חדשה במערכת. לצפייה היכנס: https://schoolmanagmentsystem-z0m5.onrender.com/login";
-            smsSender.sendSms(smsMessage, recipientsPhoneNumber);
-        }
 
         recipientsIds.forEach(this::evictReceived);
     }
@@ -371,7 +362,7 @@ return basicResponse;
         reply.setAttachmentId(storeAttachment(file, userId));
         messageRepository.save(reply);
 
-        deliver(me, reply.getTitle(), content, List.of(other), false);
+        deliver(me, reply.getTitle(), content, List.of(other));
         evictReceived(userId);
 
         BasicResponse response = new BasicResponse(true, messages.get("message.replySent"));

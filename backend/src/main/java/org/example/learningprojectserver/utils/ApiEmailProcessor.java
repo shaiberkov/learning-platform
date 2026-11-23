@@ -9,7 +9,12 @@ import javax.mail.internet.*;
 public class ApiEmailProcessor {
 
     private static final String SENDER_EMAIL = "shai27133@gmail.com"; // האימייל השולח
-    private static final String SENDER_PASSWORD = "jkey sefo oeus jgnp"; // הסיסמה/סיסמת האפליקציה
+    /** Gmail app password, from the EMAIL_APP_PASSWORD environment variable (set by {@link EmailSender} at startup). */
+    private static volatile String senderPassword;
+
+    static void setSenderPassword(String password) {
+        senderPassword = password;
+    }
     private static final String PERSONAL = "learning app"; // שם אישי שיוצג בשורת השולח
     private static final ExecutorService emailExecutor = Executors.newCachedThreadPool();
     public static void main(String[] args) {
@@ -37,7 +42,7 @@ public class ApiEmailProcessor {
         Session session = Session.getInstance(properties, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(SENDER_EMAIL, SENDER_PASSWORD);
+                return new PasswordAuthentication(SENDER_EMAIL, senderPassword);
             }
         });
 

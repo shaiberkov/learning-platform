@@ -26,9 +26,16 @@ public class TestResultEntity {
     private TestEntity test;
 
 
-    @OneToMany(fetch = FetchType.LAZY)
+    // Many-to-many: every student who takes the same teacher test links the same questions (V13 dropped the unique keys).
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "test_result_entity_correct_questions",
+            joinColumns = @JoinColumn(name = "test_result_entity_id"),
+            inverseJoinColumns = @JoinColumn(name = "correct_questions_id"))
     private List<TestQuestionEntity> correctQuestions=new ArrayList<>();
-    @OneToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "test_result_entity_incorrect_questions",
+            joinColumns = @JoinColumn(name = "test_result_entity_id"),
+            inverseJoinColumns = @JoinColumn(name = "incorrect_questions_id"))
     private List<TestQuestionEntity> incorrectQuestions=new ArrayList<>();
 
 

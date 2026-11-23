@@ -275,8 +275,7 @@ function TwoFactorAuthForm() {
                 </button>
 
                 <p className="faint text-sm text-center leading-relaxed">
-                    הקוד תקף ל-2 דקות בלבד. הקוד נשלח למספר טלפון<br />
-                    <span className="num text-ink-2" dir="ltr">{phoneNumber?.slice(0, 3)}******{phoneNumber?.slice(-3)}</span>
+                    הקוד תקף ל-2 דקות בלבד. הקוד נשלח לכתובת המייל של מנהל המערכת.
                 </p>
             </form>
         </AuthShell>

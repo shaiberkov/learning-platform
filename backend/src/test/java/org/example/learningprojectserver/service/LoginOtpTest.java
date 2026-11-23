@@ -5,12 +5,11 @@ import org.example.learningprojectserver.projection.UserCredentialsProjection;
 import org.example.learningprojectserver.repository.StudentRepository;
 import org.example.learningprojectserver.repository.UserRepository;
 import org.example.learningprojectserver.response.LoginResponse;
-import org.example.learningprojectserver.utils.SmsSender;
+import org.example.learningprojectserver.utils.EmailSender;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import java.util.List;
 import java.util.UUID;
 
 import static org.example.learningprojectserver.utils.GeneratorUtils.hashPassword;
@@ -25,16 +24,16 @@ class LoginOtpTest {
     private static final String STORED_PHONE = "0501111111";
 
     private UserRepository userRepository;
-    private SmsSender smsSender;
+    private EmailSender emailSender;
     private UserService userService;
     private String userId;
 
     @BeforeEach
     void setUp() {
         userRepository = mock(UserRepository.class);
-        smsSender = mock(SmsSender.class);
+        emailSender = mock(EmailSender.class);
         userService = new UserService(userRepository, mock(ActiveUserService.class), mock(AuthTokenService.class),
-                smsSender, mock(StudentRepository.class));
+                emailSender, mock(StudentRepository.class));
         userId = UUID.randomUUID().toString(); // the OTP maps are static, so every test uses its own user
 
         UserCredentialsProjection credentials = mock(UserCredentialsProjection.class);
@@ -47,19 +46,19 @@ class LoginOtpTest {
         when(userRepository.findUserByUserId(userId)).thenReturn(user);
     }
 
-    @SuppressWarnings("unchecked")
+    /** The code follows "הוא:" in the e-mail body, which always goes to UserService.OTP_EMAIL. */
     private String sentOtp() {
-        ArgumentCaptor<String> otp = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<List<String>> phones = ArgumentCaptor.forClass(List.class);
-        verify(smsSender).sendSms(otp.capture(), phones.capture());
-        assertEquals(List.of(STORED_PHONE), phones.getValue());
-        return otp.getValue();
+        ArgumentCaptor<String> body = ArgumentCaptor.forClass(String.class);
+        verify(emailSender).send(eq(UserService.OTP_EMAIL), contains(userId), body.capture());
+        java.util.regex.Matcher m = java.util.regex.Pattern.compile("הוא: (\\S+)").matcher(body.getValue());
+        assertTrue(m.find());
+        return m.group(1);
     }
 
     @Test
     void sendOtpWithoutPasswordLoginIsRefused() {
         assertFalse(userService.sendOtp(userId, "0509999999").isSuccess());
-        verifyNoInteractions(smsSender);
+        verifyNoInteractions(emailSender);
     }
 
     @Test
@@ -78,11 +77,11 @@ class LoginOtpTest {
     void wrongPasswordDoesNotUnlockSendOtp() {
         assertFalse(userService.loginUser(userId, "wrong").isSuccess());
         assertFalse(userService.sendOtp(userId, null).isSuccess());
-        verifyNoInteractions(smsSender);
+        verifyNoInteractions(emailSender);
     }
 
     @Test
-    void sendsToStoredPhoneAndIgnoresTheClientPhone() {
+    void emailsTheCodeAndIgnoresTheClientPhone() {
         assertTrue(userService.loginUser(userId, "pw").isSuccess());
         assertTrue(userService.sendOtp(userId, "0509999999").isSuccess());
         String otp = sentOtp();

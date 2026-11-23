@@ -390,4 +390,17 @@ public final class ControllerConstants {
         public static final String GLOBAL = "/global";
         public static final String STUDENTS_PAGE = "/students-page";
     }
+    // [s08] Past-exam simulations and the "what do I need?" grade calculator. Served under /student (STUDENT_ALL).
+    public static final class ExamSimulation {
+        private ExamSimulation() {}
+
+        public static final String EXAM_SIM_BASE_PATH = BASE_API + "/student";
+        public static final String SIM_EXAMS          = "/exam-sim/exams";
+        public static final String SIM_PREDICTION     = "/exam-sim/prediction";
+        public static final String SIM_START          = "/exam-sim/start";
+        public static final String SIM_SAVE           = "/exam-sim/save";
+        public static final String SIM_SUBMIT         = "/exam-sim/submit";
+        public static final String SIM_RESULT         = "/exam-sim/result";
+        public static final String GRADE_TARGET       = "/grade-target";
+    }
 }

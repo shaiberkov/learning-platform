@@ -219,6 +219,9 @@ function SideBar() {
                     { to: "ai-tutor", label: "מורה-עזר AI" },
                     { to: "open-questions", label: "שאלות פתוחות" },
                     { to: "live-quiz", label: "חידון בכיתה" },
+                    // [s08] Past-exam simulations and the "what do I need?" calculator
+                    { to: "exam-simulations", label: "סימולציית בגרות" },
+                    { to: "grade-target", label: "מה אני צריך?" },
                 ] : []),
                 { to: "accessibility-settings", label: "הגדרות נגישות" },
                 ...common,

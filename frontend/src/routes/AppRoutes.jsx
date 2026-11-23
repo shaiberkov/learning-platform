@@ -106,6 +106,12 @@ const Faq = lazy(() => import("../pages/footer/Faq.jsx"));
 const About = lazy(() => import("../pages/footer/About.jsx"));
 const AccessibilityStatement = lazy(() => import("../pages/footer/AccessibilityStatement.jsx"));
 
+// [s08] Past-exam simulations and the "what do I need?" calculator
+const ExamSimulations = lazy(() => import("../pages/student/ExamSimulations.jsx"));
+const ExamSimSession = lazy(() => import("../pages/student/ExamSimSession.jsx"));
+const ExamSimResult = lazy(() => import("../pages/student/ExamSimResult.jsx"));
+const GradeTargetCalculator = lazy(() => import("../pages/student/GradeTargetCalculator.jsx"));
+
 export default function AppRoutes() {
 
     const {user}=useContext(UserContext)
@@ -245,6 +251,11 @@ export default function AppRoutes() {
                             <Route path="/study-plan" element={<StudyPlan />} />
                             <Route path="/achievements" element={<Achievements />} />
                             <Route path="/accessibility-settings" element={<AccessibilitySettings />} />
+                            {/* [s08] Past-exam simulations and the "what do I need?" calculator */}
+                            <Route path="/exam-simulations" element={<ExamSimulations />} />
+                            <Route path="/exam-sim/:examId" element={<ExamSimSession />} />
+                            <Route path="/exam-sim/result/:attemptId" element={<ExamSimResult />} />
+                            <Route path="/grade-target" element={<GradeTargetCalculator />} />
                             {commonRoutes}
                         </>
                     )}

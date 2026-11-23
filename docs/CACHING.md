@@ -63,6 +63,8 @@ Recorded, not fixed. Fix one only when the task is about it.
 
 Not cached on purpose: the question bank, gradebooks and attendance (`QuestionBankService`, `GradebookService`, `AttendanceService`) read MySQL on every request, so their writes have nothing to evict.
 
+[s08] Not cached on purpose: past-exam simulations and the grade-target calculator (`ExamSimulationService`, `GradeTargetService`) read MySQL on every request; the calculator reads gradebooks through `GradebookService`, which is not cached either.
+
 ## Checklist for a change that touches data
 
 - Does the method read something one of the caches above holds? Then every write to that data must evict it.

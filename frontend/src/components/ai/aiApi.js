@@ -1,19 +1,14 @@
 import axios from "axios";
-import Cookies from "universal-cookie";
 import {
     AI_BASE_PATH,
     AI_STAFF_BASE_PATH,
     AI_TUTOR_STREAM,
     AI_TUTOR_TRANSCRIBE,
-    AUTH_HEADER,
 } from "../../constants/pages.constants.js";
-import { BEARER_PREFIX } from "../../constants/shared.constant.js";
+import { refreshSession } from "../../Utils/httpSetup.js";
 
-// AI endpoints take the user from the JWT, so every call sends the token.
-export const authHeaders = () => {
-    const token = new Cookies().get("token");
-    return { [AUTH_HEADER]: `${BEARER_PREFIX}${token}` };
-};
+// AI endpoints take the user from the JWT in the httpOnly access cookie; axios sends it
+// (withCredentials, set in Utils/httpSetup.js) and renews it on a 401.
 
 const SESSION_EXPIRED = "יש להתחבר מחדש כדי להשתמש בעוזר ה-AI";
 const NETWORK_ERROR = "אין חיבור לשרת. נסו שוב.";
@@ -35,39 +30,50 @@ const call = async (request) => {
 };
 
 export const aiGet = (path, params) =>
-    call(() => axios.get(`${AI_BASE_PATH}${path}`, { headers: authHeaders(), params }));
+    call(() => axios.get(`${AI_BASE_PATH}${path}`, { params }));
 export const aiPost = (path, body) =>
-    call(() => axios.post(`${AI_BASE_PATH}${path}`, body, { headers: authHeaders() }));
+    call(() => axios.post(`${AI_BASE_PATH}${path}`, body));
 export const aiDelete = (path) =>
-    call(() => axios.delete(`${AI_BASE_PATH}${path}`, { headers: authHeaders() }));
+    call(() => axios.delete(`${AI_BASE_PATH}${path}`));
 
 export const staffGet = (path, params) =>
-    call(() => axios.get(`${AI_STAFF_BASE_PATH}${path}`, { headers: authHeaders(), params }));
+    call(() => axios.get(`${AI_STAFF_BASE_PATH}${path}`, { params }));
 export const staffPost = (path, body, params) =>
-    call(() => axios.post(`${AI_STAFF_BASE_PATH}${path}`, body ?? {}, { headers: authHeaders(), params }));
+    call(() => axios.post(`${AI_STAFF_BASE_PATH}${path}`, body ?? {}, { params }));
 export const staffPut = (path, body) =>
-    call(() => axios.put(`${AI_STAFF_BASE_PATH}${path}`, body, { headers: authHeaders() }));
+    call(() => axios.put(`${AI_STAFF_BASE_PATH}${path}`, body));
 
 export const transcribeAudio = (blob) => {
     const form = new FormData();
     form.append("audio", blob, "speech.webm");
-    return call(() => axios.post(`${AI_BASE_PATH}${AI_TUTOR_TRANSCRIBE}`, form, { headers: authHeaders() }));
+    return call(() => axios.post(`${AI_BASE_PATH}${AI_TUTOR_TRANSCRIBE}`, form));
 };
 
 /**
  * Sends one tutor message and reads the server-sent events as they arrive.
  * EventSource cannot POST or send headers, so this reads the fetch body stream by hand.
+ * fetch bypasses axios, so it sends the auth cookie itself (credentials: "include"), adds the
+ * CSRF header, and renews an expired access cookie once before giving up.
  * Events: delta {text}, replace {text}, done {remaining}, error {message}.
  */
 export async function streamTutor(body, { onDelta, onReplace, onDone, onError, signal }) {
+    const send = () => fetch(`${AI_BASE_PATH}${AI_TUTOR_STREAM}`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json",
+            Accept: "text/event-stream",
+            "X-Requested-With": "XMLHttpRequest",
+        },
+        body: JSON.stringify(body),
+        signal,
+    });
     let response;
     try {
-        response = await fetch(`${AI_BASE_PATH}${AI_TUTOR_STREAM}`, {
-            method: "POST",
-            headers: { ...authHeaders(), "Content-Type": "application/json", Accept: "text/event-stream" },
-            body: JSON.stringify(body),
-            signal,
-        });
+        response = await send();
+        if (response.status === 401 && await refreshSession()) {
+            response = await send();
+        }
     } catch (error) {
         if (error?.name !== "AbortError") onError?.(NETWORK_ERROR);
         return;

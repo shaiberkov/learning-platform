@@ -1,12 +1,9 @@
 import axios from "axios";
-import Cookies from "universal-cookie";
-import {AUTH_HEADER, SCHOOL_ADMINISTRATION_BASE_PATH, PARENT_BASE_PATH} from "../../constants/pages.constants.js";
-import {BEARER_PREFIX} from "../../constants/shared.constant.js";
+import {SCHOOL_ADMINISTRATION_BASE_PATH, PARENT_BASE_PATH} from "../../constants/pages.constants.js";
 
 // Small request helpers for the school-administration and parent screens.
 // Query values go through axios `params`, so Hebrew class and grade names are encoded.
-
-const authHeaders = () => ({[AUTH_HEADER]: `${BEARER_PREFIX}${new Cookies().get("token")}`});
+// Auth is the httpOnly cookie that axios sends (Utils/httpSetup.js).
 
 const unwrap = (promise) =>
     promise
@@ -17,16 +14,16 @@ const unwrap = (promise) =>
         });
 
 export const schoolGet = (path, params) =>
-    unwrap(axios.get(`${SCHOOL_ADMINISTRATION_BASE_PATH}${path}`, {params, headers: authHeaders()}));
+    unwrap(axios.get(`${SCHOOL_ADMINISTRATION_BASE_PATH}${path}`, {params}));
 
 export const schoolPost = (path, params, body, contentType) =>
     unwrap(axios.post(`${SCHOOL_ADMINISTRATION_BASE_PATH}${path}`, body ?? null, {
         params,
-        headers: {...authHeaders(), ...(contentType ? {"Content-Type": contentType} : {})},
+        headers: contentType ? {"Content-Type": contentType} : {},
     }));
 
 export const parentGet = (path, params) =>
-    unwrap(axios.get(`${PARENT_BASE_PATH}${path}`, {params, headers: authHeaders()}));
+    unwrap(axios.get(`${PARENT_BASE_PATH}${path}`, {params}));
 
 // Builds a CSV file from rows (first row = header) and starts its download.
 export function downloadCsv(filename, rows) {

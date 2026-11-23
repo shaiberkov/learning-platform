@@ -8,6 +8,8 @@ import OrbitLoader from "../../components/ui/OrbitLoader.jsx";
 import MathText from "../../components/exam/MathText.jsx";
 import QuestionAnswer from "../../components/exam/QuestionAnswer.jsx";
 import { examPost } from "../../components/exam/examApi.js";
+import ExamFeedback from "../../features/adaptive/ExamFeedback.jsx";
+import { fetchExamFeedback, sendExamQuestionTimes } from "../../features/adaptive/adaptiveApi.js";
 import { INTEGRITY_EVENT, SAVE_ANSWERS, START_ATTEMPT, SUBMIT_ATTEMPT } from "../../constants/pages.constants.js";
 
 const AUTOSAVE_MS = 10000;
@@ -27,11 +29,43 @@ export default function ExamSession() {
     const [result, setResult] = useState(null);
     const [showConfirm, setShowConfirm] = useState(false);
     const [tabLeaves, setTabLeaves] = useState(0);
+    const [feedback, setFeedback] = useState(null);
+    const [feedbackError, setFeedbackError] = useState(null);
+    // Time per question: the question that holds the focus collects the time (ms).
+    const questionTimesRef = useRef({});
+    const activeQuestionRef = useRef({ id: null, since: 0 });
 
     const endAt = useRef(0);
     const dirty = useRef(false);
     const answersRef = useRef({});
     const submitting = useRef(false);
+
+    const flushQuestionTime = () => {
+        const { id, since } = activeQuestionRef.current;
+        if (id === null) return;
+        const now = Date.now();
+        questionTimesRef.current[id] = (questionTimesRef.current[id] || 0) + (now - since);
+        activeQuestionRef.current = { id, since: now };
+    };
+
+    const focusQuestion = (qid) => {
+        if (activeQuestionRef.current.id === qid) return;
+        flushQuestionTime();
+        activeQuestionRef.current = { id: qid, since: Date.now() };
+    };
+
+    // After grading: send the time per question, then load the by-topic feedback.
+    const loadFeedback = useCallback(async (examTestId) => {
+        flushQuestionTime();
+        activeQuestionRef.current = { id: null, since: 0 };
+        const seconds = Object.fromEntries(
+            Object.entries(questionTimesRef.current).map(([qid, ms]) => [qid, Math.round(ms / 1000)])
+        );
+        await sendExamQuestionTimes(user.userId, examTestId, seconds);
+        const res = await fetchExamFeedback(user.userId, examTestId);
+        if (res.success) setFeedback(res.data);
+        else setFeedbackError(res.errorCode);
+    }, [user?.userId]);
 
     const syncClock = (seconds) => {
         endAt.current = Date.now() + seconds * 1000;
@@ -87,6 +121,7 @@ export default function ExamSession() {
             if (res.data) {
                 setResult(res.data);
                 setPhase("result");
+                loadFeedback(attempt.testId ?? testId);
             } else {
                 setPhase("error");
             }
@@ -95,7 +130,7 @@ export default function ExamSession() {
             setMessage("ההגשה נכשלה, נסו שוב");
             setPhase("running");
         }
-    }, [attempt, user?.userId]);
+    }, [attempt, user?.userId, loadFeedback, testId]);
 
     // Countdown against the server deadline; submits at zero.
     useEffect(() => {
@@ -200,6 +235,8 @@ export default function ExamSession() {
                         <button className="btn btn-ghost mt-3" onClick={() => navigate("/teacher-tests")}>חזרה לרשימת המבחנים</button>
                     </div>
                 </div>
+                {feedback && <ExamFeedback feedback={feedback} />}
+                {feedbackError && <p className="notice notice--danger">{feedbackError}</p>}
             </div>
         );
     }
@@ -247,7 +284,8 @@ export default function ExamSession() {
                 className="space-y-4"
             >
                 {questions.map((q, i) => (
-                    <div key={q.id} className={`glass p-5 sm:p-6 space-y-4 ${answers[q.id] ? "!border-[color-mix(in_oklab,var(--mint)_45%,transparent)]" : ""}`}>
+                    <div key={q.id} onFocusCapture={() => focusQuestion(q.id)} onPointerDown={() => focusQuestion(q.id)}
+                         className={`glass p-5 sm:p-6 space-y-4 ${answers[q.id] ? "!border-[color-mix(in_oklab,var(--mint)_45%,transparent)]" : ""}`}>
                         <div className="flex items-center justify-between">
                             <span className="num text-xs text-ink-3">שאלה {i + 1}</span>
                             <span className="chip num !text-xs">{q.points} נק׳</span>

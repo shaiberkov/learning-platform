@@ -1,8 +1,5 @@
 import axios from "axios";
-import Cookies from "universal-cookie";
-import { BEARER_PREFIX } from "../../constants/shared.constant.js";
 import {
-    AUTH_HEADER,
     CLASS_SKILL_MAP,
     EXAM_FEEDBACK,
     EXAM_QUESTION_TIMES,
@@ -21,11 +18,6 @@ import {
 // Calls for the adaptive-learning screens. Each returns the server's BasicResponse
 // ({ success, errorCode, data }); a network failure becomes { success: false, errorCode }.
 
-const authHeaders = () => {
-    const token = new Cookies().get("token");
-    return { [AUTH_HEADER]: `${BEARER_PREFIX}${token}` };
-};
-
 const NETWORK_ERROR = "לא ניתן להתחבר לשרת. נסה שוב מאוחר יותר.";
 
 const call = async (request) => {
@@ -37,8 +29,9 @@ const call = async (request) => {
     }
 };
 
-const get = (url, params) => call(() => axios.get(url, { params, headers: authHeaders() }));
-const post = (url, params, body = {}) => call(() => axios.post(url, body, { params, headers: authHeaders() }));
+// Auth is the httpOnly cookie that axios sends (Utils/httpSetup.js).
+const get = (url, params) => call(() => axios.get(url, { params }));
+const post = (url, params, body = {}) => call(() => axios.post(url, body, { params }));
 
 /* Mistakes notebook */
 export const fetchReviewSummary = (userId) => get(`${STUDENT_ADAPTIVE_BASE_PATH}${REVIEW_SUMMARY}`, { userId });

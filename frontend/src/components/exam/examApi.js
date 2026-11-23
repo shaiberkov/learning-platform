@@ -1,11 +1,9 @@
 import axios from "axios";
-import Cookies from "universal-cookie";
-import { AUTH_HEADER, EXAM_BASE_PATH } from "../../constants/pages.constants.js";
-import { BEARER_PREFIX } from "../../constants/shared.constant.js";
+import { EXAM_BASE_PATH } from "../../constants/pages.constants.js";
 
-// Thin wrapper for the /exam endpoints: adds the bearer token and returns the BasicResponse body.
+// Thin wrapper for the /exam endpoints: returns the BasicResponse body. Auth is the httpOnly
+// cookie that axios sends (Utils/httpSetup.js).
 const headers = () => ({
-    [AUTH_HEADER]: `${BEARER_PREFIX}${new Cookies().get("token")}`,
     "Content-Type": "application/json",
 });
 

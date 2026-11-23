@@ -1,11 +1,11 @@
 // [s05] Pure helpers for the summary sheet and the study podcast screens.
 
-/** "yyyy-MM-dd HH:mm" (the server's test start time) → "dd/MM HH:mm". */
+/** "dd/MM/yyyy HH:mm" (the server's test start time) → "dd/MM HH:mm". */
 export function formatTestStart(startTime) {
     if (!startTime) return "";
-    const match = /^(\d{4})-(\d{2})-(\d{2})\s+(\d{2}:\d{2})/.exec(String(startTime).trim());
+    const match = /^(\d{2})\/(\d{2})\/\d{4}\s+(\d{2}:\d{2})/.exec(String(startTime).trim());
     if (!match) return String(startTime);
-    const [, , month, day, time] = match;
+    const [, day, month, time] = match;
     return `${day}/${month} ${time}`;
 }
 

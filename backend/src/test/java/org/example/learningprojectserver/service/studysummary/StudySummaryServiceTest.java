@@ -45,7 +45,7 @@ import static org.mockito.Mockito.*;
 class StudySummaryServiceTest {
 
     private static final String STUDENT = "s1";
-    private static final DateTimeFormatter START = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private static final DateTimeFormatter START = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     @Mock StudySummarySourceRepository sources;
     @Mock StudySheetRepository sheetRepository;

@@ -7,7 +7,7 @@ import java.util.List;
 public final class StudySummaryDTOs {
     private StudySummaryDTOs() {}
 
-    /** A teacher test the student can prepare for. {@code startTime} is "yyyy-MM-dd HH:mm". */
+    /** A teacher test the student can prepare for. {@code startTime} is "dd/MM/yyyy HH:mm", as teachers enter it. */
     public record TestOption(Long testId, String title, String subject, String topic, String startTime) {
     }
 

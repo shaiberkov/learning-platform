@@ -11,6 +11,7 @@ export default function useBrowserSpeech() {
     const chunksRef = useRef([]);
     const indexRef = useRef(0);
     const rateRef = useRef(1);
+    const spokenRateRef = useRef(1); // the rate of the sentence being spoken
     const runRef = useRef(0);
 
     const speakAt = (i, run) => {
@@ -28,6 +29,7 @@ export default function useBrowserSpeech() {
         const utterance = new SpeechSynthesisUtterance(speakableText(chunks[i]));
         utterance.lang = "he-IL";
         utterance.rate = rateRef.current;
+        spokenRateRef.current = rateRef.current;
         const hebrew = synth.getVoices().find((v) => v.lang?.toLowerCase().startsWith("he"));
         if (hebrew) utterance.voice = hebrew;
         utterance.onend = () => speakAt(i + 1, run);
@@ -58,6 +60,12 @@ export default function useBrowserSpeech() {
 
     const resume = () => {
         if (!supported) return;
+        // The speed changed while paused: say the current sentence again at the new speed.
+        if (spokenRateRef.current !== rateRef.current) {
+            window.speechSynthesis.resume(); // some browsers stay paused after cancel()
+            restartAt(indexRef.current);
+            return;
+        }
         window.speechSynthesis.resume();
         setStatus("playing");
     };

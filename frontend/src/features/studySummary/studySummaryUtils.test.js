@@ -9,7 +9,7 @@ import {
 
 describe("formatTestStart", () => {
     it("shows day/month and time", () => {
-        expect(formatTestStart("2026-12-03 08:30")).toBe("03/12 08:30");
+        expect(formatTestStart("03/12/2026 08:30")).toBe("03/12 08:30");
     });
     it("keeps an unknown format and handles empty values", () => {
         expect(formatTestStart("מחר")).toBe("מחר");

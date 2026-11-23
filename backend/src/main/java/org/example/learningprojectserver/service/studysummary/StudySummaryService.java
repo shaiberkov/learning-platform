@@ -43,6 +43,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Personal study material before a test, built from the test's topics and the student's own
@@ -65,13 +66,15 @@ public class StudySummaryService {
     static final int MAX_TOPICS = 8;
     static final int MAX_TOPIC_CHARS = 80;
     static final int MAX_MISTAKES = 8;
-    static final int MAX_SCRIPT_CHARS = 6000;
     /** OpenAI's speech endpoint takes up to 4,096 characters. */
     static final int MAX_SPEECH_CHARS = 4096;
+    /** Kept to what the speech endpoint takes, so the AI voice and the browser voice read the same text. */
+    static final int MAX_SCRIPT_CHARS = MAX_SPEECH_CHARS;
     static final String AUDIO_TYPE = "audio/mpeg";
-    private static final DateTimeFormatter START_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private static final DateTimeFormatter START_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     static final String NOTHING_TO_SUMMARIZE = "בחרו מבחן או לפחות נושא אחד לסיכום";
+    static final String AUDIO_IN_PROGRESS = "ההקראה כבר בהפקה, נסו שוב בעוד רגע";
     static final String TEST_NOT_FOUND = "המבחן לא נמצא או שאינו משויך אליך";
     static final String SHEET_NOT_FOUND = "דף הסיכום לא נמצא";
     static final String PODCAST_NOT_FOUND = "הסיכום הקולי לא נמצא";
@@ -86,6 +89,8 @@ public class StudySummaryService {
     private final ContentSafetyFilter safety;
     private final StudySheetEntityToDTOMapper sheetMapper;
     private final StudyPodcastEntityToDTOMapper podcastMapper;
+    /** Podcasts whose AI recording is being produced right now (one instance). */
+    private final Set<Long> audioInProgress = ConcurrentHashMap.newKeySet();
 
     /** What the summary is about: a title, the topics and the student's matching mistakes. */
     record Context(String title, Long testId, List<String> topics, List<ReviewItemEntity> mistakes) {
@@ -314,9 +319,7 @@ public class StudySummaryService {
                 return new BasicResponse<>(false, BAD_AI_OUTPUT);
             }
         }
-        if (script.length() > MAX_SCRIPT_CHARS) {
-            script = script.substring(0, MAX_SCRIPT_CHARS);
-        }
+        script = speechText(script);
 
         StudyPodcastEntity podcast = new StudyPodcastEntity();
         podcast.setStudentUserId(userId);
@@ -375,11 +378,17 @@ public class StudySummaryService {
         }
         StudyPodcastEntity podcast = found.get();
         if (!podcast.isHasAudio() || !audioRepository.existsById(podcastId)) {
+            // One paid speech call per podcast at a time (double click, two tabs).
+            if (!audioInProgress.add(podcastId)) {
+                return new BasicResponse<>(false, AUDIO_IN_PROGRESS);
+            }
             byte[] audio;
             try {
                 audio = gateway.speak(userResolver.resolve(userId), FEATURE_SPEECH, speechText(podcast.getScript()));
             } catch (AiException e) {
                 return new BasicResponse<>(false, e.getMessage());
+            } finally {
+                audioInProgress.remove(podcastId);
             }
             if (audio == null || audio.length == 0) {
                 return new BasicResponse<>(false, AiGateway.SPEECH_FAILED);

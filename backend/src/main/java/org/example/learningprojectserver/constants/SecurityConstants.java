@@ -114,6 +114,9 @@ public final class SecurityConstants {
         // Calendar apps open the .ics feed with only the secret token in the URL.
         public static final String CALENDAR_FEED             = CALENDAR_BASE_PATH     + FEED_PREFIX + "**";
         public static final String SEARCH_ALL                = SEARCH_BASE_PATH       + CORS_MAPPING_PATH;
+        // [s09] A shared portfolio opens with only the secret token in the URL: exactly one path segment, GET only.
+        public static final String PORTFOLIO_PUBLIC_VIEW     =
+                ControllerConstants.Portfolio.PORTFOLIO_PUBLIC_BASE_PATH + "/*";
 
         public static final String SYSTEM_ADMIN   = "SYSTEM_ADMIN";
         public static final String TEACHER        = "TEACHER";

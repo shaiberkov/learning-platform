@@ -772,3 +772,37 @@ export const {
     GET_CHILDREN,
     CHILD_OVERVIEW,
 } = ParentPaths;
+
+/* [s09] Story quests and portfolio. Mirrors ControllerConstants.Quest and ControllerConstants.Portfolio. */
+export const QuestPortfolioPaths = {
+    QUEST_BASE_PATH: `${API_BASE_URL}${BASE_API}/student/quests`,
+    LIST_QUESTS: '/list',
+    QUEST_STATE: '/state',
+    START_QUEST: '/start',
+    ANSWER_QUEST: '/answer',
+    QUEST_COSMETICS: '/cosmetics',
+    EQUIP_COSMETIC: '/cosmetics/equip',
+    PORTFOLIO_BASE_PATH: `${API_BASE_URL}${BASE_API}/student/portfolio`,
+    MY_PORTFOLIO: '/me',
+    ADD_PORTFOLIO_PROJECT: '/projects/add',
+    DELETE_PORTFOLIO_PROJECT: '/projects/delete',
+    CREATE_PORTFOLIO_SHARE: '/share/create',
+    REVOKE_PORTFOLIO_SHARE: '/share/revoke',
+    PORTFOLIO_PUBLIC_BASE_PATH: `${API_BASE_URL}${BASE_API}/portfolio-public`,
+};
+export const {
+    QUEST_BASE_PATH,
+    LIST_QUESTS,
+    QUEST_STATE,
+    START_QUEST,
+    ANSWER_QUEST,
+    QUEST_COSMETICS,
+    EQUIP_COSMETIC,
+    PORTFOLIO_BASE_PATH,
+    MY_PORTFOLIO,
+    ADD_PORTFOLIO_PROJECT,
+    DELETE_PORTFOLIO_PROJECT,
+    CREATE_PORTFOLIO_SHARE,
+    REVOKE_PORTFOLIO_SHARE,
+    PORTFOLIO_PUBLIC_BASE_PATH,
+} = QuestPortfolioPaths;

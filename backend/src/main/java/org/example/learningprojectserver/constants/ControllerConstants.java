@@ -390,4 +390,30 @@ public final class ControllerConstants {
         public static final String GLOBAL = "/global";
         public static final String STUDENTS_PAGE = "/students-page";
     }
+    // [s09] Story quests and cosmetic rewards (under /student/**: STUDENT, SYSTEM_ADMIN).
+    public static final class Quest {
+        private Quest() {}
+
+        public static final String QUEST_BASE_PATH = BASE_API + "/student/quests";
+        public static final String LIST_QUESTS     = "/list";
+        public static final String QUEST_STATE     = "/state";
+        public static final String START_QUEST     = "/start";
+        public static final String ANSWER_QUEST    = "/answer";
+        public static final String COSMETICS       = "/cosmetics";
+        public static final String EQUIP_COSMETIC  = "/cosmetics/equip";
+    }
+    // [s09] Personal portfolio (under /student/**) and its read-only public share page.
+    public static final class Portfolio {
+        private Portfolio() {}
+
+        public static final String PORTFOLIO_BASE_PATH = BASE_API + "/student/portfolio";
+        public static final String MY_PORTFOLIO        = "/me";
+        public static final String ADD_PROJECT         = "/projects/add";
+        public static final String DELETE_PROJECT      = "/projects/delete";
+        public static final String CREATE_SHARE        = "/share/create";
+        public static final String REVOKE_SHARE        = "/share/revoke";
+
+        public static final String PORTFOLIO_PUBLIC_BASE_PATH = BASE_API + "/portfolio-public";
+        public static final String PUBLIC_PORTFOLIO           = "/{token}";
+    }
 }

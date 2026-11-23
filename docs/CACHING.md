@@ -29,6 +29,8 @@ Engagement (XP, streaks, badges, class challenges), study plans, lesson pages an
 
 Not cached on purpose: the school dashboard (`SchoolAnalyticsService`), the timetable builder's lesson list, school years and their archive, and the parent screens (`ParentService`) read MySQL on every request. Messages to parents go through `MessageService.sendMessage`, which already evicts `receivedMessages` per recipient.
 
+[s09] Not cached on purpose: story quests (`QuestService`: `student_quest_progress`, `student_cosmetic`) and the portfolio (`PortfolioService`: `portfolio_project`, `portfolio_share`, plus reads of badges, engagement, archived years and teacher-test scores) read MySQL on every request. Every quest answer changes the progress, and a revoked share link must stop working at once, so the public page `/portfolio-public/{token}` is also uncached (and sent with `Cache-Control: no-store`). Quest XP and the quest badge go through `EngagementService.recordActivity`, which touches no cache. No in-memory state: the pending quest question and its answer are stored in `student_quest_progress`.
+
 ## 2. Hand-rolled in-memory maps
 
 Not Spring caches: plain `ConcurrentHashMap`s in singleton beans. Lost on restart, never shared between instances.

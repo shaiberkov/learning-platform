@@ -432,6 +432,7 @@ public final class ControllerConstants {
         public static final String PEER_REVIEW_QUEUE         = "/peer-questions/review";
         public static final String PEER_APPROVE              = "/peer-questions/approve";
         public static final String PEER_REJECT               = "/peer-questions/reject";
+    }
     // [s03] 1-on-1 duels and the daily challenge (student side, under the STUDENT route group).
     public static final class Duel {
         private Duel() {}
@@ -454,6 +455,7 @@ public final class ControllerConstants {
         public static final String DAILY_CHALLENGE_TODAY     = "/today";
         public static final String DAILY_CHALLENGE_START     = "/start";
         public static final String DAILY_CHALLENGE_ANSWER    = "/answer";
+    }
     // [s04] Flashcards (AI from a photo or summary, shared with the class) and the personal study notebook.
     // Under /student/** (STUDENT, SYSTEM_ADMIN); the student always comes from the access token.
     public static final class StudyTools {
@@ -472,6 +474,7 @@ public final class ControllerConstants {
         public static final String NOTES                  = "/notes";
         public static final String NOTES_TOPICS           = "/notes/topics";
         public static final String NOTE_BY_ID             = "/notes/{noteId}";
+    }
     // [s05] Study summary: personal summary sheet and study podcast. Under /student/** (STUDENT, SYSTEM_ADMIN).
     public static final class StudySummary {
         private StudySummary() {}
@@ -483,6 +486,7 @@ public final class ControllerConstants {
         public static final String STUDY_PODCASTS           = "/podcasts";
         public static final String STUDY_PODCAST            = "/podcasts/{podcastId}";
         public static final String STUDY_PODCAST_AUDIO      = "/podcasts/{podcastId}/audio";
+    }
     // [s06] "Explain it to me" (Feynman) and mistake-type diagnosis. Student paths under /student (STUDENT_ALL), teacher paths under /teacher (TEACHER_ALL).
     public static final class Diagnosis {
         private Diagnosis() {}
@@ -497,6 +501,7 @@ public final class ControllerConstants {
         public static final String TEACHER_DIAGNOSIS_BASE_PATH = BASE_API + "/teacher";
         public static final String CLASS_MISTAKE_TYPES         = "/class-mistake-types";
         public static final String CLASS_FEYNMAN               = "/class-feynman";
+    }
     // [s07] Real-world connection cards and the interactive simulations gallery.
     public static final class RealWorld {
         private RealWorld() {}
@@ -508,6 +513,7 @@ public final class ControllerConstants {
         public static final String RESET_OVERRIDE       = "/override/reset";
         public static final String SIMULATIONS_EXPLORED = "/simulations/explored";
         public static final String RECORD_SIMULATION    = "/simulations/record";
+    }
     // [s08] Past-exam simulations and the "what do I need?" grade calculator. Served under /student (STUDENT_ALL).
     public static final class ExamSimulation {
         private ExamSimulation() {}
@@ -520,6 +526,7 @@ public final class ControllerConstants {
         public static final String SIM_SUBMIT         = "/exam-sim/submit";
         public static final String SIM_RESULT         = "/exam-sim/result";
         public static final String GRADE_TARGET       = "/grade-target";
+    }
     // [s09] Story quests and cosmetic rewards (under /student/**: STUDENT, SYSTEM_ADMIN).
     public static final class Quest {
         private Quest() {}
@@ -545,6 +552,7 @@ public final class ControllerConstants {
 
         public static final String PORTFOLIO_PUBLIC_BASE_PATH = BASE_API + "/portfolio-public";
         public static final String PUBLIC_PORTFOLIO           = "/{token}";
+    }
     // [s10] Reflection journal and pre-exam check-in. Under /student/**, so the STUDENT_ALL rule applies.
     public static final class Wellbeing {
         private Wellbeing() {}

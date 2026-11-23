@@ -32,7 +32,7 @@ public final class CompetitionCatalog {
         TOPICS.put("הנדסה אנליטית", List.of("חישוב מרחק בין שתי נקודות בגרף", "חישוב שיפוע",
                 "נקודת חיתוך בין שני ישרים"));
         TOPICS.put("שאלות מילוליות", List.of("שאלה מילולית"));
-        TOPICS.put("חשבון אינטגרלי ודפרנציאלי", List.of("ניגזרות"));
+        // "ניגזרות" is left out: its generator answers an unsimplified polynomial whose term order matters.
     }
 
     private CompetitionCatalog() {}
@@ -65,7 +65,7 @@ public final class CompetitionCatalog {
                     "שאלה מילולית", "מערכת משוואות עם שני נעלמים"));
         }
         if (gradeLevel >= 10) {
-            list.addAll(List.of("ניגזרות", "חיבור וקטורים", "מכפלה סקלרית של וקטורים",
+            list.addAll(List.of("חיבור וקטורים","מכפלה סקלרית של וקטורים",
                     "כפל מספרים מרוכבים"));
         }
         return list;
@@ -81,13 +81,16 @@ public final class CompetitionCatalog {
         return new MathQuestionFactory().getQuestionGenerator(topicOf(subTopic), subTopic).generateQuestion(level);
     }
 
-    /** Case-insensitive, ignoring every whitespace character ("x = 3" equals "x=3"). */
+    /**
+     * Case-insensitive, ignoring every whitespace character ("x = 3" equals "x=3") and the invisible
+     * direction marks (U+200E and friends) some generators put before numbers in the expected answer.
+     */
     public static boolean answersMatch(String given, String expected) {
         if (given == null || expected == null) return false;
         return normalize(given).equals(normalize(expected));
     }
 
     static String normalize(String s) {
-        return s.replaceAll("\\s+", "").toLowerCase(Locale.ROOT);
+        return s.replaceAll("[\\s\\u200E\\u200F\\u202A-\\u202E\\u2066-\\u2069]+", "").toLowerCase(Locale.ROOT);
     }
 }

@@ -179,6 +179,48 @@ class DailyChallengeServiceTest {
         assertEquals(0, DailyChallengeService.streak(List.of(TODAY.minusDays(2)), TODAY));
     }
 
+    @Test
+    void yesterdaysSolutionStaysHiddenWhileTheMidnightAttemptIsOpen() {
+        at(TODAY.atTime(23, 59, 30));
+        service.start("s1");
+
+        at(TODAY.plusDays(1).atTime(0, 0, 30));
+        assertNull(service.getToday("s1").getData().yesterday().challenge().answer());
+
+        at(TODAY.plusDays(1).atTime(0, 5));
+        assertNotNull(service.getToday("s1").getData().yesterday().challenge().answer(), "the clock ran out");
+    }
+
+    @Test
+    void wrongAnswerTodayBreaksTheStreakAtOnce() {
+        when(attemptRepository.findCorrectDates(anyString(), any())).thenReturn(List.of(TODAY.minusDays(1)));
+        assertEquals(1, service.start("s1").getData().streak());
+
+        at(TODAY.atTime(10, 1));
+        DailyChallengeTodayDTO res = service.answer("s1", "definitely wrong").getData();
+
+        assertFalse(res.correct());
+        assertEquals(0, res.streak());
+    }
+
+    @Test
+    void everyCatalogSubTopicGeneratesATypeableAnswer() {
+        for (List<String> subTopics : CompetitionCatalog.topics().values()) {
+            for (String subTopic : subTopics) {
+                for (int level = 1; level <= 5; level++) {
+                    String answer = CompetitionCatalog.generate(subTopic, level).getAnswer();
+                    assertNotNull(answer, subTopic);
+                    assertFalse(answer.isBlank(), subTopic);
+                    assertTrue(CompetitionCatalog.answersMatch(answer, answer), subTopic);
+                }
+            }
+        }
+        assertFalse(CompetitionCatalog.contains("משוואה ריבועית"), "its answer is rounded and order-dependent");
+        for (int grade = 1; grade <= 12; grade++) {
+            assertTrue(CompetitionCatalog.forGrade(grade).stream().allMatch(CompetitionCatalog::contains));
+        }
+    }
+
     private void at(LocalDateTime time) {
         service.clock = Clock.fixed(time.atZone(ZONE).toInstant(), ZONE);
     }

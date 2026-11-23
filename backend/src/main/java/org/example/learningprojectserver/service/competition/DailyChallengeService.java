@@ -128,7 +128,8 @@ public class DailyChallengeService {
     }
 
     /**
-     * Consecutive days answered correctly, ending today, or yesterday while today's challenge is still open.
+     * Consecutive days answered correctly, ending today, or yesterday while today's challenge is still open
+     * (the caller passes 0 instead once today's answer is wrong or late).
      * {@code correctDates} is newest first.
      */
     static int streak(List<LocalDate> correctDates, LocalDate today) {
@@ -166,7 +167,11 @@ public class DailyChallengeService {
             secondsLeft = (int) Math.max(0, left);
         }
         boolean showQuestion = attempt != null;
-        int streak = streak(attemptRepository.findCorrectDates(userId, today.minusDays(STREAK_LOOKBACK_DAYS)), today);
+        // A wrong or late answer today breaks the streak now, not tomorrow.
+        boolean failedToday = status.equals("TIMED_OUT") || (attempt != null && attempt.getAnsweredAt() != null
+                && !attempt.isCorrect());
+        int streak = failedToday ? 0
+                : streak(attemptRepository.findCorrectDates(userId, today.minusDays(STREAK_LOOKBACK_DAYS)), today);
         long solved = attemptRepository.countByChallengeIdAndCorrectTrue(challenge.getId());
 
         return new DailyChallengeTodayDTO(today, challenge.getGradeName(), challenge.getTopic(),
@@ -183,7 +188,14 @@ public class DailyChallengeService {
         if (challenge == null) return null;
         DailyChallengeAttemptEntity attempt = attemptRepository
                 .findByChallengeIdAndStudentUserId(challenge.getId(), userId).orElse(null);
-        return new DailyChallengeRevealDTO(questionMapper.apply(challenge), attempt != null,
+        DailyChallengeQuestionDTO question = questionMapper.apply(challenge);
+        // Started just before midnight and still answerable: keep the solution hidden until the clock runs out.
+        if (attempt != null && attempt.getAnsweredAt() == null && !LocalDateTime.now(clock)
+                .isAfter(attempt.getStartedAt().plusSeconds(TIME_LIMIT_SECONDS + GRACE_SECONDS))) {
+            question = new DailyChallengeQuestionDTO(question.date(), question.gradeName(), question.topic(),
+                    question.subTopic(), question.questionText(), null);
+        }
+        return new DailyChallengeRevealDTO(question, attempt != null,
                 attempt == null ? null : attempt.getAnswer(), attempt != null && attempt.isCorrect());
     }
 

@@ -134,7 +134,9 @@ function DailyChallenge() {
                         <div className="space-y-2">
                             <p className="muted text-sm">{data.yesterday.challenge.subTopic}</p>
                             <p dir="ltr" className="text-start text-lg">{data.yesterday.challenge.questionText}</p>
-                            <p>התשובה הנכונה: <strong className="num">{data.yesterday.challenge.answer}</strong></p>
+                            {data.yesterday.challenge.answer == null
+                                ? <p className="muted">הפתרון ייפתח כשהזמן שלך ייגמר.</p>
+                                : <p>התשובה הנכונה: <strong className="num">{data.yesterday.challenge.answer}</strong></p>}
                             <p className="text-sm">
                                 {!data.yesterday.attempted ? "לא השתתפת אתמול."
                                     : data.yesterday.correct ? "צדקת אתמול!"

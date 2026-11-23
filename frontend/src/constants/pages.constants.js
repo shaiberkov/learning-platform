@@ -772,3 +772,27 @@ export const {
     GET_CHILDREN,
     CHILD_OVERVIEW,
 } = ParentPaths;
+
+/* [s03] Duels and the daily challenge. Mirrors ControllerConstants.Duel and ControllerConstants.DailyChallenge. */
+export const DuelPaths = {
+    DUEL_BASE_PATH: `${API_BASE_URL}${BASE_API}/student/duels`,
+    DUEL_TOPICS: '/topics',
+    DUEL_OPPONENTS: '/opponents',
+    DUEL_LIST: '/mine',
+    DUEL_INVITE: '/invite',
+};
+export const { DUEL_BASE_PATH, DUEL_TOPICS, DUEL_OPPONENTS, DUEL_LIST, DUEL_INVITE } = DuelPaths;
+/** DUEL_STATE is `/{duelId}`; accept, decline and answer are `/{duelId}/<action>`. */
+export const duelPath = (duelId, action) => `${DUEL_BASE_PATH}/${duelId}${action ? `/${action}` : ''}`;
+export const DailyChallengePaths = {
+    DAILY_CHALLENGE_BASE_PATH: `${API_BASE_URL}${BASE_API}/student/daily-challenge`,
+    DAILY_CHALLENGE_TODAY: '/today',
+    DAILY_CHALLENGE_START: '/start',
+    DAILY_CHALLENGE_ANSWER: '/answer',
+};
+export const {
+    DAILY_CHALLENGE_BASE_PATH,
+    DAILY_CHALLENGE_TODAY,
+    DAILY_CHALLENGE_START,
+    DAILY_CHALLENGE_ANSWER,
+} = DailyChallengePaths;

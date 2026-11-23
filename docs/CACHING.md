@@ -63,6 +63,8 @@ Recorded, not fixed. Fix one only when the task is about it.
 
 Not cached on purpose: the question bank, gradebooks and attendance (`QuestionBankService`, `GradebookService`, `AttendanceService`) read MySQL on every request, so their writes have nothing to evict.
 
+[s03] Not cached on purpose: duels (`DuelService`, polled every 1.5 s by both players, one row per poll) and the daily challenge (`DailyChallengeService`) read MySQL on every request, so their writes have nothing to evict. Neither keeps in-memory state.
+
 ## Checklist for a change that touches data
 
 - Does the method read something one of the caches above holds? Then every write to that data must evict it.

@@ -219,6 +219,9 @@ function SideBar() {
                     { to: "ai-tutor", label: "מורה-עזר AI" },
                     { to: "open-questions", label: "שאלות פתוחות" },
                     { to: "live-quiz", label: "חידון בכיתה" },
+                    // [s03] Duels and the daily challenge
+                    { to: "duels", label: "דו-קרבות" },
+                    { to: "daily-challenge", label: "אתגר יומי" },
                 ] : []),
                 { to: "accessibility-settings", label: "הגדרות נגישות" },
                 ...common,

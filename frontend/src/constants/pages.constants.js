@@ -772,3 +772,27 @@ export const {
     GET_CHILDREN,
     CHILD_OVERVIEW,
 } = ParentPaths;
+
+/* [s10] Reflection journal and pre-exam check-in. Mirrors ControllerConstants.Wellbeing. */
+export const WellbeingPaths = {
+    WELLBEING_BASE_PATH: `${API_BASE_URL}${BASE_API}/student/wellbeing`,
+    WELLBEING_PROMPT: '/prompt',
+    REFLECTION_CURRENT: '/reflection/current',
+    REFLECTION_HISTORY: '/reflection/history',
+    REFLECTION_SAVE: '/reflection/save',
+    REFLECTION_MARK: '/reflection/mark-achieved',
+    CHECKIN_STATUS: '/checkin/status',
+    CHECKIN_SUBMIT: '/checkin/submit',
+    CHECKIN_CONSENT: '/checkin/consent',
+};
+export const {
+    WELLBEING_BASE_PATH,
+    WELLBEING_PROMPT,
+    REFLECTION_CURRENT,
+    REFLECTION_HISTORY,
+    REFLECTION_SAVE,
+    REFLECTION_MARK,
+    CHECKIN_STATUS,
+    CHECKIN_SUBMIT,
+    CHECKIN_CONSENT,
+} = WellbeingPaths;

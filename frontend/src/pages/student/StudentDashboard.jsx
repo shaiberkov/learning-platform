@@ -9,6 +9,8 @@ import { FaCalendarAlt, FaChartBar, FaClipboardList, FaProjectDiagram, FaPuzzleP
 import ReviewDueTile from "../../features/adaptive/ReviewDueTile.jsx";
 import Prism from "../../components/ui/Prism.jsx";
 import DashboardHero, { QuickTile } from "../../components/ui/DashboardHero.jsx";
+// [s10] Sunday reflection and pre-exam check-in prompt
+import WellbeingPromptCard from "../../features/wellbeing/WellbeingPromptCard.jsx";
 
 function StudentDashboard() {
     const { user } = useContext(UserContext);
@@ -62,6 +64,11 @@ function StudentDashboard() {
                         <QuickTile index={7} to="/student-weekly-schedule" icon={<FaCalendarAlt />} label="מערכת שעות" hint="כל השבוע" />
                         <ReviewDueTile index={8} userId={user?.userId} />
                         <QuickTile index={9} to="/skill-map" icon={<FaProjectDiagram />} label="מפת מיומנויות" hint="שליטה לפי נושא" tone="icon-badge--mint" />
+                    </div>
+
+                    {/* [s10] Sunday reflection and pre-exam check-in prompt */}
+                    <div className="lg:col-span-7">
+                        <WellbeingPromptCard />
                     </div>
                 </div>
             </div>

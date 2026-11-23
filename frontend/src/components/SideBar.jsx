@@ -219,6 +219,9 @@ function SideBar() {
                     { to: "ai-tutor", label: "מורה-עזר AI" },
                     { to: "open-questions", label: "שאלות פתוחות" },
                     { to: "live-quiz", label: "חידון בכיתה" },
+                    // [s10] Reflection journal and pre-exam check-in
+                    { to: "reflection", label: "יומן רפלקציה" },
+                    { to: "exam-checkin", label: "צ'ק-אין לפני מבחן" },
                 ] : []),
                 { to: "accessibility-settings", label: "הגדרות נגישות" },
                 ...common,

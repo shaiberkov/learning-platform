@@ -2,6 +2,8 @@ package org.example.learningprojectserver.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.learningprojectserver.service.EngagementService.BadgeGrant;
+import org.example.learningprojectserver.service.wellbeing.ReflectionService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -30,6 +32,11 @@ public class EngagementEvents {
 
     private final EngagementService engagementService;
 
+    // [s10] Counts practice answers toward the weekly reflection goal. Field-injected so the
+    // constructor (used directly in tests) stays as it was; null there.
+    @Autowired
+    private ReflectionService reflectionService;
+
     /** A practice answer; skillLevel is the sub-topic level after the answer. */
     public void practiceAnswer(String userId, boolean correct, String subTopic, Integer skillLevel) {
         List<BadgeGrant> badges = new ArrayList<>();
@@ -38,6 +45,13 @@ public class EngagementEvents {
                     "הגעת לרמה " + EngagementService.MASTERY_LEVEL + " ב" + subTopic));
         }
         safely(userId, correct ? XP_CORRECT_ANSWER : XP_WRONG_ANSWER, badges);
+        if (reflectionService != null) {
+            try {
+                reflectionService.recordPracticeAnswer(userId);
+            } catch (RuntimeException e) {
+                LOG.log(Level.WARNING, "Reflection goal update failed for " + userId, e);
+            }
+        }
     }
 
     public void testCompleted(String userId, int score, boolean teacherTest) {

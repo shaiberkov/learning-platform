@@ -98,6 +98,9 @@ const SchoolYears = lazy(() => import("../pages/manager/SchoolYears.jsx"));
 const ParentLinks = lazy(() => import("../pages/manager/ParentLinks.jsx"));
 const MessageParents = lazy(() => import("../pages/teacher/MessageParents.jsx"));
 const ParentDashboard = lazy(() => import("../pages/parent/ParentDashboard.jsx"));
+// [s10] Reflection journal and pre-exam check-in
+const ReflectionJournal = lazy(() => import("../pages/student/ReflectionJournal.jsx"));
+const ExamCheckin = lazy(() => import("../pages/student/ExamCheckin.jsx"));
 
 // Public static pages
 const TermsOfService = lazy(() => import("../pages/footer/TermsOfService.jsx"));
@@ -245,6 +248,9 @@ export default function AppRoutes() {
                             <Route path="/study-plan" element={<StudyPlan />} />
                             <Route path="/achievements" element={<Achievements />} />
                             <Route path="/accessibility-settings" element={<AccessibilitySettings />} />
+                            {/* [s10] Reflection journal and pre-exam check-in */}
+                            <Route path="/reflection" element={<ReflectionJournal />} />
+                            <Route path="/exam-checkin" element={<ExamCheckin />} />
                             {commonRoutes}
                         </>
                     )}

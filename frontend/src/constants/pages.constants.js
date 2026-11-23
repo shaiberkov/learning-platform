@@ -905,3 +905,14 @@ export const {
     CLASS_MISTAKE_TYPES,
     CLASS_FEYNMAN,
 } = DiagnosisPaths;
+/* [s07] Real-world cards and the simulations gallery. Mirrors ControllerConstants.RealWorld.
+   Exported as one object only, so its short path names do not clash with other exports. */
+export const RealWorldPaths = {
+    REAL_WORLD_BASE_PATH: `${API_BASE_URL}${BASE_API}/real-world`,
+    TOPICS: '/topics',
+    TOPIC: '/topic',
+    SAVE_OVERRIDE: '/override',
+    RESET_OVERRIDE: '/override/reset',
+    SIMULATIONS_EXPLORED: '/simulations/explored',
+    RECORD_SIMULATION: '/simulations/record',
+};

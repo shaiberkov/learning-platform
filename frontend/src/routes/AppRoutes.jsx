@@ -115,6 +115,9 @@ const StudyPodcast = lazy(() => import("../pages/student/StudyPodcast.jsx"));
 const ExplainIt = lazy(() => import("../pages/student/ExplainIt.jsx"));
 const MistakeDiagnosis = lazy(() => import("../pages/student/MistakeDiagnosis.jsx"));
 const ClassDiagnosis = lazy(() => import("../pages/teacher/ClassDiagnosis.jsx"));
+// [s07] simulations gallery and real-world card editor
+const Simulations = lazy(() => import("../pages/student/Simulations.jsx"));
+const RealWorldEditor = lazy(() => import("../pages/teacher/RealWorldEditor.jsx"));
 
 // Public static pages
 const TermsOfService = lazy(() => import("../pages/footer/TermsOfService.jsx"));
@@ -247,6 +250,8 @@ export default function AppRoutes() {
                             <Route path="/peer-question-review" element={<PeerQuestionReview />} />
                             {/* [s06] class mistake types and Feynman explanations */}
                             <Route path="/class-diagnosis" element={<ClassDiagnosis />} />
+                            {/* [s07] real-world card editor */}
+                            <Route path="/real-world-editor" element={<RealWorldEditor />} />
                             {commonRoutes}
                         </>
                     )}
@@ -293,6 +298,8 @@ export default function AppRoutes() {
                             {/* [s06] "Explain it to me" (Feynman) and mistake-type diagnosis */}
                             <Route path="/explain-it" element={<ExplainIt />} />
                             <Route path="/mistake-diagnosis" element={<MistakeDiagnosis />} />
+                            {/* [s07] simulations gallery */}
+                            <Route path="/simulations" element={<Simulations />} />
                             {commonRoutes}
                         </>
                     )}

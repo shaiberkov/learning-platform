@@ -5,6 +5,7 @@ import { UserContext } from "../../context/UserContext.jsx";
 import OrbitLoader from "../../components/ui/OrbitLoader.jsx";
 import ReadAloudButton from "../../components/ReadAloudButton.jsx";
 import NoteButton from "../../features/studyTools/NoteButton.jsx"; // [s04]
+import RealWorldCard from "../../features/realworld/RealWorldCard.jsx";
 import { apiGet, apiPost, errorText } from "../../Utils/authApi.js";
 import {
     LESSON_CONTENT_BASE_PATH, LESSON_CONTENT_GET, LESSON_CONTENT_UPDATE_PROGRESS,
@@ -118,6 +119,8 @@ export default function LessonView() {
                     </button>
                 </div>
             )}
+
+            {step === "learn" && <RealWorldCard topic={lesson.subTopic || lesson.topic} />}
 
             {step === "practice" && (
                 <div className="glass p-6 sm:p-8 space-y-4 reveal">

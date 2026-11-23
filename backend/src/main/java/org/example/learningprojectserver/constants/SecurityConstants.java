@@ -40,6 +40,8 @@ import static org.example.learningprojectserver.constants.ControllerConstants.Ho
 import static org.example.learningprojectserver.constants.ControllerConstants.Accommodation.ACCOMMODATION_BASE_PATH;
 // [s02] class forum and student-authored questions
 import static org.example.learningprojectserver.constants.ControllerConstants.ClassCommunity.CLASS_COMMUNITY_BASE_PATH;
+// [s07] real-world cards and simulations
+import static org.example.learningprojectserver.constants.ControllerConstants.RealWorld.REAL_WORLD_BASE_PATH;
 
 public final class SecurityConstants {
     public static final class JwtAuthenticationFilterConstants {
@@ -118,6 +120,8 @@ public final class SecurityConstants {
         public static final String SEARCH_ALL                = SEARCH_BASE_PATH       + CORS_MAPPING_PATH;
         // [s02] class forum and student-authored questions
         public static final String CLASS_COMMUNITY_ALL       = CLASS_COMMUNITY_BASE_PATH + CORS_MAPPING_PATH;
+        // [s07] real-world cards and simulations
+        public static final String REAL_WORLD_ALL            = REAL_WORLD_BASE_PATH   + CORS_MAPPING_PATH;
 
         public static final String SYSTEM_ADMIN   = "SYSTEM_ADMIN";
         public static final String TEACHER        = "TEACHER";

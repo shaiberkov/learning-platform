@@ -202,6 +202,8 @@ function SideBar() {
                 { to: "peer-question-review", label: "שאלות שתלמידים כתבו" },
                 // [s06] class mistake types and Feynman explanations
                 { to: "class-diagnosis", label: "אבחון טעויות והסברים" },
+                // [s07] real-world card editor
+                { to: "real-world-editor", label: "למה זה חשוב? (עריכה)" },
                 ...common,
             ],
             PARENT: [
@@ -243,6 +245,8 @@ function SideBar() {
                     // [s06] "Explain it to me" (Feynman) and mistake-type diagnosis
                     { to: "explain-it", label: "תסביר לי" },
                     { to: "mistake-diagnosis", label: "אבחון טעויות" },
+                    // [s07] simulations gallery
+                    { to: "simulations", label: "סימולציות" },
                 ] : []),
                 { to: "accessibility-settings", label: "הגדרות נגישות" },
                 ...common,

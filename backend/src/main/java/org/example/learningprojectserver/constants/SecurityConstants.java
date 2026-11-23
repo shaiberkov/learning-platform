@@ -122,6 +122,9 @@ public final class SecurityConstants {
         public static final String CLASS_COMMUNITY_ALL       = CLASS_COMMUNITY_BASE_PATH + CORS_MAPPING_PATH;
         // [s07] real-world cards and simulations
         public static final String REAL_WORLD_ALL            = REAL_WORLD_BASE_PATH   + CORS_MAPPING_PATH;
+        // [s09] A shared portfolio opens with only the secret token in the URL: exactly one path segment, GET only.
+        public static final String PORTFOLIO_PUBLIC_VIEW     =
+                ControllerConstants.Portfolio.PORTFOLIO_PUBLIC_BASE_PATH + "/*";
 
         public static final String SYSTEM_ADMIN   = "SYSTEM_ADMIN";
         public static final String TEACHER        = "TEACHER";

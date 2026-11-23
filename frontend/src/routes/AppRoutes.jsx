@@ -118,6 +118,10 @@ const ClassDiagnosis = lazy(() => import("../pages/teacher/ClassDiagnosis.jsx"))
 // [s07] simulations gallery and real-world card editor
 const Simulations = lazy(() => import("../pages/student/Simulations.jsx"));
 const RealWorldEditor = lazy(() => import("../pages/teacher/RealWorldEditor.jsx"));
+// [s09] Story quests, personal portfolio and its public share page
+const Quests = lazy(() => import("../pages/student/Quests.jsx"));
+const Portfolio = lazy(() => import("../pages/student/Portfolio.jsx"));
+const SharedPortfolio = lazy(() => import("../pages/common/SharedPortfolio.jsx"));
 
 // Public static pages
 const TermsOfService = lazy(() => import("../pages/footer/TermsOfService.jsx"));
@@ -310,6 +314,9 @@ export default function AppRoutes() {
                             <Route path="/exam-sim/:examId" element={<ExamSimSession />} />
                             <Route path="/exam-sim/result/:attemptId" element={<ExamSimResult />} />
                             <Route path="/grade-target" element={<GradeTargetCalculator />} />
+                            {/* [s09] quests and portfolio */}
+                            <Route path="/quests" element={<Quests />} />
+                            <Route path="/portfolio" element={<Portfolio />} />
                             {commonRoutes}
                         </>
                     )}
@@ -332,6 +339,8 @@ export default function AppRoutes() {
                     <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                     <Route path="/terms-of-service" element={<TermsOfService />} />
                     <Route path="/accessibility" element={<AccessibilityStatement />} />
+                    {/* [s09] public, read-only shared portfolio (token in the URL) */}
+                    <Route path="/shared-portfolio/:token" element={<SharedPortfolio />} />
                 </Routes>
                 </Suspense>
                 </div>

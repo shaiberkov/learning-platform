@@ -34,6 +34,7 @@ Not cached on purpose [s04]: flashcards, their per-student SM-2 schedule and the
 [s06] Not cached on purpose: "explain it to me" (`FeynmanService`, table `feynman_explanation`) and the mistake-type diagnosis (`MistakeDiagnosisService`, columns on `review_item`) read MySQL on every request; each submission or AI analysis changes them. Their AI calls use `aiPromptCache` like the other one-shot features (an identical explanation or mistake gets the same verdict for 24 hours).
 <!-- [s07] -->
 Not cached on purpose [s07]: the "why does it matter to me?" cards (`RealWorldService`: built-in texts are static in `RealWorldCatalog`, school overrides in `real_world_override` are one indexed query) and the simulation exploration records (`SimulationService`, `simulation_exploration`) read MySQL on every request, so their writes have nothing to evict.
+[s09] Not cached on purpose: story quests (`QuestService`: `student_quest_progress`, `student_cosmetic`) and the portfolio (`PortfolioService`: `portfolio_project`, `portfolio_share`, plus reads of badges, engagement, archived years and teacher-test scores) read MySQL on every request. Every quest answer changes the progress, and a revoked share link must stop working at once, so the public page `/portfolio-public/{token}` is also uncached (and sent with `Cache-Control: no-store`). Quest XP and the quest badge go through `EngagementService.recordActivity`, which touches no cache. No in-memory state: the pending quest question and its answer are stored in `student_quest_progress`.
 
 ## 2. Hand-rolled in-memory maps
 

@@ -250,6 +250,9 @@ function SideBar() {
                     // [s08] Past-exam simulations and the "what do I need?" calculator
                     { to: "exam-simulations", label: "סימולציית בגרות" },
                     { to: "grade-target", label: "מה אני צריך?" },
+                    // [s09] quests and portfolio
+                    { to: "quests", label: "מסעות למידה" },
+                    { to: "portfolio", label: "הפורטפוליו שלי" },
                 ] : []),
                 { to: "accessibility-settings", label: "הגדרות נגישות" },
                 ...common,

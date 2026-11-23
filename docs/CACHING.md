@@ -6,7 +6,7 @@ The frontend keeps no data between visits. Screens built with TanStack Query (`f
 
 ## 1. Ehcache (Spring Cache over JCache)
 
-Configured in `backend/src/main/resources/ehcache.xml` and enabled by `@EnableCaching` in `config/SecurityConfig.java`. All caches are heap-only, TTL 24 hours, and live in one process.
+Configured in `backend/src/main/resources/ehcache.xml` and enabled by `@EnableCaching` in `config/SecurityConfig.java`. All caches are heap-only, TTL 24 hours, and live in one process. Spring Boot picks JCache only when the JSR-107 API (`javax.cache:cache-api`) is on the classpath next to `org.ehcache:ehcache` (`jakarta` classifier); without it Boot silently falls back to an unbounded `ConcurrentMapCacheManager` that ignores `ehcache.xml` and creates any cache name on demand. `CacheConfigurationTest` guards this: the manager is `JCacheCacheManager`, the cache names are exactly the aliases, and an unknown name returns `null`. Values are stored by reference (no serialization).
 
 | Cache | Filled by (`@Cacheable`) | Key | Evicted by | Size |
 |---|---|---|---|---|
@@ -35,11 +35,11 @@ Not Spring caches: plain `ConcurrentHashMap`s in singleton beans. Lost on restar
 
 | Where | Holds | Cleared |
 |---|---|---|
-| `UserService.otpLoginStorage` (static) | login OTP + its time, per user (valid 2 minutes) | overwritten by the next login; removed after a successful verification |
 | `UserService.otpStorage` (static) | password-reset OTP per user | removed after a successful reset |
+| `UserService.otpLoginStorage` (static) | login OTP per user (code, time, failed attempts; valid 2 minutes) | overwritten by the next send; removed after a successful verify, an expired code, or 5 wrong codes |
+| `UserService.passwordVerifiedAt` (static) | time the password step last succeeded per user; `send-otp` and `verify-otp` require it within 5 minutes | after a successful verify or 5 wrong codes; stale entries are dropped when read |
 | `SessionService.tokenCache` | JWT validation results | whole map every 2 hours (`clearTokenCache`) |
 | `NotificationService.emitters` | one `SseEmitter` per connected user | on completion, timeout, error, a failed send, or a failed heartbeat (every 25s); a callback removes only its own emitter, not a newer one of the same user |
-| `ChatGptService.userConversations` (static) | history of the legacy `/Chat` endpoints per user (the practice screen now uses the AI tutor, whose history is in MySQL: `ai_conversation_message`) | reset to empty by the `clear-conversation` endpoint |
 | `ActiveUserService.activeUsers` | who is online | `disconnectUser` |
 | `LiveQuizService.sessions` | running live in-class quizzes: class roster, current question with its answer, students' answers, scoreboard (by 6-digit code) | `end`, a new `start` by the same teacher, or 3 hours without activity (checked on the next access) |
 | `StatisticsService.userStats` | per-student statistics | currently unused (its writes are commented out) |

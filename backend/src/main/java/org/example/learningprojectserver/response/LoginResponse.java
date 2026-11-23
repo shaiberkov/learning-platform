@@ -1,31 +1,38 @@
 package org.example.learningprojectserver.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.example.learningprojectserver.security.IssuedTokens;
+
+/**
+ * Result of OTP verification. The tokens are never serialized: the controller writes them
+ * as httpOnly cookies, so the JSON body carries only success / errorCode.
+ */
 public class LoginResponse extends BasicResponse {
-    private String token;
+    @JsonIgnore
+    private IssuedTokens tokens;
 
 
     public LoginResponse() {
 
     }
 
-    public LoginResponse(boolean success, String errorCode, String token) {
+    public LoginResponse(boolean success, String errorCode, IssuedTokens tokens) {
         super(success, errorCode);
-        this.token = token;
+        this.tokens = tokens;
     }
 
 
-    public String getToken() {
-        return token;
+    @JsonIgnore
+    public IssuedTokens getTokens() {
+        return tokens;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setTokens(IssuedTokens tokens) {
+        this.tokens = tokens;
     }
 
     @Override
     public String toString() {
-        return "LoginResponse{" +
-                "token='" + token + '\'' + super.toString() +
-                '}';
+        return "LoginResponse{" + super.toString() + '}';
     }
 }

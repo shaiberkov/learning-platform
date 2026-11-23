@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.learningprojectserver.dto.StudentDTO;
 import org.example.learningprojectserver.dto.TeacherDTO;
 import org.example.learningprojectserver.entities.*;
+import org.example.learningprojectserver.enums.AuditAction;
 import org.example.learningprojectserver.enums.Role;
 import org.example.learningprojectserver.mappers.Mapper;
 import org.example.learningprojectserver.mappers.StudentEntityToStudentDTOMapper;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -33,6 +35,7 @@ public class SchoolManagerService {
     private final TeacherEntityToTeacherDTOMapper teacherEntityToTeacherDTOMapper;
     private final StudentEntityToStudentDTOMapper studentEntityToStudentDTOMapper;
     private final SchoolManagerRepository schoolManagerRepository;
+    private final AuditService auditService;
 
 
 public BasicResponse getSchoolCode(String userId){
@@ -52,6 +55,9 @@ return new BasicResponse(true, schoolCode);
         if (user.getRole() != Role.STUDENT) {
             return new BasicResponse(false, "המשתמש " + user.getUsername() + " משובץ כ־" + user.getRole());
         }
+        if (!belongsToSchoolOrUnassigned(user, schoolCode)) {
+            return new BasicResponse(false, "המשתמש משויך לבית ספר אחר");
+        }
 
         SchoolEntity school = schoolRepository.findBySchoolCode(schoolCode);
         if (school == null) {
@@ -67,8 +73,19 @@ return new BasicResponse(true, schoolCode);
         userRepository.delete(user);
         userRepository.save(teacher);
         schoolRepository.save(school);
+        auditService.record(AuditAction.USER_ASSIGNED_AS_TEACHER, "USER", userId,
+                "role=" + Role.STUDENT, "role=" + Role.TEACHER + ", school=" + schoolCode, schoolCode);
 
         return new BasicResponse(true, "המורה " + teacher.getUsername() + " שויך בהצלחה לבית הספר " + school.getSchoolName());
+    }
+
+    /** A manager may take only users with no school yet, or users already in their own school. */
+    private static boolean belongsToSchoolOrUnassigned(UserEntity user, String schoolCode) {
+        if (!(user instanceof StudentEntity student)) {
+            return false;
+        }
+        SchoolEntity current = student.getSchoolName();
+        return current == null || Objects.equals(current.getSchoolCode(), schoolCode);
     }
 
     public BasicResponse removeTeacherFromSchool(String userId) {
@@ -93,6 +110,9 @@ return new BasicResponse(true, schoolCode);
 
         userRepository.delete(teacher);
         userRepository.save(student);
+        auditService.record(AuditAction.TEACHER_REMOVED_FROM_SCHOOL, "USER", userId,
+                "role=" + Role.TEACHER + ", school=" + school.getSchoolCode(), "role=" + Role.STUDENT,
+                school.getSchoolCode());
 
         return new BasicResponse(true, "המורה " + teacher.getUsername() + " הוסר בהצלחה" + school.getSchoolName());
     }
@@ -126,6 +146,8 @@ return new BasicResponse(true, schoolCode);
         if (addedGrades.isEmpty()) {
             return new BasicResponse(false, "לא נוספו שכבות (ייתכן שכבר קיימות)");
         }
+        auditService.record(AuditAction.SCHOOL_GRADES_ADDED, "SCHOOL", schoolCode,
+                null, String.join(", ", addedGrades), schoolCode);
 
         return new BasicResponse(true, "השכבות הבאות נוספו בהצלחה לבית הספר " + school.getSchoolName() + ": " + String.join(", ", addedGrades));
     }
@@ -176,6 +198,8 @@ return new BasicResponse(true, schoolCode);
 
         if (!newlyAssigned.isEmpty()) {
             teacherRepository.save(teacher);
+            auditService.record(AuditAction.TEACHER_ASSIGNED_TO_CLASSES, "USER", teacherId,
+                    null, "classes=" + String.join(", ", newlyAssigned), schoolCode);
         }
 
         String message = "המורה " + teacher.getUsername();
@@ -218,6 +242,8 @@ return new BasicResponse(true, schoolCode);
         teacher.getTeachingClassRooms().remove(targetClass);
 
         classRoomRepository.save(targetClass);
+        auditService.record(AuditAction.TEACHER_REMOVED_FROM_CLASS, "USER", teacherId,
+                "class=" + className, null, schoolCode);
 
         return new BasicResponse(true, "המורה " + teacher.getUsername() + " הוסר בהצלחה מכיתה " + className);
     }
@@ -255,6 +281,8 @@ return new BasicResponse(true, schoolCode);
         if (removedGrades.isEmpty()) {
             return new BasicResponse(false, "לא הוסרו שכבות (ייתכן שלא קיימות)");
         }
+        auditService.record(AuditAction.SCHOOL_GRADES_REMOVED, "SCHOOL", schoolCode,
+                String.join(", ", removedGrades), null, schoolCode);
 
         return new BasicResponse(true, "השכבות הבאות הוסרו בהצלחה מבית הספר " + school.getSchoolName() + ": " + String.join(", ", removedGrades));
     }
@@ -349,7 +377,11 @@ return new BasicResponse(true, schoolCode);
         if (student == null) {
             return new BasicResponse(false, "המשתמש לא נמצא או שאינו תלמיד");
         }
+        if (!belongsToSchoolOrUnassigned(student, schoolCode)) {
+            return new BasicResponse(false, "התלמיד משויך לבית ספר אחר");
+        }
 
+        String previousClass = student.getClassRoom() != null ? student.getClassRoom().getName() : null;
         if (student.getClassRoom() != null && student.getClassRoom().getName().equals(className)) {
             return new BasicResponse(false, "הסטודנט כבר משויך לכיתה זו");
         }
@@ -373,6 +405,8 @@ return new BasicResponse(true, schoolCode);
         student.setClassRoom(targetClass);
         student.setSchoolName(school);
         studentRepository.save(student);
+        auditService.record(AuditAction.STUDENT_ASSIGNED_TO_CLASS, "USER", studentId,
+                "class=" + previousClass, "class=" + className, schoolCode);
 
         return new BasicResponse(true, "התלמיד " + student.getUsername() + " שויך בהצלחה לכיתה " + className);
     }
@@ -408,6 +442,7 @@ return new BasicResponse(true, schoolCode);
         }
 
         ClassRoomEntity currentClass = student.getClassRoom();
+        String previousClass = currentClass != null ? currentClass.getName() : null;
         if (currentClass != null) {
             currentClass.getStudents().remove(student);
         }
@@ -416,6 +451,8 @@ return new BasicResponse(true, schoolCode);
         newClass.getStudents().add(student);
 
         studentRepository.save(student);
+        auditService.record(AuditAction.STUDENT_CLASS_CHANGED, "USER", studentId,
+                "class=" + previousClass, "class=" + newClassName + ", grade=" + newGradeName, schoolCode);
 
         return new BasicResponse(true, "התלמיד " + student.getUsername() + " עבר בהצלחה לכיתה " + newClassName + " בשכבה " + newGradeName);
     }

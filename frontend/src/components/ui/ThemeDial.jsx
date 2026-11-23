@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 // UI-only theme state: sets data-theme on <html> and remembers the choice.
 const STORAGE_KEY = "lp-theme";
@@ -13,6 +14,7 @@ function readInitialTheme() {
 // contracts as the studio moves from daylight to night focus.
 export default function ThemeDial() {
     const [theme, setTheme] = useState(readInitialTheme);
+    const { t } = useTranslation();
 
     useEffect(() => {
         document.documentElement.dataset.theme = theme;
@@ -40,15 +42,16 @@ export default function ThemeDial() {
             type="button"
             onClick={toggle}
             className="dial"
-            aria-label={isDark ? "מעבר למצב יום" : "מעבר למצב לילה"}
             title={isDark ? "Daylight Studio" : "Night Owl Focus"}
             style={{ "--dial-rot": isDark ? "180deg" : "0deg" }}
         >
+            {/* The accessible name is the visible label plus what the button does (WCAG 2.5.3). */}
+            <span className="sr-only">{isDark ? t("a11y.themeToDay") : t("a11y.themeToNight")}</span>
             <span className="dial__face" aria-hidden="true">
                 <span className="dial__planet" />
                 <span className="dial__core" />
             </span>
-            <span className="dial__label hidden sm:grid" aria-hidden="true">
+            <span className="dial__label hidden sm:grid">
                 <small>{isDark ? "mode 02" : "mode 01"}</small>
                 <b>{isDark ? "NIGHT OWL" : "DAY STUDIO"}</b>
             </span>

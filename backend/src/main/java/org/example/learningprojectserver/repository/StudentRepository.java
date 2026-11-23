@@ -61,6 +61,7 @@ public interface StudentRepository extends JpaRepository<StudentEntity, Long> {
     JOIN s.teacherTests t
     LEFT JOIN TeacherTestResultEntity r ON r.test.id = t.id AND r.student.userId = :userId
     WHERE s.userId = :userId
+      AND (t.published IS NULL OR t.published = true)
 """)
     List<StudentTestStatusDTO> findAllTestsForStudent(@Param("userId") String userId);
 

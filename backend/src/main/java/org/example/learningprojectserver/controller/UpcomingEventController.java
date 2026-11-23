@@ -1,6 +1,7 @@
 package org.example.learningprojectserver.controller;
 
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import lombok.RequiredArgsConstructor;
 import org.example.learningprojectserver.dto.UpcomingEventDto;
 import org.example.learningprojectserver.enums.Role;
@@ -25,6 +26,7 @@ public class UpcomingEventController {
 
 
 
+    @PreAuthorize("@authz.isSelfWithRole(#userId, #role)")
     @GetMapping(GET_UPCOMING_EVENTS)
     public List<UpcomingEventDto> getUpcomingEvents(
             @RequestParam Role role,

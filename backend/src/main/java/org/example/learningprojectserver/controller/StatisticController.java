@@ -1,5 +1,6 @@
 package org.example.learningprojectserver.controller;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import lombok.RequiredArgsConstructor;
 import org.example.learningprojectserver.entities.StudentStatisticsEntity;
 import org.example.learningprojectserver.service.StatisticsService;
@@ -17,6 +18,7 @@ import static org.example.learningprojectserver.constants.ControllerConstants.Us
 public class StatisticController {
   private final StatisticsService statisticsService;
 
+    @PreAuthorize("@authz.isSelf(#userName) or @authz.isSelfUsername(#userName)")
     @GetMapping(GET_USER_STATISTIC)
     public StudentStatisticsEntity getUserStatistic(@RequestParam String userName) {
         System.out.println("getUserStatistic");

@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.learningprojectserver.dto.QuestionDTO;
 import org.example.learningprojectserver.dto.TestDTO;
 import org.example.learningprojectserver.entities.*;
+import org.example.learningprojectserver.enums.AuditAction;
 import org.example.learningprojectserver.enums.Role;
 import org.example.learningprojectserver.repository.*;
 import org.example.learningprojectserver.response.BasicResponse;
@@ -32,6 +33,9 @@ public class TestResultService {
     private final TeacherTestRepository teacherTestRepository;
     private final UserRepository userRepository;
     private final StudentRepository studentRepository;
+    private final AuditService auditService;
+    private final ExamFeedbackService examFeedbackService;
+    private final EngagementEvents engagementEvents;
 
 
     public BasicResponse startTest(Long testId,String userId) {
@@ -106,6 +110,8 @@ public class TestResultService {
 
 
         practiceTestResultRepository.save(testResult);
+        examFeedbackService.recordExamAnswers(userid, test, ExamFeedbackService.PRACTICE_TEST, userAnswers);
+        engagementEvents.testCompleted(userid, score, false);
 
 
 
@@ -182,10 +188,15 @@ public class TestResultService {
             testResult.setIncorrectQuestions(incorrectQuestions);
             testResult.setFinishTime(now.format(formatter));
             teacherTestResultRepository.save(testResult);
+            examFeedbackService.recordExamAnswers(userId, test, ExamFeedbackService.TEACHER_TEST, userAnswers);
+            engagementEvents.testCompleted(userId, score, true);
 
 
             student.getTeacherTestsResult().add(testResult);
             userRepository.save(student);
+            auditService.record(AuditAction.TEACHER_TEST_SCORE_RECORDED, "TEST_RESULT", String.valueOf(testResult.getId()),
+                    null, "student=" + userId + ", test=" + testId + ", score=" + score,
+                    student.getSchoolName() != null ? student.getSchoolName().getSchoolCode() : null);
 
             TestResultResponse response = new TestResultResponse();
             response.setScore(score);

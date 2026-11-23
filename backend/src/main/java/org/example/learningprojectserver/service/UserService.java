@@ -29,11 +29,19 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final ActiveUserService activeUserService;
-    private final JwtService jwtService;
+    private final AuthTokenService authTokenService;
     private final SmsSender smsSender;
     private final StudentRepository studentRepository;
     private static final ConcurrentHashMap<String, Map<String,String>> otpLoginStorage = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<String, String> otpStorage = new ConcurrentHashMap<>();
+    /** userId -> time (ms) the password step last succeeded. sendOtp/verifyOtp require a fresh entry. */
+    private static final ConcurrentHashMap<String, Long> passwordVerifiedAt = new ConcurrentHashMap<>();
+    private static final long PASSWORD_VERIFIED_TTL_MS = 5 * 60 * 1000;
+    private static final long OTP_TTL_MS = 2 * 60 * 1000;
+    private static final int MAX_OTP_ATTEMPTS = 5;
+    private static final String OTP_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    private static final int OTP_LENGTH = 5;
+    private static final java.security.SecureRandom SECURE_RANDOM = new java.security.SecureRandom();
 
     public RegisterResponse createUser(String username,String userId, String password, String confirmPassword, String email, String phone) {
 //todo להוסיף פונקציה שבודקת תקינות סיסמא
@@ -165,6 +173,7 @@ public class UserService {
                 return basicResponse;
             }
 
+            passwordVerifiedAt.put(userId, System.currentTimeMillis());
             basicResponse.setSuccess(true);
             basicResponse.setErrorCode("");
             basicResponse.setData(userCredentialsProjection.getPhoneNumber());
@@ -176,33 +185,54 @@ public class UserService {
             return basicResponse;
         }
     }
+    /** True when loginUser succeeded for this userId within PASSWORD_VERIFIED_TTL_MS. */
+    private static boolean passwordRecentlyVerified(String userId) {
+        Long at = userId == null ? null : passwordVerifiedAt.get(userId);
+        if (at == null) return false;
+        if (System.currentTimeMillis() - at > PASSWORD_VERIFIED_TTL_MS) {
+            passwordVerifiedAt.remove(userId);
+            return false;
+        }
+        return true;
+    }
+
+    static String generateLoginOtp() {
+        StringBuilder sb = new StringBuilder(OTP_LENGTH);
+        for (int i = 0; i < OTP_LENGTH; i++) {
+            sb.append(OTP_ALPHABET.charAt(SECURE_RANDOM.nextInt(OTP_ALPHABET.length())));
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Sends the login OTP to the phone stored for the user. Requires a password login that
+     * succeeded in the last few minutes. The client's phoneNumber is ignored.
+     */
     public BasicResponse sendOtp(String userId, String phoneNumber) {
         BasicResponse basicResponse = new BasicResponse();
 
-        if (phoneNumber == null) {
+        if (!passwordRecentlyVerified(userId)) {
             basicResponse.setSuccess(false);
-            basicResponse.setErrorCode("Phone number is required");
+            basicResponse.setErrorCode("יש להתחבר עם סיסמה לפני שליחת קוד אימות");
             return basicResponse;
         }
         try {
-            Long id = userRepository.findIdByUserId(userId);
-            if (id == null) {
+            UserCredentialsProjection credentials = userRepository.findBasicCredentialsByUserId(userId);
+            if (credentials == null || credentials.getPhoneNumber() == null || credentials.getPhoneNumber().isBlank()) {
                 basicResponse.setSuccess(false);
                 basicResponse.setErrorCode("משתמש לא נימצא");
                 return basicResponse;
             }
-            String otp = generatorCode();
-            List<String> toSend = new ArrayList<>();
-            toSend.add(phoneNumber);
+            String otp = generateLoginOtp();
 
-            Map<String, String> otpDetails = new HashMap<>();
-            otpDetails.put("OTP",otp);
+            Map<String, String> otpDetails = new ConcurrentHashMap<>();
+            otpDetails.put("OTP", otp);
             otpDetails.put("timestamp", String.valueOf(System.currentTimeMillis()));
+            otpDetails.put("attempts", "0");
 
             otpLoginStorage.put(userId, otpDetails);
 
-            System.out.println(otp);
-           smsSender.sendSms(otp, toSend);
+            smsSender.sendSms(otp, List.of(credentials.getPhoneNumber()));
 
             basicResponse.setSuccess(true);
             basicResponse.setErrorCode("OTP sent");
@@ -210,7 +240,7 @@ public class UserService {
 
         } catch (Exception e) {
             basicResponse.setSuccess(false);
-            basicResponse.setErrorCode("Error occurred during send otp");
+            basicResponse.setErrorCode("אירעה שגיאה בשליחת קוד האימות");
             return basicResponse;
         }
     }
@@ -225,39 +255,55 @@ public class UserService {
                 loginResponse.setErrorCode("יש לספק שם משתמש וקוד אימות");
                 return loginResponse;
             }
+            if (!passwordRecentlyVerified(userId)) {
+                otpLoginStorage.remove(userId);
+                loginResponse.setSuccess(false);
+                loginResponse.setErrorCode("יש להתחבר עם סיסמה מחדש");
+                return loginResponse;
+            }
             try {
-               UserEntity userEntity= userRepository.findUserByUserId(userId);
-                if (userEntity == null) {
-                    loginResponse.setSuccess(false);
-                    loginResponse.setErrorCode("המשתמש לא נמצא");
-
-                    return loginResponse;
-                }
-
-//                if (userEntity.getOtp() == null || !userEntity.getOtp().equals(otp)) {
-//                    loginResponse.setSuccess(false);
-//                    loginResponse.setErrorCode("קוד האימות שגוי");
-//                    return loginResponse;
-//                }
                 Map<String, String> otpDetails = otpLoginStorage.get(userId);
-                if (otpDetails.get("OTP") == null || !otpDetails.get("OTP").equals(otp)) {
+                if (otpDetails == null || otpDetails.get("OTP") == null) {
                     loginResponse.setSuccess(false);
-                    loginResponse.setErrorCode("קוד האימות שגוי");
+                    loginResponse.setErrorCode("לא נשלח קוד אימות או שפג תוקפו");
                     return loginResponse;
                 }
 
                 long otpTimestamp = Long.parseLong(otpDetails.get("timestamp"));
-                long currentTime = System.currentTimeMillis();
-                if (currentTime - otpTimestamp > 120000) {
+                if (System.currentTimeMillis() - otpTimestamp > OTP_TTL_MS) {
+                    otpLoginStorage.remove(userId);
                     loginResponse.setSuccess(false);
                     loginResponse.setErrorCode("עברו 2 דקות");
                     return loginResponse;
                 }
 
-                String token = jwtService.generateToken(userId,userEntity.getUsername(),String.valueOf(userEntity.getRole()));
+                if (!otpDetails.get("OTP").equalsIgnoreCase(otp.trim())) {
+                    int attempts = Integer.parseInt(otpDetails.getOrDefault("attempts", "0")) + 1;
+                    if (attempts >= MAX_OTP_ATTEMPTS) {
+                        otpLoginStorage.remove(userId);
+                        passwordVerifiedAt.remove(userId);
+                        loginResponse.setSuccess(false);
+                        loginResponse.setErrorCode("יותר מדי ניסיונות שגויים. יש להתחבר מחדש");
+                        return loginResponse;
+                    }
+                    otpDetails.put("attempts", String.valueOf(attempts));
+                    loginResponse.setSuccess(false);
+                    loginResponse.setErrorCode("קוד האימות שגוי");
+                    return loginResponse;
+                }
+
+                UserEntity userEntity = userRepository.findUserByUserId(userId);
+                if (userEntity == null) {
+                    loginResponse.setSuccess(false);
+                    loginResponse.setErrorCode("המשתמש לא נמצא");
+                    return loginResponse;
+                }
+
+                otpLoginStorage.remove(userId);
+                passwordVerifiedAt.remove(userId);
                 loginResponse.setSuccess(true);
                 loginResponse.setErrorCode("הקוד נכון");
-                loginResponse.setToken(token);
+                loginResponse.setTokens(authTokenService.issue(userId, userEntity.getUsername(), String.valueOf(userEntity.getRole())));
                 userEntity.setOtp(null);
                 userEntity.setOtpTimestamp(null);
                 Session session = new Session();
@@ -329,6 +375,7 @@ public class UserService {
         user.setPasswordHash(hashPassword);
         userRepository.save(user);
         otpStorage.remove(userId);
+        authTokenService.revokeAllForUser(userId);
         sendEmail(user.getEmail(), subject, message);
         resetPasswordResponse.setSuccess(true);
         return resetPasswordResponse;

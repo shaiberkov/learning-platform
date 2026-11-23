@@ -2,6 +2,7 @@ package org.example.learningprojectserver.controller;
 
 
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import lombok.RequiredArgsConstructor;
 import org.example.learningprojectserver.dto.TestDTO;
 import org.example.learningprojectserver.service.TestService;
@@ -19,6 +20,7 @@ public class TestController {
     private final TestService testService;
 
 
+    @PreAuthorize("@authz.canViewTest(#testId)")
     @GetMapping(GET_TEST)
     public TestDTO getTest(@RequestParam Long testId) {
         return testService.getTestDto(testId);

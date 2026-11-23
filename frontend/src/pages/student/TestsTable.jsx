@@ -17,8 +17,9 @@ import {
 import {
     AND,
     AUTH_HEADER,
+    EXAM_BASE_PATH,
     GENERATE_QUESTION, GET_STUDENT_TESTS_STATUS,
-    QUESTION, START_TEST,
+    QUESTION, START_ATTEMPT,
     STUDENT_BASE_PATH, STUDENT_ID, SUB_TOPIC, SUBJECT, TEST_ID, TOPIC,
     USER_ID
 } from "../../constants/pages.constants.js";
@@ -46,7 +47,8 @@ function TestsTable() {
     const startTest = async (teacherTestId, timeLimitMinutes, startTimeStr) => {
         try {
             const response = await axios.post(
-                `${STUDENT_BASE_PATH}${START_TEST}${QUESTION}${USER_ID}${user.userId}${AND}${TEST_ID}${teacherTestId}`,
+                `${EXAM_BASE_PATH}${START_ATTEMPT}${QUESTION}${USER_ID}${user.userId}${AND}${TEST_ID}${teacherTestId}`,
+                {},
                 {
                     headers: {
                         [AUTH_HEADER]: `${BEARER_PREFIX}${token}`
@@ -221,13 +223,7 @@ function TestsTable() {
                             {pendingNavigation ? (
                                 <>
                                     <button
-                                        onClick={() => {
-                                            const now = new Date();
-                                            const start = parseDateTime(pendingNavigation.startTime);
-                                            const diff = Math.max(0, Math.floor((now - start) / 60000));
-                                            const updatedLimit = pendingNavigation.timeLimit - diff;
-                                            navigate(`/test/${pendingNavigation.testId}/${updatedLimit}`);
-                                        }}
+                                        onClick={() => navigate(`/exam/${pendingNavigation.testId}`)}
                                         className="btn btn-primary"
                                     >
                                         המשך

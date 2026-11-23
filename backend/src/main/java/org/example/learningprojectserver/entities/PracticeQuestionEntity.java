@@ -20,4 +20,10 @@ public class PracticeQuestionEntity extends QuestionEntity {
     @JoinColumn(name = "question_history_id")
     private StudentQuestionHistoryEntity questionHistory;
 
+    /** Highest guidance step the student opened: 0 none, 1 hint 1, 2 hint 2, 3 full solution. */
+    private Integer hintsUsed;
+
+    /** Practice points earned when answered; null while unanswered. */
+    private Integer pointsEarned;
+
 }

@@ -30,6 +30,11 @@ public class SessionService {
     }
 
     public TokenValidationResponse validateToken(String cleanToken) {
+        if (cleanToken == null) {
+            TokenValidationResponse noToken = new TokenValidationResponse();
+            noToken.setValid(false);
+            return noToken;
+        }
 
         if (tokenCache.containsKey(cleanToken)) {
             return tokenCache.get(cleanToken);
@@ -66,6 +71,10 @@ public class SessionService {
         tokenValidationResponse.setRole(role);
         if (!"SYSTEM_ADMIN".equals(role)) {
             tokenValidationResponse.setSchoolCode(schoolCode);
+        }
+        if (isValid) {
+            tokenValidationResponse.setImpersonatorId(jwtService.extractImpersonatorId(cleanToken));
+            tokenValidationResponse.setImpersonatorUsername(jwtService.extractImpersonatorUsername(cleanToken));
         }
 
         tokenCache.put(cleanToken, tokenValidationResponse);

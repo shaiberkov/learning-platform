@@ -13,6 +13,8 @@ import org.example.learningprojectserver.response.SubmitAnswerResponse;
 import org.example.learningprojectserver.service.QuestionGenerator.QuestionGenerator;
 import org.example.learningprojectserver.service.QuestionGenerator.QuestionGeneratorFactory;
 import org.example.learningprojectserver.service.QuestionGenerator.SubjectQuestionGenerator;
+import org.example.learningprojectserver.dto.AdaptiveDTOs.MasteryUpdateDTO;
+import org.example.learningprojectserver.service.adaptive.PracticeScoring;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -40,11 +42,13 @@ private final QuestionEntityToQuestionDTOMapper questionEntityToQuestionDTOMappe
 private final QuestionEntityToPracticeQuestionMapper questionEntityToPracticeQuestionMapper;
 private final SchoolRepository schoolRepository;
 private final LessonsToScheduleMapper lessonsToScheduleMapper;
-private final ChatGptService chatGptService;
 private final StudentEntityToStudentTestStatusDTOMapper studentEntityToStudentTestStatusDTOMapper;
 private final TestService testService;
 private final StudentRepository studentRepository;
 private final LessonRepository lessonRepository;
+private final MasteryService masteryService;
+private final ReviewService reviewService;
+private final EngagementEvents engagementEvents;
 
 
 
@@ -77,27 +81,9 @@ public List<StudentTestStatusDTO> getStudentTestsStatus(String userId) {
 
 
 
-    public void sendJobMessage(String userId,String subject,String subTopic) {
-    String job = String.format("""
-            אתה מורה פרטי ל%s שמדבר עברית ורק עברית.
-            אתה מסביר בצורה פשוטה וברורה, כך שגם ילדים יוכלו להבין אותך בקלות.
-            אם תקבל שאלה לפתרון מהסוג: "%s",
-            אתה תסביר לתלמיד איך לחשוב על הפתרון,
-            אבל בשום פנים ואופן **לא תגלה לו את התשובה!**
-            רק תדריך אותו צעד-צעד איך לגשת לפתרון בצורה קלה להבנה.
-            תשתמש בדוגמאות פשוטות ותסביר במילים ברורות, בלי מונחים מסובכים,
-            וכל הודעה שלך תישלח רק דרך פתרון אחת כדי שהתלמיד לא יקבל הודעה ארוכה ולא מובנת.
-            אם התלמיד לא מבין, תסביר שוב בדרך אחרת, אפילו עם דוגמה מהחיים האמיתיים.
-            כל שאלה שלא קשורה למה שעכשיו ציינתי – אל תענה,
-            ותזכיר לתלמיד שאתה מורה ל%s שבא לעזור לו בשאלות מהסוג שקיבלת בפורמט הזה.
-        """, subject, subTopic, subject);
-    chatGptService.initializeConversationWithJob(userId, job);
-
-}
 
     @Transactional
     public BasicResponse generateQuestionForPractice(String userId, String subject, String topic, String subTopic) {
-        sendJobMessage(userId, subject, subTopic);
 
         StudentEntity student = studentRepository.findStudentWithProgressAndHistory(userId);
 
@@ -110,13 +96,15 @@ public List<StudentTestStatusDTO> getStudentTestsStatus(String userId) {
         skillLevels.putIfAbsent(subTopic, 1);
 
 
-        int level = skillLevels.get(subTopic);
+        int level = masteryService.pickLevel(userId, subject, subTopic);
         SubjectQuestionGenerator generator = QuestionGeneratorFactory.getSubjectQuestionGenerator(subject);
         QuestionGenerator questionGenerator = generator.getQuestionGenerator(topic, subTopic);
         QuestionEntity baseQuestion = questionGenerator.generateQuestion(level);
 
         PracticeQuestionEntity questionEntity = questionEntityToPracticeQuestionMapper.apply(baseQuestion);
 
+        questionEntity.setDifficultyLevel(level);
+        questionEntity.setHintsUsed(0);
         questionEntity.setProgressEntity(progress);
         questionEntity.setQuestionHistory(student.getStudentQuestionHistoryEntity());
         questionEntity.setQuestionText(questionEntity.getQuestionText().replaceAll("[\u200E\u200F]", ""));
@@ -156,6 +144,30 @@ public List<StudentTestStatusDTO> getStudentTestsStatus(String userId) {
         }
         boolean isCorrect = questionEntity.getAnswer().equalsIgnoreCase(answer.trim());
         historyEntity.addAnsweredQuestion(questionEntity, isCorrect);
+
+        int hintsUsed = 0;
+        Integer pointsEarned = null;
+        if (questionEntity instanceof PracticeQuestionEntity practice) {
+            hintsUsed = practice.getHintsUsed() == null ? 0 : practice.getHintsUsed();
+            if (practice.getPointsEarned() == null) {
+                pointsEarned = PracticeScoring.points(isCorrect, hintsUsed);
+                practice.setPointsEarned(pointsEarned);
+                questionRepository.save(practice);
+            }
+        }
+        MasteryUpdateDTO mastery = null;
+        boolean addedToReview = false;
+        // Count each practice question once toward mastery and the notebook.
+        if (pointsEarned != null) {
+            mastery = masteryService.recordAnswer(userId, questionEntity.getSubject(), questionEntity.getTopic(),
+                    questionEntity.getSubTopic(), questionEntity.getDifficultyLevel(),
+                    PracticeScoring.eloOutcome(isCorrect, hintsUsed), isCorrect);
+            // A question solved only after opening the full solution goes to the notebook too.
+            if (!isCorrect || hintsUsed >= PracticeScoring.FULL_SOLUTION_STEP) {
+                reviewService.addMistake(userId, questionEntity, "PRACTICE");
+                addedToReview = true;
+            }
+        }
         studentQuestionHistoryRepository.save(historyEntity);
 
         Map<String, Integer> subTopicSuccessStreak = studentProgressEntity.getSubTopicSuccessStreak();
@@ -190,12 +202,17 @@ public List<StudentTestStatusDTO> getStudentTestsStatus(String userId) {
         studentProgressEntity.setSubTopicSuccessStreak(subTopicSuccessStreak);
         studentProgressEntity.setSubTopicIncorrectStreak(subTopicIncorrectStreak);
         studentProgressRepository.save(studentProgressEntity);
+        engagementEvents.practiceAnswer(userId, isCorrect, subTopic, skillLevelsBySubTopic.get(subTopic));
 
         SubmitAnswerResponse submitAnswerResponse=new SubmitAnswerResponse();
         submitAnswerResponse.setSuccess(true);
         System.out.println(isCorrect);
         submitAnswerResponse.setCorrect(isCorrect);
         submitAnswerResponse.setMessage(isCorrect ? "תשובה נכונה כל הכבוד" : "תשובה לא נכונה ");
+        submitAnswerResponse.setHintsUsed(hintsUsed);
+        submitAnswerResponse.setPointsEarned(pointsEarned == null ? 0 : pointsEarned);
+        submitAnswerResponse.setMastery(mastery);
+        submitAnswerResponse.setAddedToReview(addedToReview);
         BasicResponse basicResponse = new BasicResponse(true, null);
         basicResponse.setData(submitAnswerResponse);
         return basicResponse;

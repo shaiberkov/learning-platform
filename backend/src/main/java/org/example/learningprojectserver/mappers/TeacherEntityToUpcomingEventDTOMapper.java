@@ -25,6 +25,9 @@ public class TeacherEntityToUpcomingEventDTOMapper implements Mapper<TeacherEnti
         List<TeacherTestEntity> teacherTestEntities=teacher.getTests();
 
         for (TeacherTestEntity testEntity: teacherTestEntities) {
+            if (testEntity.isTemplateExam()) {
+                continue; // a template has no date or students
+            }
             int eventInDays = daysUntil(testEntity.getStartTime());
             List<String> classRooms = testEntity.getStudents()
                     .stream()

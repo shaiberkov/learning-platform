@@ -130,10 +130,10 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { FaKey } from 'react-icons/fa';
-import Cookies from "universal-cookie";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import AuthShell from "../../components/ui/AuthShell.jsx";
+import { serverErrorMessage } from "../../Utils/httpSetup.js";
 import {
     QUESTION,
     SEND_OTP,
@@ -148,7 +148,6 @@ function TwoFactorAuthForm() {
     const userId = location.state?.userId;
     const phoneNumber = location.state?.phoneNumber;
     const navigate = useNavigate();
-    const cookies = new Cookies();
     const [loading, setLoading] = useState(false);
 
     const inputsRef = useRef([]);
@@ -166,7 +165,7 @@ function TwoFactorAuthForm() {
                     }
                 } catch (error) {
                     console.error('Error sending OTP:', error);
-                    setError('שגיאה בשליחת קוד אימות');
+                    setError(serverErrorMessage(error) || 'שגיאה בשליחת קוד אימות');
                 }
             }
         };
@@ -204,8 +203,8 @@ function TwoFactorAuthForm() {
                 `${USER_BASE_PATH}${VERIFY_OTP}${QUESTION}${params.toString()}`
             );
             if (response.data.success) {
+                // The server set the httpOnly auth cookies; UserContext picks the session up on navigation.
                 setLoading(false)
-                cookies.set("token", response.data.token, { path: "/" });
                 navigate("/login");
             } else {
                 setLoading(false)
@@ -213,7 +212,8 @@ function TwoFactorAuthForm() {
             }
         } catch (error) {
             console.error('Error during OTP verification:', error);
-            setError('שגיאה באימות הקוד. נסה שוב מאוחר יותר');
+            setLoading(false);
+            setError(serverErrorMessage(error) || 'שגיאה באימות הקוד. נסה שוב מאוחר יותר');
         }
     };
 

@@ -96,6 +96,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
@@ -170,9 +171,18 @@ public class HolidayUtils {
         return (int) ChronoUnit.DAYS.between(today, eventDate);
     }
 
+    /** Days from today (Israel time) to startTime ("dd/MM/yyyy HH:mm"); -1 when it is missing or unparseable. */
     public static int daysUntil(String startTime) {
+        if (startTime == null || startTime.isBlank()) {
+            return -1;
+        }
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-        LocalDateTime examDateTime = LocalDateTime.parse(startTime, fmt);
+        LocalDateTime examDateTime;
+        try {
+            examDateTime = LocalDateTime.parse(startTime.trim(), fmt);
+        } catch (DateTimeParseException e) {
+            return -1;
+        }
         ZoneId ilZone = ZoneId.of("Asia/Jerusalem");
         ZonedDateTime examZoned = examDateTime.atZone(ilZone);
         LocalDate today = LocalDate.now(ilZone);

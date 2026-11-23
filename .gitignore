@@ -2,6 +2,10 @@
 .env
 .env.*
 !.env.example
+!frontend/.env.development
+# Playwright output
+frontend/playwright-report/
+frontend/test-results/
 *.pem
 
 # java / maven

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { serverErrorMessage } from "../../Utils/httpSetup.js";
 import AuthShell from "../../components/ui/AuthShell.jsx";
 import { useNavigate } from "react-router-dom";
 import {FaKey, FaLock, FaUser} from "react-icons/fa";
@@ -69,6 +70,7 @@ function ResetPassword() {
             }
         } catch (error) {
             console.error(error);
+            setErrors(prevErrors => ({ ...prevErrors, userId: serverErrorMessage(error) }));
         }
     };
 
@@ -89,6 +91,7 @@ function ResetPassword() {
             }
         } catch (error) {
             console.error(error);
+            setErrors(prevErrors => ({ ...prevErrors, otp: serverErrorMessage(error) }));
         }
     };
 

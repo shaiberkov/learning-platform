@@ -1,10 +1,23 @@
 package org.example.learningprojectserver.controller;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
+import org.example.learningprojectserver.dto.AttachmentDownload;
 import org.example.learningprojectserver.response.BasicResponse;
 import org.example.learningprojectserver.service.MessageService;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.example.learningprojectserver.constants.ControllerConstants.Message.*;
@@ -17,28 +30,98 @@ public class MessageController {
 private final MessageService messageService;
 
 
+    @PreAuthorize("@authz.isSelf(#userId)")
     @GetMapping(RECIPIENT_TYPES)
     public BasicResponse getRecipientTypes(@RequestParam String userId) {
     return messageService.getRecipientTypes(userId);
     }
 
 
+    // Accepts the old query-string form and multipart/form-data (needed for an attachment).
+    // scheduledFor is ISO local time (2026-11-23T08:00); empty or past means send now.
+    @PreAuthorize("@authz.isSelf(#senderId) and @features.enabledForCurrentUser('MESSAGES')")
     @PostMapping(SEND_MESSAGE)
     public BasicResponse sendMessage(
-            @RequestParam String senderId,
-            @RequestParam String recipientType,
+            @NotBlank(message = "חסר מזהה השולח") @RequestParam String senderId,
+            @NotBlank(message = "יש לבחור סוג נמענים") @RequestParam String recipientType,
             @RequestParam String recipientValue,
-            @RequestParam String title,
-            @RequestParam String content
+            @NotBlank(message = "יש להזין כותרת להודעה") @Size(max = 255, message = "כותרת ההודעה ארוכה מדי (עד 255 תווים)") @RequestParam String title,
+            @NotBlank(message = "יש להזין תוכן להודעה") @Size(max = 255, message = "תוכן ההודעה ארוך מדי (עד 255 תווים)") @RequestParam String content,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime scheduledFor,
+            @RequestParam(required = false) MultipartFile file
     ) {
-        return messageService.sendMessage(senderId, recipientType, recipientValue, title, content);
+        return messageService.sendMessage(senderId, recipientType, recipientValue, title, content, scheduledFor, file);
     }
 
+    @PreAuthorize("@authz.isSelf(#userId)")
     @GetMapping(GET_ALL_RECEIVED_MESSAGES)
     public BasicResponse getAllRecivedMessages(@RequestParam String userId) {
         return messageService.getAllRecivedMessages(userId);
     }
 
-
+    @PreAuthorize("@authz.isSelf(#userId)")
+    @GetMapping(RECEIVED_MESSAGES_PAGE)
+    public BasicResponse getReceivedMessagesPage(@RequestParam String userId,
+                                                 @RequestParam(required = false) Integer page,
+                                                 @RequestParam(required = false) Integer size) {
+        return messageService.getReceivedMessagesPage(userId, page, size);
     }
 
+    @PreAuthorize("@authz.isSelf(#userId)")
+    @GetMapping(SENT_MESSAGES)
+    public BasicResponse getSentMessages(@RequestParam String userId,
+                                         @RequestParam(required = false) Integer page,
+                                         @RequestParam(required = false) Integer size) {
+        return messageService.getSentMessageSummaries(userId, page, size);
+    }
+
+    @PreAuthorize("@authz.isSelf(#userId)")
+    @GetMapping(READ_RECEIPTS)
+    public BasicResponse getReadReceipts(@RequestParam String userId, @RequestParam String batchId) {
+        return messageService.getReadReceipts(userId, batchId);
+    }
+
+    @PreAuthorize("@authz.isSelf(#userId)")
+    @PostMapping(MARK_READ)
+    public BasicResponse markRead(@RequestParam String userId, @RequestParam Long messageId) {
+        return messageService.markAsRead(userId, messageId);
+    }
+
+    @PreAuthorize("@authz.isSelf(#userId)")
+    @PostMapping(REPLY)
+    public BasicResponse reply(@RequestParam String userId,
+                               @RequestParam Long messageId,
+                               @RequestParam String content,
+                               @RequestParam(required = false) MultipartFile file) {
+        return messageService.reply(userId, messageId, content, file);
+    }
+
+    @PreAuthorize("@authz.isSelf(#userId)")
+    @GetMapping(THREAD)
+    public BasicResponse getThread(@RequestParam String userId, @RequestParam String threadId) {
+        return messageService.getThread(userId, threadId);
+    }
+
+    @PreAuthorize("@authz.isSelf(#userId)")
+    @GetMapping(ATTACHMENT)
+    public ResponseEntity<byte[]> getAttachment(@RequestParam String userId, @RequestParam Long attachmentId) {
+        AttachmentDownload file = messageService.getAttachment(userId, attachmentId);
+        if (file == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        MediaType type;
+        try {
+            type = MediaType.parseMediaType(file.contentType());
+        } catch (Exception e) {
+            type = MediaType.APPLICATION_OCTET_STREAM;
+        }
+        return ResponseEntity.ok()
+                .contentType(type)
+                .header(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition.attachment()
+                        .filename(file.fileName(), StandardCharsets.UTF_8).build().toString())
+                .header("X-Content-Type-Options", "nosniff")
+                .body(file.data());
+    }
+
+
+    }

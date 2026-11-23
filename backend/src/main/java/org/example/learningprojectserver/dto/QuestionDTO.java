@@ -15,5 +15,6 @@ public class QuestionDTO {
     private String topic;     // נושא (למשל, שברים)
     private String subTopic;  // תת-נושא (למשל, חיבור שברים)
     private String questionText;
+    private Integer difficultyLevel; // רמת הקושי שנבחרה (1-5)
 
 }

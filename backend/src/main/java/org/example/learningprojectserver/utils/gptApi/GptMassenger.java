@@ -18,6 +18,8 @@ import java.io.IOException;
 public class GptMassenger {
 @Autowired
 public  Environment env;
+@Autowired
+private AiUsageMetrics aiUsageMetrics;
 
     private static final String API_URL = "https://api.openai.com/v1/chat/completions";
 
@@ -33,6 +35,20 @@ public  Environment env;
     }
 
     public String sendChatGptRequest(ChatGptRequest request) throws IOException {
+        aiUsageMetrics.recordRequest();
+        try {
+            String content = doSendChatGptRequest(request);
+            if (content == null) {
+                aiUsageMetrics.recordFailure();
+            }
+            return content;
+        } catch (IOException | RuntimeException e) {
+            aiUsageMetrics.recordFailure();
+            throw e;
+        }
+    }
+
+    private String doSendChatGptRequest(ChatGptRequest request) throws IOException {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = createHeaders();
         HttpEntity<String> entity = new HttpEntity<>(new ObjectMapper().writeValueAsString(request), headers);

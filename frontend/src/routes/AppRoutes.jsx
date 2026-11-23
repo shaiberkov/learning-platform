@@ -131,6 +131,11 @@ const ClassForum = lazy(() => import("../pages/student/ClassForum.jsx"));
 const PeerQuestions = lazy(() => import("../pages/student/PeerQuestions.jsx"));
 const ClassForumModeration = lazy(() => import("../pages/teacher/ClassForumModeration.jsx"));
 const PeerQuestionReview = lazy(() => import("../pages/teacher/PeerQuestionReview.jsx"));
+// [s08] Past-exam simulations and the "what do I need?" calculator
+const ExamSimulations = lazy(() => import("../pages/student/ExamSimulations.jsx"));
+const ExamSimSession = lazy(() => import("../pages/student/ExamSimSession.jsx"));
+const ExamSimResult = lazy(() => import("../pages/student/ExamSimResult.jsx"));
+const GradeTargetCalculator = lazy(() => import("../pages/student/GradeTargetCalculator.jsx"));
 
 export default function AppRoutes() {
 
@@ -300,6 +305,11 @@ export default function AppRoutes() {
                             <Route path="/mistake-diagnosis" element={<MistakeDiagnosis />} />
                             {/* [s07] simulations gallery */}
                             <Route path="/simulations" element={<Simulations />} />
+                            {/* [s08] Past-exam simulations and the "what do I need?" calculator */}
+                            <Route path="/exam-simulations" element={<ExamSimulations />} />
+                            <Route path="/exam-sim/:examId" element={<ExamSimSession />} />
+                            <Route path="/exam-sim/result/:attemptId" element={<ExamSimResult />} />
+                            <Route path="/grade-target" element={<GradeTargetCalculator />} />
                             {commonRoutes}
                         </>
                     )}

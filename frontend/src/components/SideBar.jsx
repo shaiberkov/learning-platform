@@ -247,6 +247,9 @@ function SideBar() {
                     { to: "mistake-diagnosis", label: "אבחון טעויות" },
                     // [s07] simulations gallery
                     { to: "simulations", label: "סימולציות" },
+                    // [s08] Past-exam simulations and the "what do I need?" calculator
+                    { to: "exam-simulations", label: "סימולציית בגרות" },
+                    { to: "grade-target", label: "מה אני צריך?" },
                 ] : []),
                 { to: "accessibility-settings", label: "הגדרות נגישות" },
                 ...common,

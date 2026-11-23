@@ -916,3 +916,24 @@ export const RealWorldPaths = {
     SIMULATIONS_EXPLORED: '/simulations/explored',
     RECORD_SIMULATION: '/simulations/record',
 };
+/* [s08] Past-exam simulations and the "what do I need?" calculator. Mirrors ControllerConstants.ExamSimulation (under /student). */
+export const ExamSimulationPaths = {
+    EXAM_SIM_BASE_PATH: `${API_BASE_URL}${BASE_API}/student`,
+    SIM_EXAMS: '/exam-sim/exams',
+    SIM_PREDICTION: '/exam-sim/prediction',
+    SIM_START: '/exam-sim/start',
+    SIM_SAVE: '/exam-sim/save',
+    SIM_SUBMIT: '/exam-sim/submit',
+    SIM_RESULT: '/exam-sim/result',
+    GRADE_TARGET: '/grade-target',
+};
+export const {
+    EXAM_SIM_BASE_PATH,
+    SIM_EXAMS,
+    SIM_PREDICTION,
+    SIM_START,
+    SIM_SAVE,
+    SIM_SUBMIT,
+    SIM_RESULT,
+    GRADE_TARGET,
+} = ExamSimulationPaths;

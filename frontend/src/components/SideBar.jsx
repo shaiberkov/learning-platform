@@ -200,6 +200,8 @@ function SideBar() {
                 // [s02] class forum and student-authored questions
                 { to: "class-forum", label: "פורום הכיתה" },
                 { to: "peer-question-review", label: "שאלות שתלמידים כתבו" },
+                // [s06] class mistake types and Feynman explanations
+                { to: "class-diagnosis", label: "אבחון טעויות והסברים" },
                 ...common,
             ],
             PARENT: [
@@ -238,6 +240,9 @@ function SideBar() {
                     // [s05] Summary sheet and study podcast.
                     { to: "study-summary-sheet", label: "דף סיכום למבחן" },
                     { to: "study-podcast", label: "סיכום קולי" },
+                    // [s06] "Explain it to me" (Feynman) and mistake-type diagnosis
+                    { to: "explain-it", label: "תסביר לי" },
+                    { to: "mistake-diagnosis", label: "אבחון טעויות" },
                 ] : []),
                 { to: "accessibility-settings", label: "הגדרות נגישות" },
                 ...common,

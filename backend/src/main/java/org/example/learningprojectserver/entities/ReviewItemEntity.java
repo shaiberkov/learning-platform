@@ -1,6 +1,7 @@
 package org.example.learningprojectserver.entities;
 
 import jakarta.persistence.*;
+import org.example.learningprojectserver.enums.MistakeType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -57,4 +58,15 @@ public class ReviewItemEntity implements Sm2Schedulable {
 
     private LocalDateTime createdAt;
     private LocalDateTime lastReviewedAt;
+
+    /* [s06] Mistake-type diagnosis: the wrong answer, its type and who decided it (RULE or AI). */
+    @Column(length = 500)
+    private String givenAnswer;
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    private MistakeType errorType;
+    @Column(length = 10)
+    private String errorTypeSource;
+    @Column(length = 500)
+    private String errorNote;
 }

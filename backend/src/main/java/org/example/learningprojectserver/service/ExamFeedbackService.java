@@ -93,7 +93,7 @@ public class ExamFeedbackService {
             masteryService.recordAnswer(userId, question.getSubject(), question.getTopic(), question.getSubTopic(),
                     question.getDifficultyLevel(), PracticeScoring.eloOutcome(correct, 0), correct);
             if (!correct) {
-                reviewService.addMistake(userId, question, source);
+                reviewService.addMistake(userId, question, source, given);
             }
         }
         testAnswerRecordRepository.saveAll(records);

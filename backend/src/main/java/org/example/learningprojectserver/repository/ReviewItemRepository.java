@@ -35,4 +35,19 @@ public interface ReviewItemRepository extends JpaRepository<ReviewItemEntity, Lo
     /** Items answered correctly at least three reviews in a row. */
     @Query("SELECT COUNT(r) FROM ReviewItemEntity r WHERE r.studentUserId = :userId AND r.repetitions >= 3")
     long countLearned(@Param("userId") String userId);
+
+    /* [s06] Mistake-type diagnosis */
+    List<ReviewItemEntity> findTop200ByStudentUserIdOrderByCreatedAtDescIdDesc(String studentUserId);
+
+    /** Rows: errorType (may be null for items from before the diagnosis), count. */
+    @Query("SELECT r.errorType, COUNT(r) FROM ReviewItemEntity r WHERE r.studentUserId = :userId GROUP BY r.errorType")
+    List<Object[]> countByErrorType(@Param("userId") String userId);
+
+    /** Rows: studentUserId, errorType, count. */
+    @Query("""
+        SELECT r.studentUserId, r.errorType, COUNT(r) FROM ReviewItemEntity r
+        WHERE r.studentUserId IN :userIds
+        GROUP BY r.studentUserId, r.errorType
+    """)
+    List<Object[]> countByStudentAndErrorType(@Param("userIds") List<String> userIds);
 }

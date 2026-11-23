@@ -31,6 +31,7 @@ Not cached on purpose: the school dashboard (`SchoolAnalyticsService`), the time
 
 <!-- [s04] -->
 Not cached on purpose [s04]: flashcards, their per-student SM-2 schedule and the study notebook (`FlashcardService`, `FlashcardGenerationService`, `StudyNoteService`) read MySQL on every request; every review or note changes them. AI flashcard generation from a pasted summary goes through `AiGateway.complete(..., cacheable=true)`, so an identical summary is served from `aiPromptCache`; photos are never cached.
+[s06] Not cached on purpose: "explain it to me" (`FeynmanService`, table `feynman_explanation`) and the mistake-type diagnosis (`MistakeDiagnosisService`, columns on `review_item`) read MySQL on every request; each submission or AI analysis changes them. Their AI calls use `aiPromptCache` like the other one-shot features (an identical explanation or mistake gets the same verdict for 24 hours).
 
 ## 2. Hand-rolled in-memory maps
 

@@ -111,6 +111,10 @@ const StudyNotebook = lazy(() => import("../pages/student/StudyNotebook.jsx"));
 // [s05] Summary sheet and study podcast (student).
 const StudySummarySheet = lazy(() => import("../pages/student/StudySummarySheet.jsx"));
 const StudyPodcast = lazy(() => import("../pages/student/StudyPodcast.jsx"));
+// [s06] "Explain it to me" (Feynman) and mistake-type diagnosis
+const ExplainIt = lazy(() => import("../pages/student/ExplainIt.jsx"));
+const MistakeDiagnosis = lazy(() => import("../pages/student/MistakeDiagnosis.jsx"));
+const ClassDiagnosis = lazy(() => import("../pages/teacher/ClassDiagnosis.jsx"));
 
 // Public static pages
 const TermsOfService = lazy(() => import("../pages/footer/TermsOfService.jsx"));
@@ -241,6 +245,8 @@ export default function AppRoutes() {
                             {/* [s02] class forum and student-authored questions */}
                             <Route path="/class-forum" element={<ClassForumModeration />} />
                             <Route path="/peer-question-review" element={<PeerQuestionReview />} />
+                            {/* [s06] class mistake types and Feynman explanations */}
+                            <Route path="/class-diagnosis" element={<ClassDiagnosis />} />
                             {commonRoutes}
                         </>
                     )}
@@ -284,6 +290,9 @@ export default function AppRoutes() {
                             {/* [s05] Summary sheet and study podcast. */}
                             <Route path="/study-summary-sheet" element={<StudySummarySheet />} />
                             <Route path="/study-podcast" element={<StudyPodcast />} />
+                            {/* [s06] "Explain it to me" (Feynman) and mistake-type diagnosis */}
+                            <Route path="/explain-it" element={<ExplainIt />} />
+                            <Route path="/mistake-diagnosis" element={<MistakeDiagnosis />} />
                             {commonRoutes}
                         </>
                     )}

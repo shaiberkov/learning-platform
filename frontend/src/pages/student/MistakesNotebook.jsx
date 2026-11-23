@@ -7,6 +7,7 @@ import { answerReviewItem, fetchDueReviewItems, fetchReviewSummary } from "../..
 // [s04] Flashcards share the notebook's SM-2 review; the note button links an item to the study notebook.
 import FlashcardReviewPanel from "../../features/studyTools/FlashcardReviewPanel.jsx";
 import NoteButton from "../../features/studyTools/NoteButton.jsx";
+import { mistakeType } from "../../features/diagnosis/mistakeTypes.js";
 
 const SOURCE_LABELS = {
     PRACTICE: "תרגול שאלות",
@@ -148,6 +149,12 @@ function MistakesNotebook() {
                                 targetType: "REVIEW_ITEM", targetId: current.id, targetTitle: current.questionText,
                                 subject: current.subject, topic: current.topic, subTopic: current.subTopic,
                             }} />
+                            {/* [s06] mistake type, with the practice it calls for on the diagnosis page */}
+                            {current.errorType && (
+                                <Link to="/mistake-diagnosis" className={`chip ${mistakeType(current.errorType).chip}`}>
+                                    {mistakeType(current.errorType).label} · {mistakeType(current.errorType).actionLabel}
+                                </Link>
+                            )}
                         </div>
                     </div>
 

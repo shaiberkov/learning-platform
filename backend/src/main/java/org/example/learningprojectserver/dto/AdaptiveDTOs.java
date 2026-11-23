@@ -11,9 +11,9 @@ public final class AdaptiveDTOs {
 
     /* ---------- Mistakes notebook (SM-2) ---------- */
 
-    /** A due notebook item. The answer is not sent. */
+    /** A due notebook item. The answer is not sent. errorType ([s06]) is a MistakeType name or null. */
     public record ReviewItemDTO(Long id, String subject, String topic, String subTopic, String questionText,
-                                String source, int reviewCount, int lapses, LocalDate dueDate) {}
+                                String source, int reviewCount, int lapses, LocalDate dueDate, String errorType) {}
 
     public record ReviewSummaryDTO(long dueToday, long dueTomorrow, long total, long learned) {}
 

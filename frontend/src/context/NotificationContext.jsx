@@ -5,11 +5,10 @@ import {
     NOTIFICATION_BASE_PATH,
     NOTIFICATION_LIST,
     PREFERENCES,
-    QUESTION,
-    UNREAD_COUNT,
-    USER_ID
+    UNREAD_COUNT
 } from "../constants/pages.constants.js";
 import {apiGet} from "../lib/api.js";
+import { refreshSession } from "../Utils/httpSetup.js";
 
 export const NotificationContext = createContext();
 
@@ -112,9 +111,8 @@ export function NotificationProvider({ children }) {
 
         const connect = () => {
             if (closed) return;
-            eventSource = new EventSource(
-                `${NOTIFICATION_BASE_PATH}${CONNECT}${QUESTION}${USER_ID}${encodeURIComponent(userId)}`
-            );
+            // The server takes the user from the httpOnly access cookie, so the cookie must go along.
+            eventSource = new EventSource(`${NOTIFICATION_BASE_PATH}${CONNECT}`, { withCredentials: true });
 
             eventSource.addEventListener("connected", () => {
                 attempts = 0;
@@ -159,7 +157,8 @@ export function NotificationProvider({ children }) {
                 if (closed) return;
                 const delay = Math.min(MAX_DELAY, BASE_DELAY * 2 ** attempts);
                 attempts += 1;
-                retryTimer = setTimeout(connect, delay);
+                // EventSource hides the status; the drop may be an expired access cookie, so renew it first.
+                retryTimer = setTimeout(() => { refreshSession().finally(connect); }, delay);
             };
         };
 

@@ -51,7 +51,7 @@ private final AuthCookies authCookies;
         return userService.loginUser(userId, password);
     }
     @PostMapping(SEND_OTP)
-    public BasicResponse sendOtp(@NotBlank(message = "יש להזין תעודת זהות") @Size(max = 20, message = "תעודת הזהות ארוכה מדי") @RequestParam String userId, @NotBlank(message = "יש להזין מספר טלפון") @RequestParam String phoneNumber) {
+    public BasicResponse sendOtp(@NotBlank(message = "יש להזין תעודת זהות") @Size(max = 20, message = "תעודת הזהות ארוכה מדי") @RequestParam String userId, @RequestParam(required = false) String phoneNumber) {
         return userService.sendOtp(userId, phoneNumber);
     }
     @PostMapping(VERIFY_OTP)

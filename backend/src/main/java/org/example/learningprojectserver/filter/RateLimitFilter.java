@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
-import static org.example.learningprojectserver.constants.ControllerConstants.ChatGpt.*;
 import static org.example.learningprojectserver.constants.ControllerConstants.User.*;
 import static org.example.learningprojectserver.constants.SecurityConstants.JwtAuthenticationFilterConstants.PRINCIPAL_USER_ID_KEY;
 
@@ -34,16 +33,13 @@ public class RateLimitFilter extends OncePerRequestFilter {
     public static final String RULE_OTP_SEND = "otp-send";
     public static final String RULE_OTP_VERIFY = "otp-verify";
     public static final String RULE_PASSWORD_RESET = "password-reset";
-    public static final String RULE_AI_CHAT = "ai-chat";
 
     private static final Map<String, String> RULE_BY_PATH = Map.of(
             USER_BASE_PATH + LOGIN, RULE_LOGIN,
             USER_BASE_PATH + SEND_OTP, RULE_OTP_SEND,
             USER_BASE_PATH + VERIFY_OTP, RULE_OTP_VERIFY,
             USER_BASE_PATH + FORGOT_PASSWORD, RULE_PASSWORD_RESET,
-            USER_BASE_PATH + RESET_PASSWORD, RULE_PASSWORD_RESET,
-            CHAT_BASE_PATH + WITH_MEMORY, RULE_AI_CHAT,
-            CHAT_BASE_PATH + SINGLE_RESPONSE, RULE_AI_CHAT
+            USER_BASE_PATH + RESET_PASSWORD, RULE_PASSWORD_RESET
     );
 
     private static final String TOO_MANY_REQUESTS_MESSAGE = "יותר מדי בקשות. נסו שוב בעוד %d שניות.";

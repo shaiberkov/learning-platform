@@ -1,13 +1,19 @@
 package org.example.learningprojectserver.service;
 
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import org.example.learningprojectserver.enums.Role;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
+import java.security.SecureRandom;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +21,44 @@ import java.util.Map;
 @Service
 public class JwtService {
 
-    private final String SECRET = String.valueOf(Keys.secretKeyFor(SignatureAlgorithm.HS256)); // שים במשתנה סביבה
+    private static final Logger log = LoggerFactory.getLogger(JwtService.class);
+    private static final int MIN_SECRET_BYTES = 32;
+
+    private final Environment environment;
+
+    /** Base64 of at least 32 random bytes, from the JWT_SECRET environment variable. */
+    @Value("${JWT_SECRET:}")
+    private String jwtSecret;
+
+    private Key signingKey;
+
+    public JwtService(Environment environment) {
+        this.environment = environment;
+    }
+
+    @PostConstruct
+    void initSigningKey() {
+        byte[] keyBytes = null;
+        if (jwtSecret != null && !jwtSecret.isBlank()) {
+            try {
+                keyBytes = Decoders.BASE64.decode(jwtSecret.trim());
+            } catch (RuntimeException e) {
+                throw new IllegalStateException("JWT_SECRET must be Base64", e);
+            }
+            if (keyBytes.length < MIN_SECRET_BYTES) {
+                throw new IllegalStateException("JWT_SECRET must decode to at least " + MIN_SECRET_BYTES + " bytes");
+            }
+        }
+        if (keyBytes == null) {
+            if (environment.acceptsProfiles(Profiles.of("production"))) {
+                throw new IllegalStateException("JWT_SECRET is not set; refusing to start in production");
+            }
+            log.warn("JWT_SECRET is not set; using a random signing key (tokens stop working on restart)");
+            keyBytes = new byte[MIN_SECRET_BYTES];
+            new SecureRandom().nextBytes(keyBytes);
+        }
+        signingKey = Keys.hmacShaKeyFor(keyBytes);
+    }
 
     @Value("${auth.access-token.ttl-minutes:15}")
     private long accessTokenTtlMinutes;
@@ -24,7 +67,7 @@ public class JwtService {
     private static final String IMPERSONATOR_USERNAME_CLAIM = "impersonatorUsername";
 
     private Key getSigningKey() {
-        return Keys.hmacShaKeyFor(SECRET.getBytes());
+        return signingKey;
     }
 
 //   @PostConstruct

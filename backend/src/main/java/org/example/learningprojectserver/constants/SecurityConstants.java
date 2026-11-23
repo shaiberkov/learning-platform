@@ -12,11 +12,9 @@ import static org.example.learningprojectserver.constants.ControllerConstants.Ai
 import static org.example.learningprojectserver.constants.ControllerConstants.Calendar.CALENDAR_BASE_PATH;
 import static org.example.learningprojectserver.constants.ControllerConstants.Calendar.FEED_PREFIX;
 import static org.example.learningprojectserver.constants.ControllerConstants.Search.SEARCH_BASE_PATH;
-import static org.example.learningprojectserver.constants.ControllerConstants.ChatGpt.CHAT_BASE_PATH;
 import static org.example.learningprojectserver.constants.ControllerConstants.Exam.EXAM_BASE_PATH;
 import static org.example.learningprojectserver.constants.ControllerConstants.Lesson.LESSON_BASE_PATH;
 import static org.example.learningprojectserver.constants.ControllerConstants.Message.MESSAGE_BASE_PATH;
-import static org.example.learningprojectserver.constants.ControllerConstants.Notification.CONNECT;
 import static org.example.learningprojectserver.constants.ControllerConstants.Notification.NOTIFICATION_BASE_PATH;
 import static org.example.learningprojectserver.constants.ControllerConstants.Notification.PUSH_PUBLIC_KEY;
 import static org.example.learningprojectserver.constants.ControllerConstants.Parent.PARENT_BASE_PATH;
@@ -84,14 +82,12 @@ public final class SecurityConstants {
         public static final String STUDENT_ALL               = STUDENT_BASE_PATH      + CORS_MAPPING_PATH;
 
         public static final String ACTIVE_USER_ALL           = CONNECTED_USERS_BASE_PATH + CORS_MAPPING_PATH;
-        public static final String CHAT_ALL                  = CHAT_BASE_PATH         + CORS_MAPPING_PATH;
         public static final String QUESTION_ALL              = QUESTION_BASE_PATH     + CORS_MAPPING_PATH;
         public static final String USER_STATISTIC_ALL        = USER_STATISTIC_BASE_PATH + CORS_MAPPING_PATH;
         public static final String TEST_ALL                  = TEST_BASE_PATH         + CORS_MAPPING_PATH;
         public static final String MESSAGE_ALL               = MESSAGE_BASE_PATH      + CORS_MAPPING_PATH;
         public static final String NOTIFICATION_ALL          = NOTIFICATION_BASE_PATH + CORS_MAPPING_PATH;
-        // EventSource cannot send an Authorization header (and cross-site it sends no cookies), so the stream stays open.
-        public static final String NOTIFICATION_CONNECT      = NOTIFICATION_BASE_PATH + CONNECT;
+        // The VAPID public key is public; the SSE stream itself needs the access cookie.
         public static final String NOTIFICATION_PUSH_KEY     = NOTIFICATION_BASE_PATH + PUSH_PUBLIC_KEY;
         public static final String LESSON_ALL                = LESSON_BASE_PATH       + CORS_MAPPING_PATH;
         public static final String SCHEDULE_ALL              = SCHEDULE_BASE_PATH     + CORS_MAPPING_PATH;

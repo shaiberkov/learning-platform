@@ -32,14 +32,6 @@ public final class ControllerConstants {
         public static final String CONNECT_USER = "/connect-user";
         public static final String DISCONNECT_USER = "/disconnect-user";
     }
-    public static final class ChatGpt {
-        private ChatGpt() {}
-
-        public static final String CHAT_BASE_PATH = BASE_API + "/Chat";
-        public static final String WITH_MEMORY = "/get-response-from-chatGpt-with-memory";
-        public static final String SINGLE_RESPONSE = "/get-single-response-from-chatGpt";
-        public static final String CLEAR_CONVERSATION = "/clear-conversation";
-    }
     public static final class Lesson {
         private Lesson() {}
 

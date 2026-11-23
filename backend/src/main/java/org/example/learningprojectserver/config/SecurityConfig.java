@@ -96,8 +96,8 @@ public class SecurityConfig {
                         ).permitAll()
                         .requestMatchers(USER_ALL).permitAll()
                         .requestMatchers(VALIDATE_TOKEN_ALL).permitAll()
-                        // EventSource cannot send the Authorization header, so the SSE stream stays open.
-                        .requestMatchers(NOTIFICATION_CONNECT, NOTIFICATION_PUSH_KEY).permitAll()
+                        // The SSE stream authenticates with the access_token cookie (EventSource withCredentials).
+                        .requestMatchers(NOTIFICATION_PUSH_KEY).permitAll()
                         .requestMatchers(NOTIFICATION_ALL).authenticated()
                         .requestMatchers(CALENDAR_FEED).permitAll()
                         .requestMatchers(SYSTEM_ADMIN_ALL).hasRole(SYSTEM_ADMIN)
@@ -110,7 +110,6 @@ public class SecurityConfig {
                         .requestMatchers(IMPERSONATION_START).hasRole(SYSTEM_ADMIN)
                         .requestMatchers(IMPERSONATION_ALL).authenticated()
                         .requestMatchers(ACTIVE_USER_ALL).authenticated()
-                        .requestMatchers(CHAT_ALL).authenticated()
                         .requestMatchers(QUESTION_ALL).authenticated()
                         .requestMatchers(USER_STATISTIC_ALL).authenticated()
                         .requestMatchers(MESSAGE_ALL).authenticated()

@@ -42,7 +42,6 @@ private final QuestionEntityToQuestionDTOMapper questionEntityToQuestionDTOMappe
 private final QuestionEntityToPracticeQuestionMapper questionEntityToPracticeQuestionMapper;
 private final SchoolRepository schoolRepository;
 private final LessonsToScheduleMapper lessonsToScheduleMapper;
-private final ChatGptService chatGptService;
 private final StudentEntityToStudentTestStatusDTOMapper studentEntityToStudentTestStatusDTOMapper;
 private final TestService testService;
 private final StudentRepository studentRepository;
@@ -82,27 +81,9 @@ public List<StudentTestStatusDTO> getStudentTestsStatus(String userId) {
 
 
 
-    public void sendJobMessage(String userId,String subject,String subTopic) {
-    String job = String.format("""
-            אתה מורה פרטי ל%s שמדבר עברית ורק עברית.
-            אתה מסביר בצורה פשוטה וברורה, כך שגם ילדים יוכלו להבין אותך בקלות.
-            אם תקבל שאלה לפתרון מהסוג: "%s",
-            אתה תסביר לתלמיד איך לחשוב על הפתרון,
-            אבל בשום פנים ואופן **לא תגלה לו את התשובה!**
-            רק תדריך אותו צעד-צעד איך לגשת לפתרון בצורה קלה להבנה.
-            תשתמש בדוגמאות פשוטות ותסביר במילים ברורות, בלי מונחים מסובכים,
-            וכל הודעה שלך תישלח רק דרך פתרון אחת כדי שהתלמיד לא יקבל הודעה ארוכה ולא מובנת.
-            אם התלמיד לא מבין, תסביר שוב בדרך אחרת, אפילו עם דוגמה מהחיים האמיתיים.
-            כל שאלה שלא קשורה למה שעכשיו ציינתי – אל תענה,
-            ותזכיר לתלמיד שאתה מורה ל%s שבא לעזור לו בשאלות מהסוג שקיבלת בפורמט הזה.
-        """, subject, subTopic, subject);
-    chatGptService.initializeConversationWithJob(userId, job);
-
-}
 
     @Transactional
     public BasicResponse generateQuestionForPractice(String userId, String subject, String topic, String subTopic) {
-        sendJobMessage(userId, subject, subTopic);
 
         StudentEntity student = studentRepository.findStudentWithProgressAndHistory(userId);
 

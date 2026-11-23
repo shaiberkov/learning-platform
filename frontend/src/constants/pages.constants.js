@@ -8,12 +8,6 @@ export const PagesConstants = {
         DISCONNECT_USER: '/disconnect-user',
     },
 
-    ChatGpt: {
-        CHAT_BASE_PATH: `${API_BASE_URL}${BASE_API}/Chat`,
-        WITH_MEMORY: '/get-response-from-chatGpt-with-memory',
-        SINGLE_RESPONSE: '/get-single-response-from-chatGpt',
-        CLEAR_CONVERSATION: '/clear-conversation',
-    },
 
     Lesson: {
         LESSON_BASE_PATH: `${API_BASE_URL}${BASE_API}/lesson`,
@@ -319,13 +313,6 @@ export const {
     DISCONNECT_USER,
 } = PagesConstants.ActiveUser;
 
-/* ChatGpt */
-export const {
-    CHAT_BASE_PATH,
-    WITH_MEMORY,
-    SINGLE_RESPONSE,
-    CLEAR_CONVERSATION,
-} = PagesConstants.ChatGpt;
 
 
 /* Lesson */

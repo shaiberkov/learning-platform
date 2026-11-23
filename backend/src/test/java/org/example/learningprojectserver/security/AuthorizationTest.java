@@ -16,6 +16,7 @@ import org.example.learningprojectserver.service.ClassRoomService;
 import org.example.learningprojectserver.service.FeatureFlagService;
 import org.example.learningprojectserver.service.ImpersonationService;
 import org.example.learningprojectserver.service.JwtService;
+import org.springframework.test.context.TestPropertySource;
 import org.example.learningprojectserver.service.SchoolGradeService;
 import org.example.learningprojectserver.service.SchoolManagerService;
 import org.example.learningprojectserver.service.SchoolService;
@@ -57,6 +58,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 })
 @Import({SecurityConfig.class, JwtService.class, AccessGuard.class, FeatureFlags.class, AccessDeniedAdvice.class,
         AuthCookies.class, RateLimiter.class, RateLimitProperties.class})
+// The production profile is active by default and JwtService refuses to start without a key there.
+@TestPropertySource(properties = "JWT_SECRET=dGVzdC1vbmx5LWp3dC1zZWNyZXQtMzItYnl0ZXMtbG9uZyEh")
 class AuthorizationTest {
 
     private static final String AUTH = "Authorization";

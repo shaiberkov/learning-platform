@@ -390,4 +390,16 @@ public final class ControllerConstants {
         public static final String GLOBAL = "/global";
         public static final String STUDENTS_PAGE = "/students-page";
     }
+    // [s07] Real-world connection cards and the interactive simulations gallery.
+    public static final class RealWorld {
+        private RealWorld() {}
+
+        public static final String REAL_WORLD_BASE_PATH = BASE_API + "/real-world";
+        public static final String TOPICS               = "/topics";
+        public static final String TOPIC                = "/topic";
+        public static final String SAVE_OVERRIDE        = "/override";
+        public static final String RESET_OVERRIDE       = "/override/reset";
+        public static final String SIMULATIONS_EXPLORED = "/simulations/explored";
+        public static final String RECORD_SIMULATION    = "/simulations/record";
+    }
 }

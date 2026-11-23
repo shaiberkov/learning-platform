@@ -29,6 +29,9 @@ Engagement (XP, streaks, badges, class challenges), study plans, lesson pages an
 
 Not cached on purpose: the school dashboard (`SchoolAnalyticsService`), the timetable builder's lesson list, school years and their archive, and the parent screens (`ParentService`) read MySQL on every request. Messages to parents go through `MessageService.sendMessage`, which already evicts `receivedMessages` per recipient.
 
+<!-- [s07] -->
+Not cached on purpose [s07]: the "why does it matter to me?" cards (`RealWorldService`: built-in texts are static in `RealWorldCatalog`, school overrides in `real_world_override` are one indexed query) and the simulation exploration records (`SimulationService`, `simulation_exploration`) read MySQL on every request, so their writes have nothing to evict.
+
 ## 2. Hand-rolled in-memory maps
 
 Not Spring caches: plain `ConcurrentHashMap`s in singleton beans. Lost on restart, never shared between instances.

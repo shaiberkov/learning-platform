@@ -98,6 +98,9 @@ const SchoolYears = lazy(() => import("../pages/manager/SchoolYears.jsx"));
 const ParentLinks = lazy(() => import("../pages/manager/ParentLinks.jsx"));
 const MessageParents = lazy(() => import("../pages/teacher/MessageParents.jsx"));
 const ParentDashboard = lazy(() => import("../pages/parent/ParentDashboard.jsx"));
+// [s07] simulations gallery and real-world card editor
+const Simulations = lazy(() => import("../pages/student/Simulations.jsx"));
+const RealWorldEditor = lazy(() => import("../pages/teacher/RealWorldEditor.jsx"));
 
 // Public static pages
 const TermsOfService = lazy(() => import("../pages/footer/TermsOfService.jsx"));
@@ -219,6 +222,8 @@ export default function AppRoutes() {
                             <Route path="/attendance" element={<Attendance />} />
                             <Route path="/message-parents" element={<MessageParents />} />
                             <Route path="/send-message" element={<SendMessage />} />
+                            {/* [s07] real-world card editor */}
+                            <Route path="/real-world-editor" element={<RealWorldEditor />} />
                             {commonRoutes}
                         </>
                     )}
@@ -245,6 +250,8 @@ export default function AppRoutes() {
                             <Route path="/study-plan" element={<StudyPlan />} />
                             <Route path="/achievements" element={<Achievements />} />
                             <Route path="/accessibility-settings" element={<AccessibilitySettings />} />
+                            {/* [s07] simulations gallery */}
+                            <Route path="/simulations" element={<Simulations />} />
                             {commonRoutes}
                         </>
                     )}

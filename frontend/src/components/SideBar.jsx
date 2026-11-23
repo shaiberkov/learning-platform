@@ -197,6 +197,8 @@ function SideBar() {
                 { to: "attendance", label: "נוכחות" },
                 { to: "message-parents", label: "הודעה להורים" },
                 { to: "send-message", label: t("nav.sendMessage") },
+                // [s07] real-world card editor
+                { to: "real-world-editor", label: "למה זה חשוב? (עריכה)" },
                 ...common,
             ],
             PARENT: [
@@ -219,6 +221,8 @@ function SideBar() {
                     { to: "ai-tutor", label: "מורה-עזר AI" },
                     { to: "open-questions", label: "שאלות פתוחות" },
                     { to: "live-quiz", label: "חידון בכיתה" },
+                    // [s07] simulations gallery
+                    { to: "simulations", label: "סימולציות" },
                 ] : []),
                 { to: "accessibility-settings", label: "הגדרות נגישות" },
                 ...common,

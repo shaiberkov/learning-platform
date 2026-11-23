@@ -15,6 +15,7 @@ import {skillColor} from "../../features/adaptive/adaptiveApi.js";
 import {useTranslation} from "react-i18next";
 import useOnlineStatus from "../../offline/useOnlineStatus.js";
 import {countQuestions, exerciseKey, queueAnswer, saveQuestions, takeQuestion} from "../../offline/practiceStore.js";
+import RealWorldCard from "../../features/realworld/RealWorldCard.jsx";
 
 const OFFLINE_BATCH = 10;
 
@@ -336,6 +337,8 @@ function QuestionPractice(){
                     />
                 </div>
             </section>
+
+            <RealWorldCard topic={topicName || exerciseName} className="mt-5" />
 
             <button
                 onClick={toggleChat}

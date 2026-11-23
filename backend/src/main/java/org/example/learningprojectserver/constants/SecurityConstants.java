@@ -38,6 +38,8 @@ import static org.example.learningprojectserver.constants.ControllerConstants.St
 import static org.example.learningprojectserver.constants.ControllerConstants.LessonContent.LESSON_CONTENT_BASE_PATH;
 import static org.example.learningprojectserver.constants.ControllerConstants.Homework.HOMEWORK_BASE_PATH;
 import static org.example.learningprojectserver.constants.ControllerConstants.Accommodation.ACCOMMODATION_BASE_PATH;
+// [s07] real-world cards and simulations
+import static org.example.learningprojectserver.constants.ControllerConstants.RealWorld.REAL_WORLD_BASE_PATH;
 
 public final class SecurityConstants {
     public static final class JwtAuthenticationFilterConstants {
@@ -114,6 +116,8 @@ public final class SecurityConstants {
         // Calendar apps open the .ics feed with only the secret token in the URL.
         public static final String CALENDAR_FEED             = CALENDAR_BASE_PATH     + FEED_PREFIX + "**";
         public static final String SEARCH_ALL                = SEARCH_BASE_PATH       + CORS_MAPPING_PATH;
+        // [s07] real-world cards and simulations
+        public static final String REAL_WORLD_ALL            = REAL_WORLD_BASE_PATH   + CORS_MAPPING_PATH;
 
         public static final String SYSTEM_ADMIN   = "SYSTEM_ADMIN";
         public static final String TEACHER        = "TEACHER";
